@@ -1,0 +1,364 @@
+html, body {
+  /* Make the body to be as tall as browser window */
+  height: 100%;
+  margin: 0;
+  font-family: Sans-serif;
+  color: white;
+}
+
+.body {
+ height: 100%;
+ background-image: linear-gradient(red, blue);
+ display: grid;
+ justify-content: center;
+ align-content: center;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="date"] {
+ border-radius: 6px;
+ border-color: blue;
+ border-width: 2px;
+ border-style: solid;
+ color: blue;
+ width: 130px;
+}
+
+input[type="button"] {
+ background-color: white;
+ border-color: blue;
+ border-style: solid;
+ border-radius: 4px;
+ color: red;
+ padding: 4px 10px;
+ cursor: pointer;
+}
+
+a:hover {
+ cursor: pointer;
+}
+
+.error {
+ border-color: red !important;
+}
+
+.header {
+ height: 30px;
+ width: 100%;
+ top: 0;
+ position: absolute;
+}
+
+.header a:hover {
+ color: blue;
+}
+
+.header nav {
+ float: right;
+ margin-top: 5px;
+}
+
+.header nav a {
+ margin-right: 5px;
+}
+
+.footer {
+ height: 30px;
+ width: 100%;
+ bottom: 0;
+ position: absolute;
+}
+
+.footer a:hover {
+ color: red;
+}
+
+.sidebar-menu {
+ height: calc(100% - 60px);
+ width: 100px;
+ top: 30px;
+ position:absolute;
+}
+
+.sidebar-menu div {
+ padding: 5px 10px;
+ border-bottom: 2px solid white;
+}
+
+.content {
+ background-color: white;
+ color: blue;
+ height: calc(100% - 80px);
+ width: calc(100% - 120px);
+ top: 30px;
+ left: 100px;
+ position:absolute;
+ overflow: auto;
+ border-radius: 0 10px;
+ padding: 10px;
+}
+
+@keyframes please-wait-animation {
+ 0% {
+  background-image: linear-gradient(red, blue);
+  opacity: 0.4;
+ }
+ 50% {
+  background-image: linear-gradient(red, blue);
+  opacity: 1;
+ }
+ 100% {
+  background-image: linear-gradient(red, blue);
+  opacity: 0.4;
+ }
+}
+
+.please-wait {
+ position: absolute;
+ width: 100%;
+ height: 100%;
+ z-index: 1;
+ top: 0;
+ left: 0;
+ animation: please-wait-animation 1s;
+ animation-iteration-count: infinite;
+ display: grid;
+ justify-content: center;
+ align-content: center;
+}
+
+.progress-bar-background {
+ position: absolute;
+ width: 100%;
+ height: 100%;
+ z-index: 2;
+ top: 0;
+ left: 0;
+ display: grid;
+ justify-content: center;
+ align-content: center;
+}
+
+.progress-bar {
+ width: 100px;
+ height: 20px;
+ background-color: white;
+ border-radius: 5px;
+ border: 2px solid blue;
+ display: grid;
+ justify-content: center;
+ align-content: center;
+}
+
+.progress-bar-done-number {
+ color: blue;
+}
+
+.signUp h3{
+ text-align: center;
+}
+
+.signUp td:nth-child(1){
+ text-align: right;
+}
+
+.tree {
+ -moz-user-select: none;
+ user-select: none;
+ cursor: default;
+ width: 300px;
+ height: 100%;
+ float: left;
+ overflow: auto;
+}
+
+.tree div {
+ min-height: 19px;
+}
+
+.tree .sign {
+ float: left;
+ width: 20px;
+}
+
+.tree .pointer {
+ cursor: pointer;
+}
+
+.tree .docName {
+ float: left;
+ max-width: 180px;
+}
+
+.tree .line {
+ width: 200px;
+}
+
+.tree .subarea {
+ margin-left: 20px;
+ min-height: 0px;
+}
+
+.tree .subareaEmpty {
+  min-height: 0px;
+}
+
+.tree .highlightDoc {
+  background-color: blue;
+  color: white;
+}
+
+.ideFileDisplay {
+ float: left;
+ height: 100%;
+ width: calc(100% - 300px);
+}
+
+.openedFile {
+ width: 100%;
+ height: calc(100% - 40px);
+}
+
+.textarea {
+ z-index: 1;
+ background: transparent;
+ color: transparent;
+ caret-color: black;
+ border: none;
+ resize: none;
+ box-sizing: border-box;
+}
+
+.highlights {
+ background-color: white;
+ color: black;
+}
+
+.highlights,
+.textarea {
+ height: calc(100% - 62px);
+ width: calc(100% - 320px);
+ font-size: 14px;
+ font-family: monospace;
+ position: absolute;
+ overflow: auto;
+ white-space: pre;
+ word-wrap: break-word;
+}
+
+bracket {
+ color: green;
+}
+
+keyword {
+ color: #ff9d00;
+}
+
+function {
+ color: gray;
+}
+
+boolean {
+ color: red;
+}
+
+comment,
+comment bracket,
+comment keyword,
+comment function,
+comment boolean {
+ color: blue;
+}
+
+.tabBar {
+ width: 100%;
+ height: 40px;
+ display: -moz-box;
+ overflow-x: scroll;
+ cursor: default;
+}
+
+.tab {
+ max-width: 100px;
+ height: 28px;
+ border: 1px solid blue;
+ overflow: hidden;
+}
+
+.tabName {
+ float: left;
+ width: calc(80% - 10px);
+ overflow: hidden;
+ padding: 5px;
+}
+
+.tabClose {
+ float: right;
+ width: calc(20% - 10px);
+ text-align: right;
+ padding: 5px;
+}
+
+.activeTab {
+ background-color: #ffcdcd;
+ border: 1px solid #de00ff;
+}
+
+.inactiveEditor {
+ display: none;
+}
+
+ul.projectMenu  {
+ position: absolute;
+ background-color: red;
+ color: white;
+ padding: 8px;
+ cursor: default;
+ border-radius: 0 10px;
+ z-index: 1;
+ margin-top: 0;
+}
+
+ul.projectMenu li {
+ padding: 3px;
+ list-style: none;
+ border-radius: 0 10px;
+}
+
+ul.projectMenu li:hover {
+ background-color: blue;
+}
+
+#gitRemoteLink {
+ display: flex;
+ justify-content: center;
+}
+
+#gitRemoteLink input[type="text"] {
+ width: 100%;
+}
+
+#unpushedCommits textarea,
+#commitMessage textarea {
+ width: 400px;
+ height: 100px;
+ resize: none;
+}
+
+#addRemoveFiles {
+ width: 400px;
+ height: 200px;
+ overflow: auto;
+}
+
+#addRemoveFiles > div {
+ height: 30px;
+}
+
+#popup-content > div {
+ margin-bottom: 10px;
+}
+
