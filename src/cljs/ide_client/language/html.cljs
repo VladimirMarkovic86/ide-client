@@ -1,7 +1,7 @@
-(ns ide-client.user.html
+(ns ide-client.language.html
   (:require [htmlcss-lib.core :refer [gen div a]]
             [framework-lib.core :refer [create-entity gen-table]]
-            [ide-client.user.entity :refer [table-conf]]
+            [ide-client.language.entity :refer [table-conf]]
             [language-lib.core :refer [get-label]]))
 
 (defn nav
@@ -10,6 +10,12 @@
   []
   (gen
     [(div
+       (a
+         (get-label 4)
+         {:id "aCreateId"}
+         {:onclick {:evt-fn create-entity
+                    :evt-p table-conf}}))
+     (div
        (a
          (get-label 5)
          nil

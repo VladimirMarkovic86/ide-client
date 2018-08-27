@@ -11,7 +11,8 @@
             [ide-client.working-area.leiningen.controller :as walc]
             [ide-client.working-area.file-system.html :as fsh]
             [ide-middle.project.entity :as pem]
-            [clojure.string :as cstring]))
+            [clojure.string :as cstring]
+            [language-lib.core :refer [get-label]]))
 
 (def display-as-text
      #{"txt"
@@ -133,7 +134,10 @@
     (doseq [opened-file-html opened-files-html]
       (md/add-class
         opened-file-html
-        "inactiveEditor"))
+        "inactiveEditor")
+      (md/remove-class
+        opened-file-html
+        "activeEditor"))
     (md/remove-class
       active-tab
       "activeTab"))
@@ -154,6 +158,9 @@
     (md/remove-class
       editor-div
       "inactiveEditor")
+    (md/add-class
+      editor-div
+      "activeEditor")
     (md/add-class
       parent-el
       "activeTab"))
@@ -192,6 +199,9 @@
           (md/add-class
             tab
             "activeTab")
+          (md/add-class
+            editor-obj
+            "activeEditor")
           (md/remove-class
             editor-obj
             "inactiveEditor"))
@@ -260,6 +270,9 @@
           (md/remove-class
             editor-obj
             "inactiveEditor")
+          (md/add-class
+            editor-obj
+            "activeEditor")
           (md/add-class
             tab
             "activeTab"))
@@ -633,60 +646,6 @@
        ))
    ))
 
-;; initialize local and set remote repository
-;git init
-;git remote add origin git@gitlab:VladimirMarkovic86/<project_name>.git
-
-;; change remote repository
-;git remote remove origin
-;git remote add origin git@gitlab:VladimirMarkovic86/<project_name>.git
-
-;; list modified, deleted and new files
-;git status -s
-
-;; add modified and new files
-;git add file-path1
-;git add file-path2
-
-;; remove deleted diles
-;git rm file-path3
-
-;; commit with message
-;git commit -m '<commit_message>'
-
-;; push all commits
-;git push
-
-;right click on project or it's sub documents
-;choose git menu item
-
-;display popup
-; scenario 1. git not initialized
-;             offer to initalize git repo
-;              as input field for remote
-;              repo and press initialize button
-;             or cancel
-;              after either initialize or cancel action close popup
-; scenario 2. git is initilized
-;             display changes
-;             scenario 1. no changes message
-;             scenario 2. display files
-;                          one line per file
-;                          first checkbox
-;                          then action[M|D|??]
-;                          then file name
-;                         display textarea for commit message
-;                         offer
-;                          "commit" button and
-;                          "commit and push" button
-;                            after either button action close popup
-
-;git status
-;(if (= out
-;       "fatal: Not a git repository (or any of the parent directories): .git")
-;  scenario 1.
-;  scenario 2.)
-
 (defn change-state-evt
   ""
   [{relative-path :relative-path
@@ -752,9 +711,14 @@
                :entity {:entity-id entity-id
                         :entity-type proent/entity-type
                         :action pem/git-commit
-                        :commit-message commit-message}})]
-    
-   ))
+                        :commit-message commit-message}})
+        close-popup-btn (md/query-selector-on-element
+                          "#popup-window"
+                          "#close-btn")]
+    (md/dispatch-event
+      "click"
+      close-popup-btn))
+ )
 
 (defn commit-and-push-changes-evt
   ""
@@ -771,9 +735,14 @@
                :entity {:entity-id entity-id
                         :entity-type proent/entity-type
                         :action pem/git-commit-push
-                        :commit-message commit-message}})]
-    
-   ))
+                        :commit-message commit-message}})
+        close-popup-btn (md/query-selector-on-element
+                          "#popup-window"
+                          "#close-btn")]
+    (md/dispatch-event
+      "click"
+      close-popup-btn))
+ )
 
 (defn push-commits-evt
   ""
@@ -784,10 +753,14 @@
               {:url rurls/git-project-url
                :entity {:entity-id entity-id
                         :entity-type proent/entity-type
-                        :action pem/git-push}})]
-    
-   ))
-
+                        :action pem/git-push}})
+        close-popup-btn (md/query-selector-on-element
+                          "#popup-window"
+                          "#close-btn")]
+    (md/dispatch-event
+      "click"
+      close-popup-btn))
+ )
 
 (defn git-project-evt-success
   ""
@@ -799,6 +772,10 @@
                            response
                            [:unpushed-commits
                             :out])
+        project-diff (get-in
+                       response
+                       [:project-diff
+                        :out])
         entity-id (get-in
                     ajax-params
                     [:entity
@@ -817,6 +794,7 @@
         (waih/git-popup-content
           git-remote-url
           unpushed-commits
+          project-diff
           nil
           change-state-evt
           entity-id
@@ -836,6 +814,7 @@
         (waih/git-popup-content
           git-remote-url
           unpushed-commits
+          project-diff
           nil
           change-state-evt
           entity-id
@@ -907,6 +886,7 @@
           (waih/git-popup-content
             git-remote-url
             unpushed-commits
+            project-diff
             @prepared-files
             change-state-evt
             entity-id
@@ -1081,35 +1061,88 @@
         page-x
         page-y
         fn-event
-        [["New folder"
-          mkdir-popup-fn]
-         ["New file"
-          mkfile-popup-fn]
-         ["Cut"
-          cut-evt]
-         ["Copy"
-          copy-evt]
-         ["Paste"
-          paste-evt]
-         ["Delete"
-          delete-evt]
-         ["Build"
+        [[(get-label 52)
           walc/build-project-evt-fn]
-         ["Build All"
+         [(get-label 53)
           walc/build-project-dependencies-evt-fn]
-         ["Clean"
+         [(get-label 54)
           walc/clean-project-evt-fn]
-         ["Start Server"
+         [(get-label 55)
           walc/start-server-evt-fn]
-         ["Stop Server"
+         [(get-label 56)
           walc/stop-server-evt-fn]
-         ["Restart Server"
+         [(get-label 57)
           walc/restart-server-evt-fn]
-         ["Server Status"
+         [(get-label 58)
           walc/server-status-evt-fn]
-         ["Git"
-          git-project-evt]]))
+         [(get-label 48)
+          git-project-evt]
+         [(get-label 61)
+          mkdir-popup-fn]
+         [(get-label 62)
+          mkfile-popup-fn]
+         [(get-label 63)
+          cut-evt]
+         [(get-label 64)
+          copy-evt]
+         [(get-label 65)
+          paste-evt]
+         [(get-label 8)
+          delete-evt]]))
    ))
+
+(defn save-file-changes-fn
+  ""
+  [evt-p
+   element
+   event]
+  (let [file-textarea (md/query-selector-on-element
+                        ".ideFileDisplay"
+                        ".activeEditor textarea")
+        file-with-changes (md/get-value
+                            file-textarea)
+        file-path (aget
+                    file-textarea
+                    "filePath")
+        xhr (sjax
+              {:url rurls/save-file-changes-url
+               :entity {:file-path file-path
+                        :file-content file-with-changes}})]
+    
+   ))
+
+(defn save-all-file-changes-fn
+  ""
+  [evt-p
+   element
+   event]
+  (let [file-textarea (md/query-selector-on-element
+                        ".ideFileDisplay"
+                        ".activeEditor textarea")
+        file-textareas (md/query-selector-all-on-element
+                         ".ideFileDisplay"
+                         ".inactiveEditor textarea")
+        file-with-changes (md/get-value
+                            file-textarea)
+        file-path (aget
+                    file-textarea
+                    "filePath")
+        xhr (sjax
+              {:url rurls/save-file-changes-url
+               :entity {:file-path file-path
+                        :file-content file-with-changes}})]
+    (doseq [file-text file-textareas]
+      (let [file-with-changes (md/get-value
+                                file-text)
+            file-path (aget
+                        file-text
+                        "filePath")]
+        (sjax
+          {:url rurls/save-file-changes-url
+           :entity {:file-path file-path
+                    :file-content file-with-changes}}))
+     ))
+ )
 
 (defn display-ide-success
   ""
@@ -1132,6 +1165,20 @@
           ""
           {:class "tabBar"})
         {:class "ideFileDisplay"}))
+    (md/prepend-element
+      ".ideFileDisplay"
+      (waih/input-fn
+        ""
+        {:value (get-label 60)
+         :type "button"}
+        {:onclick {:evt-fn save-all-file-changes-fn}}))
+    (md/prepend-element
+      ".ideFileDisplay"
+      (waih/input-fn
+        ""
+        {:value (get-label 1)
+         :type "button"}
+        {:onclick {:evt-fn save-file-changes-fn}}))
    ))
 
 (defn display-ide

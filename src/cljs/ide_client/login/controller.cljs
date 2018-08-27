@@ -37,6 +37,41 @@
          "expires=Thu, 01 Jan 1970 00:00:01 GMT; "))
  )
 
+(defn is-session-expired
+  "Check if session cookie exists"
+  []
+  (let [cookies (aget
+                  js/document
+                  "cookie")]
+    (= -1
+       (.indexOf
+         cookies
+         "session"))
+   ))
+
+(defn is-login-displayed
+  "Check if login form displayed"
+  []
+  (md/query-selector
+    "table.login"))
+
+(defn logout-on-session-expired
+  "Log out if session expired"
+  []
+  (md/timeout
+    #(do
+       (when (and (not (is-login-displayed))
+                  (is-session-expired))
+         (.reload
+           js/location))
+       (when (not
+               (and (is-login-displayed)
+                    (is-session-expired))
+              )
+         (logout-on-session-expired))
+      )
+    1000))
+
 (defn main-page
   "Open main page"
   [xhr
@@ -52,6 +87,7 @@
    ajax-params]
   (md/remove-element-content
     ".body")
+  (logout-on-session-expired)
   (main-page
     xhr
     ajax-params))

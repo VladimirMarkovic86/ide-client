@@ -1,10 +1,11 @@
 (ns ide-client.project.entity
- (:require [htmlcss-lib.core :refer [gen]]
-           [js-lib.core :as md]
-           [framework-lib.core :as frm :refer [gen-table]]
-           [utils-lib.core :refer [round-decimals]]
-           [ide-middle.project.entity :as pem]
-           [cljs.reader :as reader]))
+  (:require [htmlcss-lib.core :refer [gen]]
+            [js-lib.core :as md]
+            [framework-lib.core :as frm :refer [gen-table]]
+            [utils-lib.core :refer [round-decimals]]
+            [ide-middle.project.entity :as pem]
+            [cljs.reader :as reader]
+            [language-lib.core :refer [get-label]]))
 
 (def entity-type
      "project")
@@ -12,25 +13,33 @@
 (def form-conf
      {:id :_id
       :type entity-type
-      :fields {:name {:label "Name"
-                      :input-el "text"}
-               :group-id {:label "Group id"
-                          :input-el "text"}
-               :artifact-id {:label "Artifact id"
-                             :input-el "text"}
-               :version {:label "Version"
-                         :input-el "text"}
-               :absolute-path {:label "Absolute path"
-                               :input-el "text"}
-               :git-remote-link {:label "Git remote link"
+      :entity-name (get-label 35)
+      :fields {:name {:label (get-label 37)
+                      :input-el "text"
+                      :attrs {:required "required"}}
+               :group-id {:label (get-label 38)
+                          :input-el "text"
+                          :attrs {:required "required"}}
+               :artifact-id {:label (get-label 39)
+                             :input-el "text"
+                             :attrs {:required "required"}}
+               :version {:label (get-label 40)
+                         :input-el "text"
+                         :attrs {:required "required"}}
+               :absolute-path {:label (get-label 41)
+                               :input-el "text"
+                               :attrs {:required "required"}}
+               :git-remote-link {:label (get-label 42)
                                  :input-el "text"}
-               :language {:label "Language"
+               :language {:label (get-label 43)
                           :input-el "radio"
+                          :attrs {:required "required"}
                           :options [pem/clojure
                                     pem/clojure-script
                                     pem/clojurescript]}
-               :project-type {:label "Project type"
+               :project-type {:label (get-label 44)
                               :input-el "radio"
+                              :attrs {:required "required"}
                               :options [pem/application
                                         pem/library]}}
       :fields-order [:name
@@ -54,49 +63,49 @@
                    ]
       :style
        {:name
-         {:content "Project name"
+         {:content (get-label 37)
           :th {:style {:width "100px"}}
           :td {:style {:width "100px"
                        :text-align "left"}}
           }
         :group-id
-         {:content "Group id"
+         {:content (get-label 38)
           :th {:style {:width "100px"}}
           :td {:style {:width "100px"
                        :text-align "left"}}
           }
         :artifact-id
-         {:content "Artifact id"
+         {:content (get-label 39)
           :th {:style {:width "200px"}}
           :td {:style {:width "200px"
                        :text-align "left"}}
           }
         :version
-         {:content "Version"
+         {:content (get-label 40)
           :th {:style {:width "100px"}}
           :td {:style {:width "100px"
                        :text-align "center"}}
           }
         :absolute-path
-         {:content "Absolute path"
+         {:content (get-label 41)
           :th {:style {:width "100px"}}
           :td {:style {:width "100px"
                        :text-align "left"}}
           }
         :git-remote-link
-         {:content "Git remote link"
+         {:content (get-label 42)
           :th {:style {:width "100px"}}
           :td {:style {:width "100px"
                        :text-align "left"}}
           }
         :language
-         {:content "Language"
+         {:content (get-label 43)
           :th {:style {:width "100px"}}
           :td {:style {:width "100px"
                        :text-align "left"}}
           }
         :project-type
-         {:content "Project type"
+         {:content (get-label 44)
           :th {:style {:width "100px"}}
           :td {:style {:width "100px"
                        :text-align "left"}}

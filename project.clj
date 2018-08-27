@@ -13,6 +13,7 @@
                    [org.vladimir/utils-lib "0.1.0"]
                    [org.vladimir/client-test-lib "0.1.0"]
                    [org.vladimir/ide-middle "0.1.0"]
+                   [org.vladimir/language-lib "0.1.0"]
                    ]
   
   :plugins [[lein-cljsbuild  "1.1.7"]

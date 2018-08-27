@@ -25,6 +25,7 @@ input[type="date"] {
  border-style: solid;
  color: blue;
  width: 130px;
+ box-shadow: none;
 }
 
 input[type="button"] {
@@ -219,7 +220,7 @@ a:hover {
 
 .openedFile {
  width: 100%;
- height: calc(100% - 40px);
+ height: calc(100% - 67px);
 }
 
 .textarea {
@@ -239,7 +240,7 @@ a:hover {
 
 .highlights,
 .textarea {
- height: calc(100% - 62px);
+ height: calc(100% - 88px);
  width: calc(100% - 320px);
  font-size: 14px;
  font-family: monospace;
@@ -360,5 +361,9 @@ ul.projectMenu li:hover {
 
 #popup-content > div {
  margin-bottom: 10px;
+}
+
+td.validationMessage {
+ color: red;
 }
 

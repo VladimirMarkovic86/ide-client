@@ -1,4 +1,4 @@
-(ns ide-client.user.entity
+(ns ide-client.language.entity
   (:require [htmlcss-lib.core :refer [gen crt]]
             [js-lib.core :as md]
             [framework-lib.core :refer [gen-table]]
@@ -7,42 +7,45 @@
             [language-lib.core :refer [get-label]]))
 
 (def entity-type
-     "user")
+     "language")
 
 (def form-conf
      {:id :_id
       :type entity-type
-      :entity-name (get-label 21)
-      :fields {:username {:label (get-label 19)
-                          :input-el "text"}
-               :password {:label (get-label 15)
-                          :input-el "password"}
-               :email {:label (get-label 14)
-                       :input-el "email"}}
-      :fields-order [:username
-                     :password
-                     :email]})
+      :entity-name (get-label 23)
+      :fields {:code {:label (get-label 24)
+                      :input-el "number"
+                      :attrs {:required "required"}}
+               :english {:label (get-label 25)
+                         :input-el "text"
+                         :attrs {:required "required"}}
+               :serbian {:label (get-label 26)
+                         :input-el "text"
+                         :attrs {:required "required"}}
+               }
+      :fields-order [:code
+                     :english
+                     :serbian]})
 
 (def columns
-     {:projection [:username
-                   ;:password
-                   :email
-                   ]
+     {:projection [:code
+                   :english
+                   :serbian]
       :style
-       {:username
-         {:content (get-label 19)
+       {:code
+         {:content (get-label 24)
           :th {:style {:width "100px"}}
           :td {:style {:width "100px"
                        :text-align "left"}}
           }
-        :password
-         {:content (get-label 15)
+        :english
+         {:content (get-label 25)
           :th {:style {:width "100px"}}
           :td {:style {:width "100px"
                        :text-align "left"}}
           }
-        :email
-         {:content (get-label 14)
+        :serbian
+         {:content (get-label 26)
           :th {:style {:width "100px"}}
           :td {:style {:width "100px"
                        :text-align "left"}}
@@ -50,14 +53,12 @@
        })
 
 (def query
-     {:entity-type  entity-type
-      :entity-filter  {}
-      :projection  (:projection columns)
-      :projection-include  true
-      :qsort  {:username 1}
-      :pagination  true
-      :current-page  0
-      :rows  25
+     {:entity-type entity-type
+      :entity-filter {}
+      :projection (:projection columns)
+      :projection-include true
+      :qsort {:code 1}
+      :pagination false
       :collation {:locale "sr"}})
 
 (def table-conf
@@ -66,7 +67,7 @@
       :form-conf form-conf
       :actions [:details :edit :delete]
       :search-on true
-      :search-fields [:username :email]
+      :search-fields [:english :serbian]
       :render-in ".content"
       :table-class "entities"
       :table-fn gen-table})

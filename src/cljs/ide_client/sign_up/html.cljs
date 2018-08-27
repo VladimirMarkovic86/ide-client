@@ -1,5 +1,6 @@
 (ns ide-client.sign-up.html
-  (:require [htmlcss-lib.core :refer [gen table tr td h3 label input]]))
+  (:require [htmlcss-lib.core :refer [gen table tr td h3 label input]]
+            [language-lib.core :refer [get-label]]))
 
 (defn form
   "Generate table HTML element that contains sign up form"
@@ -9,13 +10,13 @@
     (table
       [(tr
          (td
-           (h3 "Sign up")
+           (h3 (get-label 18))
            {:colspan 2})
         )
        (tr
          [(td
             (label
-              "Username"
+              (get-label 19)
               {:for "txtUsernameId"}))
           (td
             (input
@@ -27,7 +28,7 @@
        (tr
         [(td
            (label
-             "E-mail"
+             (get-label 14)
              {:for "txtEmailId"}))
          (td
            (input
@@ -39,7 +40,7 @@
        (tr
          [(td
             (label
-              "Password"
+              (get-label 15)
               {:for "pswSignUpId"}))
           (td
             (input
@@ -51,7 +52,7 @@
        (tr
          [(td
             (label
-              "Confirm password"
+              (get-label 20)
               {:for "pswConfirmSignUpId"}))
           (td
             (input
@@ -66,7 +67,7 @@
               ""
               {:id "btnCancelId"
                :type "button"
-               :value "Cancel"
+               :value (get-label 12)
                :style {:float "right"}}
               cancel-evt))
           (td
@@ -75,7 +76,7 @@
               {:id "btnSignUpId"
                :name "btnSignUpN"
                :type "button"
-               :value "Sign up"}
+               :value (get-label 18)}
               sign-up-evt))]
         )]
       {:class "signUp"}))

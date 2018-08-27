@@ -1,7 +1,8 @@
 (ns ide-client.project.html
- (:require [htmlcss-lib.core :refer [gen div a]]
-           [framework-lib.core :refer [create-entity gen-table]]
-           [ide-client.project.entity :refer [table-conf]]))
+  (:require [htmlcss-lib.core :refer [gen div a]]
+            [framework-lib.core :refer [create-entity gen-table]]
+            [ide-client.project.entity :refer [table-conf]]
+            [language-lib.core :refer [get-label]]))
 
 (defn nav
   "Generate ul HTML element
@@ -10,13 +11,13 @@
   (gen
     [(div
        (a
-         "Create"
+         (get-label 4)
          {:id "aCreateId"}
          {:onclick {:evt-fn create-entity
                     :evt-p table-conf}}))
      (div
        (a
-         "Show all"
+         (get-label 5)
          nil
          {:onclick {:evt-fn gen-table
                     :evt-p table-conf}}))]

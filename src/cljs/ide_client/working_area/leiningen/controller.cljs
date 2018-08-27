@@ -5,7 +5,8 @@
             [ajax-lib.core :refer [ajax get-response]]
             [ide-client.request-urls :as rurls]
             [ide-client.working-area.leiningen.html :as walh]
-            [ide-middle.project.entity :as pem]))
+            [ide-middle.project.entity :as pem]
+            [language-lib.core :refer [get-label]]))
 
 (defn empty-then-append
   "Empty content and append new one"
@@ -24,21 +25,24 @@
         output (:data response)
         heading (:heading response)
         display-output (atom "")]
-    (if-not (empty? (:out output))
-      (reset!
-        display-output
-        (:out output))
-      (when-not (empty? (:err output))
-        (reset!
-          display-output
-          (:err output))
-       ))
+    (swap!
+      display-output
+      str
+      "\n"
+      (get-label 50)
+      ":\n"
+      (:out output)
+      "\n"
+      (get-label 51)
+      ":\n"
+      (:err output))
     (frm/popup-fn
       {:content (walh/div-fn
                   @display-output
-                  {:style {:white-space "pre"
+                  {:style {:white-space "pre-wrap"
                            :word-wrap "break-word"
                            :max-height "500px"
+                           :max-width "500px"
                            :overflow "auto"}})
        :heading heading}))
   (md/end-please-wait))
@@ -242,19 +246,19 @@
   (let [table-conf (assoc
                      proent/table-conf
                      :actions
-                     [{:label "build"
+                     [{:label (get-label 52)
                        :evt-fn build-project-evt-fn}
-                      {:label "build all"
+                      {:label (get-label 53)
                        :evt-fn build-project-dependencies-evt-fn}
-                      {:label "clean"
+                      {:label (get-label 54)
                        :evt-fn clean-project-evt-fn}
-                      {:label "start"
+                      {:label (get-label 55)
                        :evt-fn start-server-evt-fn}
-                      {:label "stop"
+                      {:label (get-label 56)
                        :evt-fn stop-server-evt-fn}
-                      {:label "restart"
+                      {:label (get-label 57)
                        :evt-fn restart-server-evt-fn}
-                      {:label "status"
+                      {:label (get-label 58)
                        :evt-fn server-status-evt-fn}])]
     (empty-then-append
       ".content"

@@ -51,3 +51,6 @@
 (def git-status-url
      "/clojure/git-status")
 
+(def save-file-changes-url
+     "/clojure/save-file-changes")
+

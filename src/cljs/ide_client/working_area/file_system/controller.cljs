@@ -320,10 +320,7 @@
                                    {:evt-fn remember-element-fn}})]
             (md/append-element
               "#filesDisplay"
-              directory-link)
-            (md/append-element
-              "#filesDisplay"
-              "<br>"))
+              directory-link))
           (let [file-link (wah/a-fn
                             doc-name
                             {:onclick
@@ -333,13 +330,10 @@
                               {:evt-fn remember-element-fn}})]
             (md/append-element
               "#filesDisplay"
-              file-link)
-            (md/append-element
-              "#filesDisplay"
-              "<br>")
-           ))
-       ))
-   ))
+              file-link))
+         ))
+     ))
+ )
 
 (defn prepare-file-system-fn-success
   ""

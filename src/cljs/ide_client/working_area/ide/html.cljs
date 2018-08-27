@@ -1,6 +1,6 @@
 (ns ide-client.working-area.ide.html
   (:require [htmlcss-lib.core :refer [gen div textarea pre
-                                      ul li input ]]
+                                      ul li input]]
             [ide-client.working-area.ide.editor :as editor]))
 
 (defn div-fn
@@ -11,6 +11,20 @@
       dyn-attrs]]
   (gen
     (div
+      content
+      attrs
+      evts
+      dyn-attrs))
+ )
+
+(defn input-fn
+  ""
+  [& [content
+      attrs
+      evts
+      dyn-attrs]]
+  (gen
+    (input
       content
       attrs
       evts
@@ -41,7 +55,7 @@
                     (div
                       [textarea-el
                        highlights-el]
-                      {:class "openedFile"}))]
+                      {:class "openedFile activeEditor"}))]
     (editor/fill-in-highlights
       textarea-el
       highlights-el)
@@ -120,6 +134,7 @@
   ""
   [remote-link
    unpushed-commits
+   project-diff
    file-paths
    change-state-evt
    entity-id
@@ -171,6 +186,16 @@
             )
            @files)
          {:id "addRemoveFiles"})
+       (div
+         [(div
+            "Change differences")
+          (textarea
+            project-diff
+            {:style {:width "400px"
+                     :height "100px"
+                     :resize "none"}
+             :readonly true})]
+         {:id "changeDifferences"})
        (div
          [(div
             "Commit message")

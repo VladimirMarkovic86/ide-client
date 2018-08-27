@@ -1,6 +1,7 @@
 (ns ide-client.working-area.html
- (:require [htmlcss-lib.core :refer [gen div a input label
-                                     textarea img video source]]))
+  (:require [htmlcss-lib.core :refer [gen div a input label
+                                      textarea img video source]]
+            [language-lib.core :refer [get-label]]))
 
 (defn textarea-fn
   "Generate textarea HTML element"
@@ -80,27 +81,27 @@
   (gen
     [(div
        (a
-         "Shell"
+         (get-label 45)
          {:id "aShellId"}
          shell-evts))
      (div
        (a
-         "File system"
+         (get-label 46)
          {:id "aFileSystemId"}
          file-system-evts))
      (div
        (a
-         "Leiningen"
+         (get-label 47)
          {:id "aLeiningenId"}
          leiningen-evts))
      (div
        (a
-         "Git"
+         (get-label 48)
          {:id "aGitId"}
          git-evts))
      (div
        (a
-         "IDE"
+         (get-label 49)
          {:id "aIDEId"}
          ide-evts))]
    ))

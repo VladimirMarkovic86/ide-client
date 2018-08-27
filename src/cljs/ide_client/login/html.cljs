@@ -6,7 +6,9 @@
             [framework-lib.core :refer [popup-fn]]
             [ide-client.working-area.controller :as wac]
             [ide-client.project.controller :as pc]
-            [ide-client.user.controller :as uc]))
+            [ide-client.user.controller :as uc]
+            [ide-client.language.controller :as lc]
+            [language-lib.core :refer [get-label]]))
 
 (defn form
   "Generate table HTML element that contains login form"
@@ -17,7 +19,7 @@
       [(tr
          [(td
             (label
-              "email"
+              (get-label 14)
               {:for "txtEmailId"}))
           (td
             (input
@@ -30,7 +32,7 @@
        (tr
          [(td
             (label
-              "password"
+              (get-label 15)
               {:for "pswLoginId"}))
           (td
             (input
@@ -43,7 +45,7 @@
        (tr
          [(td
             (label
-              "remember me"
+              (get-label 16)
               {:for "chkRememberMeId"}))
           (td
             (input
@@ -59,14 +61,14 @@
               {:id "btnLoginId"
                :name "btnLoginN"
                :type "button"
-               :value "Login"}
+               :value (get-label 17)}
               login-evt))]
         )
        (tr
          [(td)
           (td
             (a
-              "Sign up"
+              (get-label 18)
               {:id "aSignUpId"
                :style
                  {:float "right"}}
@@ -102,23 +104,27 @@
   [logout-fn]
   (nav
     [(a
-       "Home"
+       (get-label 3)
        {:id "aHomeId"}
        {:onclick {:evt-fn home-fn}})
      (a
-       "User"
+       (get-label 21)
        {:id "aUserId"}
        {:onclick {:evt-fn uc/nav-link}})
      (a
-       "Project"
+       (get-label 35)
        {:id "aProjectId"}
        {:onclick {:evt-fn pc/nav-link}})
      (a
-       "Working area"
+       (get-label 36)
        {:id "aWorkingAreaId"}
        {:onclick {:evt-fn wac/nav-link}})
      (a
-       "Log out"
+       (get-label 23)
+       {:id "aLanguageId"}
+       {:onclick {:evt-fn lc/nav-link}})
+     (a
+       (get-label 2)
        {:id "aLogoutId"}
        {:onclick {:evt-fn logout-fn}})])
  )

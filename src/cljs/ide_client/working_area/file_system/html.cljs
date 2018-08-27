@@ -66,7 +66,9 @@
             {:id "filesDisplay"
              :style {:width "100%"
                      :height "500px"
-                     :overflow "auto"}})
+                     :overflow "auto"
+                     :display "grid"
+                     :align-content "baseline"}})
           (div
             ""
             {:id "displayFile"

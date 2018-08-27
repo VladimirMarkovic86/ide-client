@@ -5,7 +5,8 @@
             [ajax-lib.core :refer [ajax get-response]]
             [ide-client.request-urls :as rurls]
             [ide-client.working-area.git.html :as walh]
-            [ide-middle.project.entity :as pem]))
+            [ide-middle.project.entity :as pem]
+            [language-lib.core :refer [get-label]]))
 
 (defn empty-then-append
   "Empty content and append new one"
@@ -73,9 +74,9 @@
   (let [table-conf (assoc
                      proent/table-conf
                      :actions
-                     [{:label "status"
+                     [{:label (get-label 58)
                        :evt-fn status-project-fn}
-                      {:label "diff"
+                      {:label (get-label 59)
                        :evt-fn diff-project-fn}])]
     (empty-then-append
       ".content"
