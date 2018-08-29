@@ -57,13 +57,45 @@ a:hover {
  color: blue;
 }
 
-.header nav {
- float: right;
- margin-top: 5px;
+.header nav,
+.header div.languageDropDownMenuContainer > div {
+ display: grid;
+ cursor: default;
 }
 
-.header nav a {
+.header nav div.dropDownMenu,
+.header div div.languageDropDownMenu {
+ white-space: pre;
+ text-overflow: ellipsis;
+ width: auto;
+ overflow: hidden;
+ height: 25px;
+ padding-top: 5px;
+}
+
+.header div.dropDownMenuContainer {
+ float: right;
+ width: 200px;
+ height: 30px;
+}
+
+.header div.languageDropDownMenuContainer {
+ float: right;
+ width: 100px;
+ height: 30px;
+ background-color: blue;
+}
+
+.header nav a,
+.header div a {
  margin-right: 5px;
+ background-color: red;
+ padding: 3px 3px 3px 5px;
+}
+
+.header div.dropDownMenuContainer:hover a,
+.header div.languageDropDownMenuContainer:hover a {
+ z-index: 1;
 }
 
 .footer {

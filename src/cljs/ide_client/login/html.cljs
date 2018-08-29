@@ -101,9 +101,13 @@
 
 (defn nav-fn
   "Header navigation menu"
-  [logout-fn]
+  [logout-fn
+   username]
   (nav
-    [(a
+    [(div
+       username
+       {:class "dropDownMenu"})
+     (a
        (get-label 3)
        {:id "aHomeId"}
        {:onclick {:evt-fn home-fn}})
@@ -129,13 +133,47 @@
        {:onclick {:evt-fn logout-fn}})])
  )
 
+(defn language-fn
+  ""
+  [change-language-fn
+   language-name]
+  (div
+    [(div
+       language-name
+       {:class "languageDropDownMenu"})
+     (a
+       "English"
+       {:id "aEnglishId"}
+       {:onclick {:evt-fn change-language-fn
+                  :evt-p {:language :english
+                          :language-name "English"}}})
+     (a
+       "Srpski"
+       {:id "aSerbianId"}
+       {:onclick {:evt-fn change-language-fn
+                  :evt-p {:language :serbian
+                          :language-name "Srpski"}}
+        })])
+ )
+
 (defn template
   "Template of main page"
-  [logout-fn]
+  [logout-fn
+   username
+   change-language-fn
+   language-name]
   (gen
     [(div
-       (nav-fn
-         logout-fn)
+       [(div
+          (nav-fn
+            logout-fn
+            username)
+          {:class "dropDownMenuContainer"})
+        (div
+          (language-fn
+            change-language-fn
+            language-name)
+          {:class "languageDropDownMenuContainer"})]
        {:class "header"})
      (div
        ""
