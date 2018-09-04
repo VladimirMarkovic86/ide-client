@@ -6,6 +6,8 @@
             [ide-client.request-urls :as rurls]
             [ide-client.working-area.git.html :as walh]
             [ide-middle.project.entity :as pem]
+            [ide-middle.functionalities :as imfns]
+            [common-client.allowed-actions.controller :refer [allowed-actions]]
             [language-lib.core :refer [get-label]]))
 
 (defn empty-then-append
@@ -72,12 +74,18 @@
   "Initial function for displaying shell area"
   []
   (let [table-conf (assoc
-                     proent/table-conf
+                     (proent/table-conf-fn)
                      :actions
-                     [{:label (get-label 58)
-                       :evt-fn status-project-fn}
-                      {:label (get-label 59)
-                       :evt-fn diff-project-fn}])]
+                     [(when (contains?
+                              @allowed-actions
+                              imfns/git-project)
+                        {:label (get-label 1024)
+                         :evt-fn status-project-fn})
+                      (when (contains?
+                              @allowed-actions
+                              imfns/git-status)
+                        {:label (get-label 1025)
+                         :evt-fn diff-project-fn})])]
     (empty-then-append
       ".content"
       (frm/gen-table

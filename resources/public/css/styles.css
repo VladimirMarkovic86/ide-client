@@ -399,3 +399,34 @@ td.validationMessage {
  color: red;
 }
 
+div.pagination {
+  display: flex;
+  justify-content: center;
+}
+
+div.pagination div{
+  margin-left: 10px;
+}
+
+div.pagination div:nth-child(1) {
+  min-width: 30px;
+}
+
+div.pagination div:nth-child(2) {
+  min-width: 62px;
+}
+
+div.pagination div:nth-child(3),
+div.pagination div:nth-child(4),
+div.pagination div:nth-child(5) {
+  min-width: 27px;
+}
+
+div.pagination div:nth-child(6) {
+  min-width: 32px;
+}
+
+div.pagination div:nth-child(7) {
+  min-width: 27px;
+}
+

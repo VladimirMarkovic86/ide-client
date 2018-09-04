@@ -1,7 +1,9 @@
 (ns ide-client.working-area.html
   (:require [htmlcss-lib.core :refer [gen div a input label
                                       textarea img video source]]
-            [language-lib.core :refer [get-label]]))
+            [common-client.allowed-actions.controller :refer [allowed-actions]]
+            [language-lib.core :refer [get-label]]
+            [ide-middle.functionalities :as imfns]))
 
 (defn textarea-fn
   "Generate textarea HTML element"
@@ -79,30 +81,107 @@
    git-evts
    ide-evts]
   (gen
-    [(div
-       (a
-         (get-label 45)
-         {:id "aShellId"}
-         shell-evts))
-     (div
-       (a
-         (get-label 46)
-         {:id "aFileSystemId"}
-         file-system-evts))
-     (div
-       (a
-         (get-label 47)
-         {:id "aLeiningenId"}
-         leiningen-evts))
-     (div
-       (a
-         (get-label 48)
-         {:id "aGitId"}
-         git-evts))
-     (div
-       (a
-         (get-label 49)
-         {:id "aIDEId"}
-         ide-evts))]
-   ))
+    [(when (contains?
+             @allowed-actions
+             imfns/execute-shell-command)
+       (div
+         (a
+           (get-label 1011)
+           {:id "aShellId"}
+           shell-evts))
+      )
+     (when (contains?
+             @allowed-actions
+             imfns/list-documents)
+       (div
+         (a
+           (get-label 1012)
+           {:id "aFileSystemId"}
+           file-system-evts))
+      )
+     (when (and (contains?
+                  @allowed-actions
+                  imfns/project-read)
+                (or (contains?
+                      @allowed-actions
+                      imfns/build-project)
+                    (contains?
+                      @allowed-actions
+                      imfns/build-project-dependencies)
+                    (contains?
+                      @allowed-actions
+                      imfns/clean-project)
+                    (contains?
+                      @allowed-actions
+                      imfns/run-project))
+            )
+       (div
+         (a
+           (get-label 1013)
+           {:id "aLeiningenId"}
+           leiningen-evts))
+      )
+     (when (and (contains?
+                  @allowed-actions
+                  imfns/project-read)
+                (or (contains?
+                      @allowed-actions
+                      imfns/git-project)
+                    (contains?
+                      @allowed-actions
+                      imfns/git-status))
+            )
+       (div
+         (a
+           (get-label 1014)
+           {:id "aGitId"}
+           git-evts))
+      )
+     (when (and (contains?
+                  @allowed-actions
+                  imfns/project-read)
+                (or (contains?
+                      @allowed-actions
+                      imfns/new-folder)
+                    (contains?
+                      @allowed-actions
+                      imfns/new-file)
+                    (contains?
+                      @allowed-actions
+                      imfns/move-document)
+                    (contains?
+                      @allowed-actions
+                      imfns/copy-document)
+                    (contains?
+                      @allowed-actions
+                      imfns/delete-document)
+                    (contains?
+                      @allowed-actions
+                      imfns/build-project)
+                    (contains?
+                      @allowed-actions
+                      imfns/build-project-dependencies)
+                    (contains?
+                      @allowed-actions
+                      imfns/clean-project)
+                    (contains?
+                      @allowed-actions
+                      imfns/run-project)
+                    (contains?
+                      @allowed-actions
+                      imfns/git-project)
+                    (contains?
+                      @allowed-actions
+                      imfns/git-status)
+                    (contains?
+                      @allowed-actions
+                      imfns/save-file-changes))
+                )
+       (div
+         (a
+           (get-label 1015)
+           {:id "aIDEId"}
+           ide-evts))
+      )])
+ )
 

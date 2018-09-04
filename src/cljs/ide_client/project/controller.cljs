@@ -1,7 +1,7 @@
 (ns ide-client.project.controller
   (:require [js-lib.core :as md]
             [framework-lib.core :refer [gen-table]]
-            [ide-client.project.entity :refer [table-conf]]
+            [ide-client.project.entity :refer [table-conf-fn]]
             [ide-client.project.html :as ohtml]))
 
 (defn nav-link
@@ -12,7 +12,7 @@
   (md/append-element
     ".content"
     (gen-table
-      table-conf))
+      (table-conf-fn)))
   (md/remove-element-content
     ".sidebar-menu")
   (md/append-element

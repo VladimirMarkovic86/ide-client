@@ -11,6 +11,8 @@
             [ide-client.working-area.leiningen.controller :as walc]
             [ide-client.working-area.file-system.html :as fsh]
             [ide-middle.project.entity :as pem]
+            [ide-middle.functionalities :as imfns]
+            [common-client.allowed-actions.controller :refer [allowed-actions]]
             [clojure.string :as cstring]
             [language-lib.core :refer [get-label]]))
 
@@ -23,7 +25,8 @@
        "md"
        "clj"
        "cljc"
-       "cljs"})
+       "cljs"
+       "log"})
 
 (def display-as-image
      #{"jpeg"
@@ -1061,35 +1064,81 @@
         page-x
         page-y
         fn-event
-        [[(get-label 52)
-          walc/build-project-evt-fn]
-         [(get-label 53)
-          walc/build-project-dependencies-evt-fn]
-         [(get-label 54)
-          walc/clean-project-evt-fn]
-         [(get-label 55)
-          walc/start-server-evt-fn]
-         [(get-label 56)
-          walc/stop-server-evt-fn]
-         [(get-label 57)
-          walc/restart-server-evt-fn]
-         [(get-label 58)
-          walc/server-status-evt-fn]
-         [(get-label 48)
-          git-project-evt]
-         [(get-label 61)
-          mkdir-popup-fn]
-         [(get-label 62)
-          mkfile-popup-fn]
-         [(get-label 63)
-          cut-evt]
-         [(get-label 64)
-          copy-evt]
-         [(get-label 65)
-          paste-evt]
-         [(get-label 8)
-          delete-evt]]))
-   ))
+        [(when (contains?
+                 @allowed-actions
+                 imfns/build-project)
+           [(get-label 1018)
+            walc/build-project-evt-fn])
+         (when (contains?
+                 @allowed-actions
+                 imfns/build-project-dependencies)
+           [(get-label 1019)
+            walc/build-project-dependencies-evt-fn])
+         (when (contains?
+                 @allowed-actions
+                 imfns/clean-project)
+           [(get-label 1020)
+            walc/clean-project-evt-fn])
+         (when (contains?
+                 @allowed-actions
+                 imfns/run-project)
+           [(get-label 1021)
+            walc/start-server-evt-fn])
+         (when (contains?
+                 @allowed-actions
+                 imfns/run-project)
+           [(get-label 1022)
+            walc/stop-server-evt-fn])
+         (when (contains?
+                 @allowed-actions
+                 imfns/run-project)
+           [(get-label 1023)
+            walc/restart-server-evt-fn])
+         (when (contains?
+                 @allowed-actions
+                 imfns/run-project)
+           [(get-label 1024)
+            walc/server-status-evt-fn])
+         (when (contains?
+                 @allowed-actions
+                 imfns/git-project)
+           [(get-label 1014)
+            git-project-evt])
+         (when (contains?
+                 @allowed-actions
+                 imfns/new-folder)
+           [(get-label 1027)
+            mkdir-popup-fn])
+         (when (contains?
+                 @allowed-actions
+                 imfns/new-file)
+           [(get-label 1028)
+            mkfile-popup-fn])
+         (when (contains?
+                 @allowed-actions
+                 imfns/move-document)
+           [(get-label 1029)
+            cut-evt])
+         (when (contains?
+                 @allowed-actions
+                 imfns/copy-document)
+           [(get-label 1030)
+            copy-evt])
+         (when (or (contains?
+                     @allowed-actions
+                     imfns/move-document)
+                   (contains?
+                     @allowed-actions
+                     imfns/copy-document))
+           [(get-label 1031)
+            paste-evt])
+         (when (contains?
+                 @allowed-actions
+                 imfns/delete-document)
+           [(get-label 8)
+            delete-evt])])
+     ))
+ )
 
 (defn save-file-changes-fn
   ""
@@ -1165,21 +1214,25 @@
           ""
           {:class "tabBar"})
         {:class "ideFileDisplay"}))
-    (md/prepend-element
-      ".ideFileDisplay"
-      (waih/input-fn
-        ""
-        {:value (get-label 60)
-         :type "button"}
-        {:onclick {:evt-fn save-all-file-changes-fn}}))
-    (md/prepend-element
-      ".ideFileDisplay"
-      (waih/input-fn
-        ""
-        {:value (get-label 1)
-         :type "button"}
-        {:onclick {:evt-fn save-file-changes-fn}}))
-   ))
+    (when (contains?
+            @allowed-actions
+            imfns/save-file-changes)
+      (md/prepend-element
+        ".ideFileDisplay"
+        (waih/input-fn
+          ""
+          {:value (get-label 1026)
+           :type "button"}
+          {:onclick {:evt-fn save-all-file-changes-fn}}))
+      (md/prepend-element
+        ".ideFileDisplay"
+        (waih/input-fn
+          ""
+          {:value (get-label 1)
+           :type "button"}
+          {:onclick {:evt-fn save-file-changes-fn}}))
+     ))
+ )
 
 (defn display-ide
   "Initial function for displaying ide area"

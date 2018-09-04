@@ -70,15 +70,17 @@
   (let [menu-item-htmls (atom [])]
     (doseq [[item-label
              item-event] menu-items]
-      (swap!
-        menu-item-htmls
-        conj
-        (li
-          item-label
-          nil
-          {:onclick {:evt-fn item-event
-                     :evt-p fn-event}}))
-     )
+      (when (and item-label
+                 item-event)
+        (swap!
+          menu-item-htmls
+          conj
+          (li
+            item-label
+            nil
+            {:onclick {:evt-fn item-event
+                       :evt-p fn-event}}))
+       ))
     (gen
       (ul
         @menu-item-htmls

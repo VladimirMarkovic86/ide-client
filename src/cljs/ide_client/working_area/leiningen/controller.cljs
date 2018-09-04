@@ -6,6 +6,8 @@
             [ide-client.request-urls :as rurls]
             [ide-client.working-area.leiningen.html :as walh]
             [ide-middle.project.entity :as pem]
+            [ide-middle.functionalities :as imfns]
+            [common-client.allowed-actions.controller :refer [allowed-actions]]
             [language-lib.core :refer [get-label]]))
 
 (defn empty-then-append
@@ -29,11 +31,11 @@
       display-output
       str
       "\n"
-      (get-label 50)
+      (get-label 1016)
       ":\n"
       (:out output)
       "\n"
-      (get-label 51)
+      (get-label 1017)
       ":\n"
       (:err output))
     (frm/popup-fn
@@ -244,22 +246,43 @@
   "Initial function for displaying shell area"
   []
   (let [table-conf (assoc
-                     proent/table-conf
+                     (proent/table-conf-fn)
                      :actions
-                     [{:label (get-label 52)
-                       :evt-fn build-project-evt-fn}
-                      {:label (get-label 53)
-                       :evt-fn build-project-dependencies-evt-fn}
-                      {:label (get-label 54)
-                       :evt-fn clean-project-evt-fn}
-                      {:label (get-label 55)
-                       :evt-fn start-server-evt-fn}
-                      {:label (get-label 56)
-                       :evt-fn stop-server-evt-fn}
-                      {:label (get-label 57)
-                       :evt-fn restart-server-evt-fn}
-                      {:label (get-label 58)
-                       :evt-fn server-status-evt-fn}])]
+                     [(when (contains?
+                              @allowed-actions
+                              imfns/build-project)
+                        {:label (get-label 1018)
+                         :evt-fn build-project-evt-fn})
+                      (when (contains?
+                              @allowed-actions
+                              imfns/build-project-dependencies)
+                        {:label (get-label 1019)
+                         :evt-fn build-project-dependencies-evt-fn})
+                      (when (contains?
+                              @allowed-actions
+                              imfns/clean-project)
+                        {:label (get-label 1020)
+                         :evt-fn clean-project-evt-fn})
+                      (when (contains?
+                              @allowed-actions
+                              imfns/run-project)
+                        {:label (get-label 1021)
+                         :evt-fn start-server-evt-fn})
+                      (when (contains?
+                              @allowed-actions
+                              imfns/run-project)
+                        {:label (get-label 1022)
+                         :evt-fn stop-server-evt-fn})
+                      (when (contains?
+                              @allowed-actions
+                              imfns/run-project)
+                        {:label (get-label 1023)
+                         :evt-fn restart-server-evt-fn})
+                      (when (contains?
+                              @allowed-actions
+                              imfns/run-project)
+                        {:label (get-label 1024)
+                         :evt-fn server-status-evt-fn})])]
     (empty-then-append
       ".content"
       (frm/gen-table
