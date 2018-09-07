@@ -1,15 +1,7 @@
 (ns ide-client.working-area.ide.clj-highlight)
 
-;<style id="comment" _name="Comment" map-to="def:comment"/>
-;<style id="string" _name="String" map-to="def:string"/>
-;<style id="keyword" _name="Keyword" map-to="def:keyword"/>
-;<style id="function" _name="Function" map-to="def:function"/>
-;<style id="boolean" _name="Boolean" map-to="def:boolean"/>    
-;<style id="decimal" _name="Decimal number" map-to="def:decimal"/>
-;<style id="bracket" _name="All kinds of brackets" map-to="def:type"/>  
-
 (def default-prefix-and-sufix
-     "(\\s|\\n|\\(|\\))")
+     "(\\s|\\n|\\(|\\)|:)")
 
 (def keyword-s
      ["$1<keyword>$2</keyword>$3"
@@ -756,11 +748,31 @@
       "(;)(.*)(\n|\\Z)"
       ])
 
+(def htmlh-s
+     ["<htag>$1</htag>"
+      "(<|</|>|/>)"])
+
+(def html-s
+     ["$1<htagname>$2</htagname>$3"
+      "(<htag><</htag>|<htag></</htag>)([^<]*?)(<htag>></htag>|<htag>/></htag>)"])
+
+(def string-s
+     ["<squote>$1</squote>"
+      "(((\")(\"))|((\")([\\s\\S]*?)([^\\\\]\")))"])
+
+(def number-s
+     ["<number>$1</number>"
+      "(\\d)"])
+
 (def patterns
-     [comment-s
+     [htmlh-s
+      html-s
+      string-s
+      comment-s
       boolean-s
       keyword-s
       function-s
       bracket-s
+      number-s
       ])
 

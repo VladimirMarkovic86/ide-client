@@ -34,7 +34,9 @@
 (defn editor-fn
   "Generate textarea HTML element"
   [file-path
-   content]
+   content
+   save-file-changes-fn
+   save-all-file-changes-fn]
   (let [highlights-el (gen
                         (div
                           ""
@@ -46,8 +48,8 @@
                           "")
                         {:class "textarea"
                          :spellcheck false}
-                        {:onkeydown {:evt-fn editor/handle-keydown}
-                         :onpaste {:evt-fn editor/handle-paste}
+                        {:oninput {:evt-fn editor/handle-input}
+                         :onkeydown {:evt-fn editor/handle-keydown}
                          :onscroll {:evt-fn editor/handle-scroll}}
                         {:filePath file-path
                          :highlightsDiv highlights-el}))
@@ -58,7 +60,9 @@
                       {:class "openedFile activeEditor"}))]
     (editor/fill-in-highlights
       textarea-el
-      highlights-el)
+      highlights-el
+      save-file-changes-fn
+      save-all-file-changes-fn)
     editor-el))
 
 (defn menu-fn

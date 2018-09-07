@@ -201,6 +201,8 @@ a:hover {
 .tree {
  -moz-user-select: none;
  user-select: none;
+ color: white;
+ background-color: #001b33;
  cursor: default;
  width: 300px;
  height: 100%;
@@ -240,14 +242,17 @@ a:hover {
 }
 
 .tree .highlightDoc {
-  background-color: blue;
+  background-color: #0088ff;
   color: white;
+  border-radius: 15px;
 }
 
 .ideFileDisplay {
  float: left;
  height: 100%;
  width: calc(100% - 300px);
+ background-color: #001b33;
+ color: white;
 }
 
 .openedFile {
@@ -259,15 +264,10 @@ a:hover {
  z-index: 1;
  background: transparent;
  color: transparent;
- caret-color: black;
+ caret-color: white;
  border: none;
  resize: none;
  box-sizing: border-box;
-}
-
-.highlights {
- background-color: white;
- color: black;
 }
 
 .highlights,
@@ -282,8 +282,23 @@ a:hover {
  word-wrap: break-word;
 }
 
+.highlights {
+ background-color: #001b33;
+ color: white;
+}
+
+.textarea::-moz-selection {
+  background: #0088ff;
+  color: white;
+}
+
+.textarea::selection {
+  background: #0088ff;
+  color: white;
+}
+
 bracket {
- color: green;
+ color: #7af4b4;
 }
 
 keyword {
@@ -291,19 +306,41 @@ keyword {
 }
 
 function {
- color: gray;
+ color: #cccccc;
 }
 
-boolean {
+boolean,
+number {
  color: red;
+}
+
+htag {
+ color: #80ffbb;
+}
+
+htagname {
+ color: #cccccc;
 }
 
 comment,
 comment bracket,
 comment keyword,
 comment function,
-comment boolean {
- color: blue;
+comment boolean,
+comment squote,
+comment number {
+ color: #0088ff;
+}
+
+
+squote,
+squote keyword,
+squote function,
+squote comment,
+squote bracket,
+squote boolean,
+squote number {
+ color: #3ad900;
 }
 
 .tabBar {
@@ -312,13 +349,15 @@ comment boolean {
  display: -moz-box;
  overflow-x: scroll;
  cursor: default;
+ background-color: #001b33;
 }
 
 .tab {
  max-width: 100px;
  height: 28px;
- border: 1px solid blue;
+ border: 1px solid #001b33;
  overflow: hidden;
+ color: white;
 }
 
 .tabName {
@@ -330,14 +369,15 @@ comment boolean {
 
 .tabClose {
  float: right;
- width: calc(20% - 10px);
- text-align: right;
- padding: 5px;
+ max-width: 20%;
+ text-align: center;
+ background-color: red;
 }
 
 .activeTab {
- background-color: #ffcdcd;
- border: 1px solid #de00ff;
+ background-color: #0088ff;
+ color: white;
+ border: 1px solid white;
 }
 
 .inactiveEditor {
@@ -428,5 +468,9 @@ div.pagination div:nth-child(6) {
 
 div.pagination div:nth-child(7) {
   min-width: 27px;
+}
+
+.tabName.starChanged::before {
+    content: '*';
 }
 

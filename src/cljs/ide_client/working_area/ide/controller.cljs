@@ -14,7 +14,8 @@
             [ide-middle.functionalities :as imfns]
             [common-client.allowed-actions.controller :refer [allowed-actions]]
             [clojure.string :as cstring]
-            [language-lib.core :refer [get-label]]))
+            [language-lib.core :refer [get-label]]
+            [ide-client.working-area.ide.editor :as editor]))
 
 (def display-as-text
      #{"txt"
@@ -191,24 +192,131 @@
       opened-files
       disj
       file-path))
-    (when (not
-            (md/query-selector
-              ".tab.activeTab"))
-      (when-let [tab (md/query-selector
-                       ".tab")]
-        (let [editor-obj (aget
-                           tab
-                           "editorDiv")]
-          (md/add-class
-            tab
-            "activeTab")
-          (md/add-class
-            editor-obj
-            "activeEditor")
-          (md/remove-class
-            editor-obj
-            "inactiveEditor"))
-       ))
+  (when (not
+          (md/query-selector
+            ".tab.activeTab"))
+    (when-let [tab (md/query-selector
+                     ".tab")]
+      (let [editor-obj (aget
+                         tab
+                         "editorDiv")]
+        (md/add-class
+          tab
+          "activeTab")
+        (md/add-class
+          editor-obj
+          "activeEditor")
+        (md/remove-class
+          editor-obj
+          "inactiveEditor"))
+     ))
+ )
+
+(defn save-file-changes-fn
+  ""
+  [& [evt-p
+      element
+      event]]
+  (let [file-textarea (md/query-selector-on-element
+                        ".ideFileDisplay"
+                        ".activeEditor textarea")
+        file-with-changes (md/get-value
+                            file-textarea)
+        file-path (aget
+                    file-textarea
+                    "filePath")
+        xhr (sjax
+              {:url rurls/save-file-changes-url
+               :entity {:file-path file-path
+                        :file-content file-with-changes}})
+        is-response-ok? (= (aget
+                             xhr
+                             "status")
+                           200)]
+    (when is-response-ok?
+      (let [tab-bar-el (.querySelector
+                         js/document
+                         ".tabBar")
+            active-tab-el (.querySelector
+                            tab-bar-el
+                            ".activeTab")
+            tab-name-el (.querySelector
+                          active-tab-el
+                          ".tabName")
+            class-list (aget
+                         tab-name-el
+                         "classList")]
+        (.remove
+          class-list
+          "starChanged"))
+     ))
+ )
+
+(defn save-all-file-changes-fn
+  ""
+  [& [evt-p
+      element
+      event]]
+  (let [file-textarea (md/query-selector-on-element
+                        ".ideFileDisplay"
+                        ".activeEditor textarea")
+        file-textareas (md/query-selector-all-on-element
+                         ".ideFileDisplay"
+                         ".inactiveEditor textarea")
+        file-with-changes (md/get-value
+                            file-textarea)
+        file-path (aget
+                    file-textarea
+                    "filePath")
+        remove-star-changed-fn
+          (fn [xhr
+               file-path]
+            (let [is-response-ok? (= (aget
+                                       xhr
+                                       "status")
+                                     200)]
+              (when is-response-ok?
+                (let [tab-bar-el (.querySelector
+                                   js/document
+                                   ".tabBar")
+                      active-tab-el (.querySelector
+                                      tab-bar-el
+                                      (str
+                                        "div[title='"
+                                        file-path
+                                        "']"))
+                      tab-name-el (.querySelector
+                                    active-tab-el
+                                    ".tabName")
+                      class-list (aget
+                                   tab-name-el
+                                   "classList")]
+                  (.remove
+                    class-list
+                    "starChanged"))
+               ))
+           )
+        xhr (sjax
+              {:url rurls/save-file-changes-url
+               :entity {:file-path file-path
+                        :file-content file-with-changes}})]
+    (remove-star-changed-fn
+      xhr
+      file-path)
+    (doseq [file-text file-textareas]
+      (let [file-with-changes (md/get-value
+                                file-text)
+            file-path (aget
+                        file-text
+                        "filePath")
+            xhr (sjax
+                  {:url rurls/save-file-changes-url
+                   :entity {:file-path file-path
+                            :file-content file-with-changes}})]
+        (remove-star-changed-fn
+          xhr
+          file-path))
+     ))
  )
 
 (defn get-subfile
@@ -281,7 +389,9 @@
             "activeTab"))
         (let [editor-obj (waih/editor-fn
                            file-path
-                           response)
+                           response
+                           save-file-changes-fn
+                           save-all-file-changes-fn)
               tab (waih/div-fn
                     [(waih/div-fn
                        file-name
@@ -289,7 +399,7 @@
                        {:onclick {:evt-fn focus-file-editor}}
                        {:editorDiv editor-obj})
                      (waih/div-fn
-                       "X"
+                       "x"
                        {:class "tabClose"}
                        {:onclick {:evt-fn close-file-editor}}
                        {:editorDiv editor-obj})]
@@ -1137,59 +1247,6 @@
                  imfns/delete-document)
            [(get-label 8)
             delete-evt])])
-     ))
- )
-
-(defn save-file-changes-fn
-  ""
-  [evt-p
-   element
-   event]
-  (let [file-textarea (md/query-selector-on-element
-                        ".ideFileDisplay"
-                        ".activeEditor textarea")
-        file-with-changes (md/get-value
-                            file-textarea)
-        file-path (aget
-                    file-textarea
-                    "filePath")
-        xhr (sjax
-              {:url rurls/save-file-changes-url
-               :entity {:file-path file-path
-                        :file-content file-with-changes}})]
-    
-   ))
-
-(defn save-all-file-changes-fn
-  ""
-  [evt-p
-   element
-   event]
-  (let [file-textarea (md/query-selector-on-element
-                        ".ideFileDisplay"
-                        ".activeEditor textarea")
-        file-textareas (md/query-selector-all-on-element
-                         ".ideFileDisplay"
-                         ".inactiveEditor textarea")
-        file-with-changes (md/get-value
-                            file-textarea)
-        file-path (aget
-                    file-textarea
-                    "filePath")
-        xhr (sjax
-              {:url rurls/save-file-changes-url
-               :entity {:file-path file-path
-                        :file-content file-with-changes}})]
-    (doseq [file-text file-textareas]
-      (let [file-with-changes (md/get-value
-                                file-text)
-            file-path (aget
-                        file-text
-                        "filePath")]
-        (sjax
-          {:url rurls/save-file-changes-url
-           :entity {:file-path file-path
-                    :file-content file-with-changes}}))
      ))
  )
 
