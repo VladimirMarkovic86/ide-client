@@ -50,6 +50,8 @@
                          :spellcheck false}
                         {:oninput {:evt-fn editor/handle-input}
                          :onkeydown {:evt-fn editor/handle-keydown}
+                         :onkeyup {:evt-fn editor/handle-keyup}
+                         :onclick {:evt-fn editor/handle-click}
                          :onscroll {:evt-fn editor/handle-scroll}}
                         {:filePath file-path
                          :highlightsDiv highlights-el}))

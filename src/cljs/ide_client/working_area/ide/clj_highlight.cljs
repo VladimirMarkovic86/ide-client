@@ -1,7 +1,7 @@
 (ns ide-client.working-area.ide.clj-highlight)
 
 (def default-prefix-and-sufix
-     "(\\s|\\n|\\(|\\)|:)")
+     "(\\s|\\n|\\(|\\)|:|[>])")
 
 (def keyword-s
      ["$1<keyword>$2</keyword>$3"
@@ -764,15 +764,20 @@
      ["<number>$1</number>"
       "(\\d)"])
 
+(def selbracket-s
+     ["<selbracket>$2</selbracket>"
+      "(sel)(\\(|\\)|\\[|\\]|\\{|\\})(bra)"])
+
 (def patterns
      [htmlh-s
       html-s
       string-s
+      selbracket-s
+      bracket-s
       comment-s
       boolean-s
       keyword-s
       function-s
-      bracket-s
       number-s
       ])
 

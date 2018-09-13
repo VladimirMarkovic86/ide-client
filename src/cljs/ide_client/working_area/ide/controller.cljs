@@ -219,9 +219,10 @@
       event]]
   (let [file-textarea (md/query-selector-on-element
                         ".ideFileDisplay"
-                        ".activeEditor textarea")
-        file-with-changes (md/get-value
-                            file-textarea)
+                        ".activeEditor .textarea")
+        file-with-changes (aget
+                            file-textarea
+                            "value")
         file-path (aget
                     file-textarea
                     "filePath")
@@ -259,12 +260,13 @@
       event]]
   (let [file-textarea (md/query-selector-on-element
                         ".ideFileDisplay"
-                        ".activeEditor textarea")
+                        ".activeEditor .textarea")
         file-textareas (md/query-selector-all-on-element
                          ".ideFileDisplay"
-                         ".inactiveEditor textarea")
-        file-with-changes (md/get-value
-                            file-textarea)
+                         ".inactiveEditor .textarea")
+        file-with-changes (aget
+                            file-textarea
+                            "value")
         file-path (aget
                     file-textarea
                     "filePath")
@@ -304,8 +306,9 @@
       xhr
       file-path)
     (doseq [file-text file-textareas]
-      (let [file-with-changes (md/get-value
-                                file-text)
+      (let [file-with-changes (aget
+                                file-text
+                                "value")
             file-path (aget
                         file-text
                         "filePath")
@@ -464,8 +467,9 @@
                     ".line")
           sign-el (md/query-selector-on-element
                     line-el
-                    ".sign")popup-input-value (md/get-value
-                            "#popupInputId")
+                    ".sign")
+          popup-input-value (md/get-value
+                              "#popupInputId")
           xhr (sjax
                 {:url rurls/new-folder-url
                  :entity {:dir-path (str
@@ -540,7 +544,7 @@
                     line-el
                     ".sign")
           popup-input-value (md/get-value
-                            "#popupInputId")
+                              "#popupInputId")
           xhr (sjax
                 {:url rurls/new-file-url
                  :entity {:file-path (str
@@ -1253,6 +1257,15 @@
 (defn display-ide-success
   ""
   [xhr]
+  (reset!
+    editor/undo-stack
+    {})
+  (reset!
+    editor/redo-stack
+    {})
+  (reset!
+    editor/saved-stack
+    {})
   (let [response (get-response
                    xhr)
         projects (:data response)

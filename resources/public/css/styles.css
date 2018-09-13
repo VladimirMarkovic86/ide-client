@@ -301,6 +301,10 @@ bracket {
  color: #7af4b4;
 }
 
+selbracket {
+ background-color: #4f94cd;
+}
+
 keyword {
  color: #ff9d00;
 }
