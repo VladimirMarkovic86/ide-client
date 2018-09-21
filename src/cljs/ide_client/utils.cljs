@@ -1,7 +1,7 @@
 (ns ide-client.utils
   (:require [ajax-lib.core :refer [ajax get-response]]
             [js-lib.core :as md]
-            [ide-client.request-urls :as rurls]
+            [common-middle.request-urls :as rurls]
             [ide-client.project.entity :as proent]
             [cljs.reader :as reader]))
 

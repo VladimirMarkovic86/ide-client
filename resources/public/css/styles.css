@@ -95,7 +95,7 @@ a:hover {
 
 .header div.dropDownMenuContainer:hover a,
 .header div.languageDropDownMenuContainer:hover a {
- z-index: 1;
+ z-index: 2;
 }
 
 .footer {
@@ -113,7 +113,7 @@ a:hover {
  height: calc(100% - 60px);
  width: 100px;
  top: 30px;
- position:absolute;
+ position: absolute;
 }
 
 .sidebar-menu div {
@@ -238,13 +238,13 @@ a:hover {
 }
 
 .tree .subareaEmpty {
-  min-height: 0px;
+ min-height: 0px;
 }
 
 .tree .highlightDoc {
-  background-color: #0088ff;
-  color: white;
-  border-radius: 15px;
+ background-color: #0088ff;
+ color: white;
+ border-radius: 15px;
 }
 
 .ideFileDisplay {
@@ -297,6 +297,8 @@ a:hover {
   color: white;
 }
 
+/* clj, cljs and cljc file style */
+
 bracket {
  color: #7af4b4;
 }
@@ -336,7 +338,6 @@ comment number {
  color: #0088ff;
 }
 
-
 squote,
 squote keyword,
 squote function,
@@ -345,6 +346,178 @@ squote bracket,
 squote boolean,
 squote number {
  color: #3ad900;
+}
+
+/* css file style */
+
+cssfunction,
+cssfunction selectortagname {
+ color: #cccccc;
+}
+
+selectorclass,
+selectorclass selectortagname,
+selectorclass selectortagname knownvalue,
+selectorclass knownvalue,
+selectorclass knownvalue selectortagname {
+ color: #cccccc;
+}
+
+selectortagname,
+selectortagname knownvalue {
+ color: #80ffbb;
+}
+
+cssbracket {
+ color: white;
+}
+
+cssselbracket {
+ background-color: #4f94cd;
+}
+
+colorhex,
+colorhex selectorid,
+colorhex selectorid selectortagname,
+color {
+ color: #ff0044;
+}
+
+dimension,
+decimal {
+ color: #ff0044;
+}
+
+knownvalue,
+knownvalue selectortagname {
+ color: #ffee80;
+}
+
+selectorid,
+selectorid selectortagname,
+selectorid selectortagname knownvalue,
+csskeyword,
+csskeyword knownvalue,
+csskeyword selectortagname,
+csskeyword selectortagname knownvalue
+csskeyword selectortagname knownvalue selectortagname,
+csskeyword color,
+important,
+important selectortagname {
+ color: #ff9d00;
+}
+
+csscomment,
+csscomment selectorid,
+csscomment selectorclass,
+csscomment selectortagname,
+csscomment knownvalue,
+csscomment color,
+csscomment important,
+csscomment csskeyword,
+csscomment colorhex {
+ color: #0088ff;
+}
+
+/* javascript file style */
+
+jskeyword,
+jsfunction,
+jsfunction jsconstructor {
+ color: #ff9d00;
+ font-weight: 600;
+}
+
+jsboolean {
+ color: #ff0044;
+}
+
+jstype {
+ color: #80ffbb;
+}
+
+jssquote,
+jssquote jskeyword,
+jssquote htag,
+jssquote htagname,
+jssquote jsundefined,
+jsapostrophe,
+jsapostrophe jskeyword,
+jsapostrophe htag,
+jsapostrophe htagname,
+jsapostrophe jsundefined {
+ color: #3ad900;
+}
+
+jsundefined {
+ color: #ff0044;
+ font-weight: 600;
+}
+
+jsselbracket {
+ background-color: #4f94cd;
+}
+
+jsbracket {
+ color: white;
+}
+
+jsproperties {
+ color: #ff9d00;
+}
+
+jsconstructor {
+ color: #80ffbb;
+}
+
+jsfuturewords {
+ background-color: #990000;
+ font-weight: 600;
+}
+
+/* java file style */
+
+jexternal {
+ color: #cccccc;
+}
+
+jdeclaration {
+ color: #80ffbb;
+}
+
+jtype,
+jtype jkeyword {
+ color: #80ffbb;
+}
+
+jstorageclass {
+ color: #80ffbb;
+}
+
+jscopedeclaration {
+ color: #80ffbb;
+}
+
+jkeyword {
+ color: #ff9d00;
+}
+
+jreserved {
+ background-color: #990000;
+ font-weight: 600;
+}
+
+jnullvalue {
+ color: #ff0044;
+ font-weight: 600;
+}
+
+jboolean {
+ color: #ff0044;
+}
+
+jnumber {
+ color: #ff0044;
 }
 
 .tabBar {
@@ -475,6 +648,6 @@ div.pagination div:nth-child(7) {
 }
 
 .tabName.starChanged::before {
-    content: '*';
+  content: '*';
 }
 

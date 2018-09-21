@@ -1,4 +1,4 @@
-(ns ide-client.working-area.ide.clj-highlight)
+(ns ide-client.working-area.ide.highlighters.clj-highlight)
 
 (def default-prefix-and-sufix
      "(\\s|\\n|\\(|\\)|:|[>])")

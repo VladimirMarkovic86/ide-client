@@ -1,7 +1,7 @@
 (ns ide-client.working-area.shell.controller
   (:require [js-lib.core :as md]
             [ajax-lib.core :refer [ajax get-response]]
-            [ide-client.request-urls :as rurls]
+            [ide-middle.request-urls :as irurls]
             [ide-client.working-area.shell.html :as shh]
             [ide-client.working-area.html :as wah]
             [ide-client.project.entity :as proent]
@@ -47,7 +47,7 @@
              "keyCode")
            13)
     (ajax
-      {:url rurls/execute-shell-command-url
+      {:url irurls/execute-shell-command-url
        :success-fn execute-command-fn-success
        :entity {:command (md/get-value "#executeCommandLine")}}
      ))

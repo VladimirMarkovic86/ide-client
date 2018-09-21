@@ -3,7 +3,7 @@
             [framework-lib.core :as frm]
             [ide-client.project.entity :as proent]
             [ajax-lib.core :refer [ajax get-response]]
-            [ide-client.request-urls :as rurls]
+            [ide-middle.request-urls :as irurls]
             [ide-client.working-area.git.html :as walh]
             [ide-middle.project.entity :as pem]
             [ide-middle.functionalities :as imfns]
@@ -48,7 +48,7 @@
   (md/start-please-wait)
   (let [ent-id (:ent-id evt-p)]
     (ajax
-      {:url rurls/git-project-url
+      {:url irurls/git-project-url
        :success-fn response-success-fn
        :entity {:entity-type proent/entity-type
                 :entity-id ent-id
@@ -63,7 +63,7 @@
   (md/start-please-wait)
   (let [ent-id (:ent-id evt-p)]
     (ajax
-      {:url rurls/git-project-url
+      {:url irurls/git-project-url
        :success-fn response-success-fn
        :entity {:entity-type proent/entity-type
                 :entity-id ent-id

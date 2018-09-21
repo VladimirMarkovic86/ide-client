@@ -5,7 +5,8 @@
             [ide-client.project.entity :as proent]
             [ajax-lib.core :refer [ajax sjax get-response]]
             [ajax-lib.http.request-header :as rh]
-            [ide-client.request-urls :as rurls]
+            [common-middle.request-urls :as rurls]
+            [ide-middle.request-urls :as irurls]
             [ide-client.working-area.html :as wah]
             [ide-client.working-area.ide.html :as waih]
             [ide-client.working-area.leiningen.controller :as walc]
@@ -22,6 +23,7 @@
        "html"
        "css"
        "js"
+       "java"
        "sh"
        "md"
        "clj"
@@ -89,7 +91,7 @@
   ""
   [absolute-path]
   (let [xhr (sjax
-              {:url rurls/list-documents-url
+              {:url irurls/list-documents-url
                :entity {:dir-path absolute-path}})
         response (get-response xhr)
         data (:data response)
@@ -227,7 +229,7 @@
                     file-textarea
                     "filePath")
         xhr (sjax
-              {:url rurls/save-file-changes-url
+              {:url irurls/save-file-changes-url
                :entity {:file-path file-path
                         :file-content file-with-changes}})
         is-response-ok? (= (aget
@@ -299,7 +301,7 @@
                ))
            )
         xhr (sjax
-              {:url rurls/save-file-changes-url
+              {:url irurls/save-file-changes-url
                :entity {:file-path file-path
                         :file-content file-with-changes}})]
     (remove-star-changed-fn
@@ -313,7 +315,7 @@
                         file-text
                         "filePath")
             xhr (sjax
-                  {:url rurls/save-file-changes-url
+                  {:url irurls/save-file-changes-url
                    :entity {:file-path file-path
                             :file-content file-with-changes}})]
         (remove-star-changed-fn
@@ -347,19 +349,19 @@
                    extension)
         xhr (if is-text
               (sjax
-                {:url rurls/read-file-url
+                {:url irurls/read-file-url
                  :entity {:file-path file-path
                           :operation "read"}})
               (if is-image
                 (sjax
-                  {:url rurls/read-file-url
+                  {:url irurls/read-file-url
                    :request-header-map {(rh/accept) (str "image/" extension)}
                    :request-property-map {"responseType" "blob"}
                    :entity {:file-path file-path
                             :operation "image"}})
                 (when is-video
                   (sjax
-                    {:url rurls/read-file-url
+                    {:url irurls/read-file-url
                      :request-header-map {(rh/accept) (str "video/" extension)}
                      :request-property-map {"responseType" "blob"}
                      :entity {:file-path file-path
@@ -471,7 +473,7 @@
           popup-input-value (md/get-value
                               "#popupInputId")
           xhr (sjax
-                {:url rurls/new-folder-url
+                {:url irurls/new-folder-url
                  :entity {:dir-path (str
                                       selected-dir
                                       "/"
@@ -546,7 +548,7 @@
           popup-input-value (md/get-value
                               "#popupInputId")
           xhr (sjax
-                {:url rurls/new-file-url
+                {:url irurls/new-file-url
                  :entity {:file-path (str
                                        selected-dir
                                        "/"
@@ -615,14 +617,14 @@
       (reset!
         paste-clipboard
         [file-path
-         rurls/move-document-url])
+         irurls/move-document-url])
       (when-let [dir-path (aget
                             highlighted-doc
                             "dirPath")]
         (reset!
           paste-clipboard
           [dir-path
-           rurls/move-document-url]))
+           irurls/move-document-url]))
      ))
  )
 
@@ -640,14 +642,14 @@
       (reset!
         paste-clipboard
         [file-path
-         rurls/copy-document-url])
+         irurls/copy-document-url])
       (when-let [dir-path (aget
                             highlighted-doc
                             "dirPath")]
         (reset!
           paste-clipboard
           [dir-path
-           rurls/copy-document-url]))
+           irurls/copy-document-url]))
      ))
  )
 
@@ -736,7 +738,7 @@
             dir-path))
        )
       (when @delete-path
-        (let [sjax-params {:url rurls/delete-document-url
+        (let [sjax-params {:url irurls/delete-document-url
                            :entity {:doc-path @delete-path}}
               xhr (sjax
                     sjax-params)]
@@ -782,7 +784,7 @@
                    pem/git-add)
                  pem/git-reset)
         xhr (sjax
-              {:url rurls/git-project-url
+              {:url irurls/git-project-url
                :entity {:entity-id entity-id
                         :entity-type proent/entity-type
                         :action action
@@ -805,7 +807,7 @@
                  pem/git-init
                  pem/git-remote-change)
         xhr (sjax
-              {:url rurls/git-project-url
+              {:url irurls/git-project-url
                :entity {:entity-id entity-id
                         :entity-type proent/entity-type
                         :action action
@@ -824,7 +826,7 @@
         commit-message (md/get-value
                          commit-message-textarea)
         xhr (sjax
-              {:url rurls/git-project-url
+              {:url irurls/git-project-url
                :entity {:entity-id entity-id
                         :entity-type proent/entity-type
                         :action pem/git-commit
@@ -848,7 +850,7 @@
         commit-message (md/get-value
                          commit-message-textarea)
         xhr (sjax
-              {:url rurls/git-project-url
+              {:url irurls/git-project-url
                :entity {:entity-id entity-id
                         :entity-type proent/entity-type
                         :action pem/git-commit-push
@@ -867,7 +869,7 @@
    element
    event]
   (let [xhr (sjax
-              {:url rurls/git-project-url
+              {:url irurls/git-project-url
                :entity {:entity-id entity-id
                         :entity-type proent/entity-type
                         :action pem/git-push}})
@@ -1038,7 +1040,7 @@
                           root-dir-el
                           "ent-id")]
           (ajax
-            {:url rurls/git-project-url
+            {:url irurls/git-project-url
              :success-fn git-project-evt-success
              :entity {:action pem/git-status
                       :entity-id entity-id

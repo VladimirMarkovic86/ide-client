@@ -3,7 +3,7 @@
             [framework-lib.core :as frm]
             [ide-client.project.entity :as proent]
             [ajax-lib.core :refer [ajax get-response]]
-            [ide-client.request-urls :as rurls]
+            [ide-middle.request-urls :as irurls]
             [ide-client.working-area.leiningen.html :as walh]
             [ide-middle.project.entity :as pem]
             [ide-middle.functionalities :as imfns]
@@ -54,7 +54,7 @@
   [ent-id]
   (md/start-please-wait)
   (ajax
-      {:url rurls/build-project-url
+      {:url irurls/build-project-url
        :success-fn response-success-fn
        :entity {:entity-type proent/entity-type
                 :entity-id ent-id}}))
@@ -81,7 +81,7 @@
   [ent-id]
   (md/start-please-wait)
   (ajax
-    {:url rurls/clean-project-url
+    {:url irurls/clean-project-url
      :success-fn response-success-fn
      :entity {:entity-type proent/entity-type
               :entity-id ent-id}}))
@@ -108,7 +108,7 @@
   [ent-id]
   (md/start-please-wait)
   (ajax
-      {:url rurls/build-project-dependencies-url
+      {:url irurls/build-project-dependencies-url
        :success-fn response-success-fn
        :entity {:entity-type proent/entity-type
                 :entity-id ent-id}}))
@@ -135,7 +135,7 @@
   [ent-id]
   (md/start-please-wait)
   (ajax
-    {:url rurls/run-project-url
+    {:url irurls/run-project-url
      :success-fn response-success-fn
      :entity {:entity-type proent/entity-type
               :entity-id ent-id
@@ -163,7 +163,7 @@
   [ent-id]
   (md/start-please-wait)
   (ajax
-    {:url rurls/run-project-url
+    {:url irurls/run-project-url
      :success-fn response-success-fn
      :entity {:entity-type proent/entity-type
               :entity-id ent-id
@@ -191,7 +191,7 @@
   [ent-id]
   (md/start-please-wait)
   (ajax
-    {:url rurls/run-project-url
+    {:url irurls/run-project-url
      :success-fn response-success-fn
      :entity {:entity-type proent/entity-type
               :entity-id ent-id
@@ -219,7 +219,7 @@
   [ent-id]
   (md/start-please-wait)
   (ajax
-    {:url rurls/run-project-url
+    {:url irurls/run-project-url
      :success-fn response-success-fn
      :entity {:entity-type proent/entity-type
               :entity-id ent-id

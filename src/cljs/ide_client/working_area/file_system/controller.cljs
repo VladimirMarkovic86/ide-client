@@ -2,7 +2,7 @@
   (:require [js-lib.core :as md]
             [ajax-lib.core :refer [ajax get-response]]
             [ajax-lib.http.request-header :as rh]
-            [ide-client.request-urls :as rurls]
+            [ide-middle.request-urls :as irurls]
             [ide-client.working-area.file-system.html :as fsh]
             [ide-client.working-area.html :as wah]
             [ide-client.project.entity :as proent]
@@ -133,7 +133,7 @@
   [{dir-name :dir-name
     success-fn :success-fn}]
   (ajax
-    {:url rurls/execute-shell-command-url
+    {:url irurls/execute-shell-command-url
      :success-fn success-fn
      :entity {:command (str
                          "ls -al "
@@ -249,13 +249,13 @@
                             extension)]
     (when display-as-text?
       (ajax
-        {:url rurls/read-file-url
+        {:url irurls/read-file-url
          :success-fn read-file-success
          :entity {:file-path file-path
                   :operation "read"}}))
     (when display-as-image?
       (ajax
-        {:url rurls/read-file-url
+        {:url irurls/read-file-url
          :success-fn read-file-success
          :request-header-map {(rh/accept) (str "image/" extension)}
          :request-property-map {"responseType" "blob"}
@@ -264,7 +264,7 @@
      )
     (when display-as-video?
       (ajax
-        {:url rurls/read-file-url
+        {:url irurls/read-file-url
          :success-fn read-file-success
          :request-header-map {(rh/accept) (str "video/" extension)}
          :request-property-map {"responseType" "blob"}
@@ -354,7 +354,7 @@
       "#absolutePath"
       @current-directory)
     (ajax
-      {:url rurls/execute-shell-command-url
+      {:url irurls/execute-shell-command-url
        :success-fn prepare-file-system-fn-success2
        :entity {:command (str
                            "ls -al "
@@ -365,7 +365,7 @@
   "Call server to return data about chosen document source"
   []
   (ajax
-    {:url rurls/execute-shell-command-url
+    {:url irurls/execute-shell-command-url
      :success-fn prepare-file-system-fn-success
      :entity {:command "pwd"}}))
 
@@ -376,7 +376,7 @@
   (frm/close-popup)
   (let [dir-name (:dir-name ajax-params)]
     (ajax
-      {:url rurls/execute-shell-command-url
+      {:url irurls/execute-shell-command-url
        :success-fn prepare-file-system-fn-success2
        :entity {:command (str
                            "ls -al "
@@ -392,7 +392,7 @@
   (let [new-folder-name (md/get-value
                           "#popupInputId")]
     (ajax
-      {:url rurls/execute-shell-command-url
+      {:url irurls/execute-shell-command-url
        :success-fn mkdir-fn-success
        :entity {:command (str
                            "mkdir "
@@ -445,7 +445,7 @@
   ""
   []
   (ajax
-    {:url rurls/execute-shell-command-url
+    {:url irurls/execute-shell-command-url
      :success-fn prepare-file-system-fn-success2
      :entity {:command (str
                          "ls -al "
@@ -460,7 +460,7 @@
       cut-value
       nil)
     (ajax
-      {:url rurls/execute-shell-command-url
+      {:url irurls/execute-shell-command-url
        :success-fn paste-fn-success
        :entity {:command (str
                            "mv "
@@ -473,7 +473,7 @@
       copy-value
       nil)
     (ajax
-      {:url rurls/execute-shell-command-url
+      {:url irurls/execute-shell-command-url
        :success-fn paste-fn-success
        :entity {:command (str
                            "cp -r "
@@ -486,7 +486,7 @@
   ""
   []
   (ajax
-    {:url rurls/execute-shell-command-url
+    {:url irurls/execute-shell-command-url
      :success-fn prepare-file-system-fn-success2
      :entity {:command (str
                          "ls -al "
@@ -497,7 +497,7 @@
   ""
   []
   (ajax
-    {:url rurls/execute-shell-command-url
+    {:url irurls/execute-shell-command-url
      :success-fn delete-fn-success
      :entity {:command (str
                          "rm -rf "

@@ -2,7 +2,11 @@
   (:require [clojure.string :as cstring]
             [utils-lib.core :as utils]
             [js-lib.core :as md]
-            [ide-client.working-area.ide.clj-highlight :refer [patterns]]))
+            [ide-client.working-area.ide.highlighters.clj-highlight :as cljhl]
+            [ide-client.working-area.ide.highlighters.css-highlight :as csshl]
+            [ide-client.working-area.ide.highlighters.js-highlight :as jshl]
+            [ide-client.working-area.ide.highlighters.java-highlight :as jhl]
+            [ide-client.working-area.ide.highlighters.html-highlight :as htmlhl]))
 
 (def save-file-changes-fn-a (atom nil))
 
@@ -596,6 +600,33 @@
         is-before-bracket-v))
    ))
 
+(defn fetch-patterns
+  ""
+  [file-path]
+  (let [last-dot-index (cstring/last-index-of
+                         file-path
+                         ".")
+        last-dot-index (if (< (inc
+                                last-dot-index)
+                              (count
+                                file-path))
+                         (inc
+                           last-dot-index)
+                         last-dot-index)
+        extension (.substring
+                    file-path
+                    last-dot-index)]
+    (case extension
+      "html" htmlhl/patterns
+      "css" csshl/patterns
+      "js" jshl/patterns
+      "java" jhl/patterns
+      "clj" cljhl/patterns
+      "cljs" cljhl/patterns
+      "cljc" cljhl/patterns
+      cljhl/patterns))
+ )
+
 (defn apply-highlights
   ""
   [textarea]
@@ -603,7 +634,11 @@
                textarea)
         caret-start (.-selectionStart
                       textarea)
-        text-a (atom text)]
+        text-a (atom text)
+        file-path (.-filePath
+                    textarea)
+        patterns (fetch-patterns
+                   file-path)]
     (highlight-brackets
       text-a
       caret-start)
@@ -1230,6 +1265,8 @@
                       textarea)
         caret-end (.-selectionEnd
                     textarea)
+        selection-direction (.-selectionDirection
+                              textarea)
         no-selection (= caret-start
                         caret-end)
         is-shift-pressed (.-shiftKey
@@ -1255,12 +1292,19 @@
     (when (and (not no-selection)
                is-shift-pressed
                is-at-first-place)
-      (reset!
-        start-index
-        (find-first-sign-in-row
-          text
-          caret-start))
-     )
+      (if (= selection-direction
+             "forward")
+        (reset!
+          end-index
+          (find-first-sign-in-row
+            text
+            caret-end))
+        (reset!
+          start-index
+          (find-first-sign-in-row
+            text
+            caret-start))
+       ))
     (when (and (not is-shift-pressed)
                is-at-first-place)
       (let [first-sign-index (find-first-sign-in-row
@@ -1341,6 +1385,8 @@
                       textarea)
         caret-end (.-selectionEnd
                     textarea)
+        selection-direction (.-selectionDirection
+                              textarea)
         no-selection (= caret-start
                         caret-end)
         is-shift-pressed (.-shiftKey
@@ -1375,27 +1421,55 @@
           (inc
             last-sign-index))
        ))
-    (when (and (not no-selection)
-               is-shift-pressed
-               is-at-last-place)
-      (let [previous-char (get
-                            text
-                            (dec
-                              caret-end))
-            caret-end-p (if (= previous-char
-                               \newline)
-                            caret-end
-                            (dec
-                              caret-end))
-            last-sign-index (find-last-sign-in-row
-                              text
-                              caret-end-p)]
-        (reset!
-          end-index
-          (inc
-            last-sign-index))
+    (when (or (and (not no-selection)
+                   is-shift-pressed)
+              (and (not no-selection)
+                   is-shift-pressed))
+      (let [part-one-count (count
+                             (.substring
+                               text
+                               0
+                               caret-start))
+            part-two (.substring
+                       text
+                       caret-start
+                       caret-end)
+            part-two-count (count
+                             part-two)
+            part-three (.substring
+                         text
+                         caret-end)
+            first-newline-index (cstring/index-of
+                                  part-two
+                                  "\n")
+            part-two-first-newline (if first-newline-index
+                                     first-newline-index
+                                     (count
+                                       part-two))
+            last-newline-index (cstring/index-of
+                                 part-three
+                                 "\n")
+            part-three-first-newline (if last-newline-index
+                                       last-newline-index
+                                       (count
+                                         part-three))
+            caret-start (+ part-one-count
+                           part-two-first-newline)
+            caret-end (if is-at-last-place
+                        caret-end
+                        (+ part-one-count
+                           part-two-count
+                           part-three-first-newline))]
+        (if (= selection-direction
+               "forward")
+          (reset!
+            end-index
+            caret-end)
+          (reset!
+            start-index
+            caret-start))
        ))
-    (when (and (not is-shift-pressed) 
+    (when (and (not is-shift-pressed)
                is-at-last-place)
       (let [previous-char (get
                             text
@@ -1418,7 +1492,8 @@
           (inc
             last-sign-index))
        ))
-    (when (and is-shift-pressed
+    (when (and no-selection
+               is-shift-pressed
                (not is-at-last-place))
       (let [previous-char (get
                             text
@@ -1466,6 +1541,597 @@
       "selectionEnd"
       @end-index)
    ))
+
+(defn find-first-sign-in-row-index
+  ""
+  [event
+   index]
+  (let [textarea (.-target
+                   event)
+        text (.-value
+               textarea)
+        first-sign-in-row-index (find-first-sign-in-row
+                                  text
+                                  index)]
+    first-sign-in-row-index))
+
+(defn end-of-the-row-index-recur
+  ""
+  [text
+   index]
+  (if (< index
+         (count
+           text))
+    (let [c-char (get
+                   text
+                   index)]
+      (if (= c-char
+             \newline)
+        index
+        (recur
+          text
+          (inc
+            index))
+       ))
+    (count
+      text))
+ )
+
+(defn find-end-of-the-row-index
+  ""
+  [event
+   index]
+  (let [textarea (.-target
+                   event)
+        text (.-value
+               textarea)
+        end-of-the-row-index (end-of-the-row-index-recur
+                               text
+                               index)]
+    end-of-the-row-index))
+
+(defn begin-of-the-row-index-recur
+  ""
+  [text
+   index]
+  (if (< -1
+         index)
+    (let [c-char (get
+                   text
+                   index)]
+      (if (= c-char
+             \newline)
+        (inc
+          index)
+        (recur
+          text
+          (dec
+            index))
+       ))
+    0))
+
+(defn find-begin-of-the-row-index
+  ""
+  [event
+   index]
+  (let [textarea (.-target
+                   event)
+        text (.-value
+               textarea)
+        begin-of-the-row-index (begin-of-the-row-index-recur
+                                 text
+                                 (dec
+                                   index))]
+    begin-of-the-row-index))
+
+(defn last-sign-in-row-index-recur
+  ""
+  [text
+   index]
+  (if (< -1
+         index)
+    (let [c-char (get
+                   text
+                   index)]
+      (if (not= c-char
+                \space)
+        (inc
+          index)
+        (recur
+          text
+          (dec
+            index))
+       ))
+    0))
+
+(defn find-last-sign-in-row-index
+  ""
+  [event
+   index]
+  (let [textarea (.-target
+                   event)
+        text (.-value
+               textarea)
+        last-sign-in-row-index (last-sign-in-row-index-recur
+                                 text
+                                 (dec
+                                   index))]
+    last-sign-in-row-index))
+
+(defn keydown-home-end
+  ""
+  [event
+   is-home
+   & [is-end]]
+  (let [textarea (.-target
+                   event)
+        text (.-value
+               textarea)
+        caret-start (.-selectionStart
+                      textarea)
+        caret-end (.-selectionEnd
+                    textarea)
+        no-selection (= caret-start
+                        caret-end)
+        is-shift-pressed (.-shiftKey
+                           event)
+        caret-start-a (atom
+                        caret-start)
+        caret-end-a (atom
+                      caret-end)]
+    (when no-selection
+      (let [is-at-first-place (= (get
+                                   text
+                                   (dec
+                                     caret-start))
+                                 \newline)
+            is-at-last-place (= (get
+                                  text
+                                  caret-start)
+                                \newline)]
+        (when is-shift-pressed
+          (when (and is-at-first-place
+                     is-at-last-place))
+          (when (and is-at-first-place
+                     (not is-at-last-place))
+            (when is-home
+              ;caret-start stays the same
+              (reset!
+                caret-end-a
+                (find-first-sign-in-row-index
+                  event
+                  caret-start))
+             )
+            (when is-end
+              ;caret-start stays the same
+              (reset!
+                caret-end-a
+                (find-end-of-the-row-index
+                  event
+                  caret-start))
+             ))
+          (when (and (not is-at-first-place)
+                     (not is-at-last-place))
+            (when is-home
+              (reset!
+                caret-start-a
+                (find-begin-of-the-row-index
+                  event
+                  caret-start))
+              ;caret-end stays the same
+              (set!
+                (.-selectionDirection
+                  textarea)
+                "backward"))
+            (when is-end
+              ;caret-start stays the same
+              (reset!
+                caret-end-a
+                (find-end-of-the-row-index
+                  event
+                  caret-start))
+             ))
+          (when (and (not is-at-first-place)
+                     is-at-last-place)
+            (when is-home
+              (reset!
+                caret-start-a
+                (find-begin-of-the-row-index
+                  event
+                  caret-start))
+              ;caret-end stays the same
+             )
+            (when is-end
+              (reset!
+                caret-start-a
+                (find-last-sign-in-row-index
+                  event
+                  caret-start))
+              ;caret-end stays the same
+             ))
+         )
+        (when-not is-shift-pressed
+          (when (and is-at-first-place
+                     is-at-last-place))
+          (when (and is-at-first-place
+                     (not is-at-last-place))
+            (when is-home
+              (let [first-sign-in-row-index (find-first-sign-in-row-index
+                                              event
+                                              caret-start)]
+                (reset!
+                  caret-start-a
+                  first-sign-in-row-index)
+                (reset!
+                  caret-end-a
+                  first-sign-in-row-index))
+             )
+            (when is-end
+              (let [end-of-the-row-index (find-end-of-the-row-index
+                                           event
+                                           caret-start)]
+                (reset!
+                  caret-start-a
+                  end-of-the-row-index)
+                (reset!
+                  caret-end-a
+                  end-of-the-row-index))
+             ))
+          (when (and (not is-at-first-place)
+                     (not is-at-last-place))
+            (when is-home
+              (let [begin-of-the-row-index (find-begin-of-the-row-index
+                                             event
+                                             caret-start)]
+                (reset!
+                  caret-start-a
+                  begin-of-the-row-index)
+                (reset!
+                  caret-end-a
+                  begin-of-the-row-index))
+             )
+            (when is-end
+              (let [end-of-the-row-index (find-end-of-the-row-index
+                                           event
+                                           caret-start)]
+                (reset!
+                  caret-start-a
+                  end-of-the-row-index)
+                (reset!
+                  caret-end-a
+                  end-of-the-row-index))
+             )
+           )
+          (when (and (not is-at-first-place)
+                     is-at-last-place)
+            (when is-home
+              (let [begin-of-the-row-index (find-begin-of-the-row-index
+                                             event
+                                             caret-start)]
+                (reset!
+                  caret-start-a
+                  begin-of-the-row-index)
+                (reset!
+                  caret-end-a
+                  begin-of-the-row-index))
+             )
+            (when is-end
+              (let [last-sign-in-row-index (find-last-sign-in-row-index
+                                             event
+                                             caret-start)]
+                (reset!
+                  caret-start-a
+                  last-sign-in-row-index)
+                (reset!
+                  caret-end-a
+                  last-sign-in-row-index))
+             ))
+         ))
+     )
+    (when-not no-selection
+      (let [selection-direction (.-selectionDirection
+                                  textarea)
+            is-direction-forward (= selection-direction
+                                    "forward")
+            is-caret-start-at-first-place (= (get
+                                               text
+                                               (dec
+                                                 caret-start))
+                                             \newline)
+            is-caret-start-at-last-place (= (get
+                                              text
+                                              caret-start)
+                                            \newline)
+            is-caret-end-at-first-place (= (get
+                                             text
+                                             (dec
+                                               caret-end))
+                                           \newline)
+            is-caret-end-at-last-place (= (get
+                                            text
+                                            caret-end)
+                                          \newline)]
+        (when is-shift-pressed
+          (when is-direction-forward
+            (when (and is-caret-end-at-first-place
+                       is-caret-end-at-last-place))
+            (when (and is-caret-end-at-first-place
+                       (not is-caret-end-at-last-place))
+              (when is-home
+                ;caret-start stays the same
+                (reset!
+                  caret-end-a
+                  (find-first-sign-in-row-index
+                    event
+                    caret-end))
+               )
+              (when is-end
+                ;caret-start stays the same
+                (reset!
+                  caret-end-a
+                  (find-end-of-the-row-index
+                    event
+                    caret-end))
+               ))
+            (when (and (not is-caret-end-at-first-place)
+                       (not is-caret-end-at-last-place))
+              (when is-home
+                ;caret-start stays the same
+                (reset!
+                  caret-end-a
+                  (find-begin-of-the-row-index
+                    event
+                    caret-end))
+               )
+              (when is-end
+                ;caret-start stay the same
+                (reset!
+                  caret-end-a
+                  (find-end-of-the-row-index
+                    event
+                    caret-end))
+               ))
+            (when (and (not is-caret-end-at-first-place)
+                       is-caret-end-at-last-place)
+              (when is-home
+                ;caret-start stays the same
+                (reset!
+                  caret-end-a
+                  (find-begin-of-the-row-index
+                    event
+                    caret-end)) 
+               )
+              (when is-end
+                ;caret-start stays the same
+                (reset!
+                  caret-end-a
+                  (find-last-sign-in-row-index
+                    event
+                    caret-end))
+               ))
+           )
+          (when-not is-direction-forward
+            (when (and is-caret-start-at-first-place
+                       is-caret-start-at-last-place))
+            (when (and is-caret-start-at-first-place
+                       (not is-caret-start-at-last-place))
+              (when is-home
+                (reset!
+                  caret-start-a
+                  (find-first-sign-in-row-index
+                    event
+                    caret-start))
+                ;caret-end stays the same
+               )
+              (when is-end
+                (reset!
+                  caret-start-a
+                  (find-end-of-the-row-index
+                    event
+                    caret-start))
+                ;caret-end stays the same
+               ))
+            (when (and (not is-caret-start-at-first-place)
+                       (not is-caret-start-at-last-place))
+              (when is-home
+                (reset!
+                  caret-start-a
+                  (find-begin-of-the-row-index
+                    event
+                    caret-start))
+                ;caret-end stays the same
+               )
+              (when is-end
+                (reset!
+                  caret-start-a
+                  (find-end-of-the-row-index
+                    event
+                    caret-start))
+                ;caret-end stays the same
+               ))
+            (when (and (not is-caret-start-at-first-place)
+                       is-caret-start-at-last-place)
+              (when is-home
+                (reset!
+                  caret-start-a
+                  (find-begin-of-the-row-index
+                    event
+                    caret-start))
+                ;caret-end stays-the same
+               )
+              (when is-end
+                (reset!
+                  caret-start-a
+                  (find-last-sign-in-row-index
+                    event
+                    caret-start))
+                ;caret-end stays the same
+               ))
+           )
+         )
+        (when-not is-shift-pressed
+          (when is-direction-forward
+            (when (and is-caret-end-at-first-place
+                       is-caret-end-at-last-place))
+            (when (and is-caret-end-at-first-place
+                       (not is-caret-end-at-last-place))
+              (when is-home
+                (let [first-sign-in-row-index (find-first-sign-in-row-index
+                                                event
+                                                caret-end)]
+                  (reset!
+                    caret-start-a
+                    first-sign-in-row-index)
+                  (reset!
+                    caret-end-a
+                    first-sign-in-row-index))
+               )
+              (when is-end
+                (let [end-of-the-row-index (find-end-of-the-row-index
+                                             event
+                                             caret-end)]
+                  (reset!
+                    caret-start-a
+                    end-of-the-row-index)
+                  (reset!
+                    caret-end-a
+                    end-of-the-row-index))
+               ))
+            (when (and (not is-caret-end-at-first-place)
+                       (not is-caret-end-at-last-place))
+              (when is-home
+                (let [begin-of-the-row-index (find-begin-of-the-row-index
+                                               event
+                                               caret-start)]
+                  (reset!
+                    caret-start-a
+                    begin-of-the-row-index)
+                  (reset!
+                    caret-end-a
+                    begin-of-the-row-index))
+               )
+              (when is-end
+                (let [end-of-the-row-index (find-end-of-the-row-index
+                                             event
+                                             caret-end)]
+                  (reset!
+                    caret-start-a
+                    end-of-the-row-index)
+                  (reset!
+                    caret-end-a
+                    end-of-the-row-index))
+               ))
+            (when (and (not is-caret-end-at-first-place)
+                       is-caret-end-at-last-place)
+              (when is-home
+                (let [begin-of-the-row-index (find-begin-of-the-row-index
+                                               event
+                                               caret-start)]
+                  (reset!
+                    caret-start-a
+                    begin-of-the-row-index)
+                  (reset!
+                    caret-end-a
+                    begin-of-the-row-index))
+               )
+              (when is-end
+                (let [end-of-the-row-index (find-end-of-the-row-index
+                                             event
+                                             caret-end)]
+                  (reset!
+                    caret-start-a
+                    end-of-the-row-index)
+                  (reset!
+                    caret-end-a
+                    end-of-the-row-index))
+               ))
+           )
+          (when-not is-direction-forward
+            (when (and is-caret-start-at-first-place
+                       is-caret-start-at-last-place))
+            (when (and is-caret-start-at-first-place
+                       (not is-caret-start-at-last-place))
+              (when is-home
+                (let [first-sign-in-row-index (find-first-sign-in-row-index
+                                                event
+                                                caret-start)]
+                  (reset!
+                    caret-start-a
+                    first-sign-in-row-index)
+                  (reset!
+                    caret-end-a
+                    first-sign-in-row-index))
+               )
+              (when is-end
+                (let [end-of-the-row-index (find-end-of-the-row-index
+                                             event
+                                             caret-end)]
+                  (reset!
+                    caret-start-a
+                    end-of-the-row-index)
+                  (reset!
+                    caret-end-a
+                    end-of-the-row-index))
+               ))
+            (when (and (not is-caret-start-at-first-place)
+                       (not is-caret-start-at-last-place))
+              (when is-home
+                (let [begin-of-the-row-index (find-begin-of-the-row-index
+                                               event
+                                               caret-start)]
+                  (reset!
+                    caret-start-a
+                    begin-of-the-row-index)
+                  (reset!
+                    caret-end-a
+                    begin-of-the-row-index))
+               )
+              (when is-end
+                (let [end-of-the-row-index (find-end-of-the-row-index
+                                             event
+                                             caret-end)]
+                  (reset!
+                    caret-start-a
+                    end-of-the-row-index)
+                  (reset!
+                    caret-end-a
+                    end-of-the-row-index))
+               ))
+            (when (and (not is-caret-start-at-first-place)
+                       is-caret-start-at-last-place)
+              (when is-home
+                (let [begin-of-the-row-index (find-begin-of-the-row-index
+                                               event
+                                               caret-start)]
+                  (reset!
+                    caret-start-a
+                    begin-of-the-row-index)
+                  (reset!
+                    caret-end-a
+                    begin-of-the-row-index))
+               )
+              (when is-end
+                (let [last-sign-in-row-index (find-last-sign-in-row-index
+                                               event
+                                               caret-start)]
+                  (reset!
+                    caret-start-a
+                    last-sign-in-row-index)
+                  (reset!
+                    caret-end-a
+                    last-sign-in-row-index))
+               ))
+           ))
+       ))
+    (aset
+      textarea
+      "selectionStart"
+      @caret-start-a)
+    (aset
+      textarea
+      "selectionEnd"
+      @caret-end-a))
+ )
 
 (defn handle-keydown
   ""
@@ -1527,14 +2193,17 @@
              "Home")
       (.preventDefault
         event)
-      (keydown-home
-        event))
+      (keydown-home-end
+        event
+        true))
     (when (= key-name
              "End")
       (.preventDefault
         event)
-      (keydown-end
-        event))
+      (keydown-home-end
+        event
+        false
+        true))
    ))
 
 (defn handle-keyup

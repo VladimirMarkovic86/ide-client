@@ -3,7 +3,6 @@
   :url "http://gitlab:1610/VladimirMarkovic86/ide-client"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :resource-paths ["resources"]
   :dependencies [[org.clojure/clojure	"1.9.0"]
                  [org.clojure/clojurescript "1.10.339"]
                  [org.vladimir/ajax-lib "0.1.0"]
@@ -15,7 +14,16 @@
                  [org.vladimir/ide-middle "0.1.0"]
                  [org.vladimir/language-lib "0.1.0"]
                  [org.vladimir/common-client "0.1.0"]
+                 [org.vladimir/server-lib "0.1.0"]
                  ]
+  
+  :resource-paths ["resources"]
+  :source-paths ["src/clj"]
+  
+  ; AOT - Compailation ahead of time
+  :main ^:skip-aot ide-client.core
+  :target-path "target/%s"
+  :profiles {:uberjar {:aot :all}}
   
   :plugins [[lein-cljsbuild  "1.1.7"]
             ]
