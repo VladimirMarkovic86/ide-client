@@ -7,7 +7,7 @@
             [language-lib.core :refer [get-label]]))
 
 (defn custom-menu
-  ""
+  "Render menu items for user that have privilege for them"
   []
   [(when (contains?
            @allowed-actions

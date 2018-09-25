@@ -19,7 +19,7 @@
 (def saved-stack (atom {}))
 
 (defn update-undo-stack
-  ""
+  "Update undo stack after any change has been done on file"
   [event
    & [reset-redo-states]]
   (let [textarea (.-target
@@ -77,7 +77,7 @@
    ))
 
 (defn update-redo-stack
-  ""
+  "Update redo stack after undo has been executed"
   [event]
   (let [textarea (.-target
                    event)
@@ -123,7 +123,8 @@
    ))
 
 (defn file-changed-evt
-  ""
+  "After change on active file has been done
+   mark it's tab with start by adding starChanged class on tab's div element"
   [is-changed]
   (let [tab-bar-el (.querySelector
                      js/document
@@ -161,7 +162,8 @@
  )
 
 (defn files-saved-evt
-  ""
+  "After save event has been executed, remove starChanged class from tab
+   and note in undo, redo and save stacks that this is now persistent version of file"
   []
   (let [tab-bar-el (.querySelector
                      js/document
@@ -211,7 +213,7 @@
      ")]}")
 
 (defn is-after-bracket?
-  ""
+  "Is caret positioned after bracket"
   [text-a
    caret-start]
   (when (< caret-start
@@ -243,7 +245,7 @@
  )
 
 (defn is-before-bracket?
-  ""
+  "Is caret positioned before bracket"
   [text-a
    caret-start]
   (when (< 0
@@ -274,7 +276,7 @@
  )
 
 (defn highlight-closing-bracket-recur
-  ""
+  "Highlight closing bracket recursion"
   [text-a
    caret-position
    open-bracket
@@ -354,7 +356,7 @@
    ))
 
 (defn highlight-closing-bracket
-  ""
+  "Highlight closing bracket"
   [text-a
    caret-position
    open-bracket
@@ -393,7 +395,7 @@
  )
 
 (defn highlight-opening-bracket-recur
-  ""
+  "Highlight opening bracket recursion"
   [text-a
    caret-position
    open-bracket
@@ -472,7 +474,7 @@
    ))
 
 (defn highlight-opening-bracket
-  ""
+  "Highlight opening bracket"
   [text-a
    caret-position
    open-bracket
@@ -511,7 +513,7 @@
   )
 
 (defn find-bracket-pair
-  ""
+  "Find open and close bracket pair"
   [text-a
    caret-before
    caret-after
@@ -570,7 +572,7 @@
    ))
 
 (defn highlight-brackets
-  ""
+  "Highlight brackets"
   [text-a
    caret-start]
   (let [[after-bracket-type
@@ -601,7 +603,7 @@
    ))
 
 (defn fetch-patterns
-  ""
+  "Fetch patterns for different file types"
   [file-path]
   (let [last-dot-index (cstring/last-index-of
                          file-path
@@ -628,7 +630,7 @@
  )
 
 (defn apply-highlights
-  ""
+  "Apply highlights onto text from textarea"
   [textarea]
   (let [text (.-value
                textarea)
@@ -687,7 +689,7 @@
        "F12"})
 
 (defn keydown-save-save-all
-  ""
+  "Handle save and save all events"
   [event]
   (let [is-shift-pressed (.-shiftKey
                            event)
@@ -725,7 +727,7 @@
    ))
 
 (defn current-row-start-index
-  ""
+  "Find start index of current row"
   [text
    index]
   (if (< -1
@@ -744,7 +746,7 @@
     0))
 
 (defn current-row-end-index
-  ""
+  "Find end index of current row"
   [text
    index]
   (if (< index
@@ -766,7 +768,7 @@
  )
 
 (defn split-with-newline
-  ""
+  "Split text with newline without loosing empty rows"
   [text]
   (let [all-rows (atom [])
         current-row (atom "")]
@@ -796,7 +798,7 @@
     @all-rows))
 
 (defn appearance-count-recur
-  ""
+  "Count appearances of match-string in text"
   [text
    count-a
    match-string]
@@ -822,7 +824,7 @@
    ))
 
 (defn keydown-tab
-  ""
+  "Handle key tab from textarea to effect highlight div too"
   [event]
   (let [textarea (.-target
                    event)
@@ -1001,7 +1003,7 @@
    ))
 
 (defn keydown-undo-redo
-  ""
+  "Handle undo redo commands from textarea to effect highlight div too"
   [event]
   (let [textarea (.-target
                    event)
@@ -1107,7 +1109,7 @@
  )
 
 (defn find-indent
-  ""
+  "Find indent in row"
   [text
    index
    indent]
@@ -1135,7 +1137,7 @@
     @indent))
 
 (defn keydown-enter
-  ""
+  "Handle enter key pressed in textarea so it effects highlights div"
   [event]
   (let [textarea (.-target
                    event)
@@ -1218,8 +1220,8 @@
         true))
    ))
 
-(defn find-first-sign-in-row
-  ""
+(defn first-sign-in-row-index-recur
+  "Find first sign in row space excluded recursion"
   [text
    index]
   (if (< index
@@ -1236,327 +1238,21 @@
      )
     index))
 
-(defn find-last-sign-in-row
-  ""
-  [text
-   index]
-  (if (< 0
-         index)
-    (if (not= (get
-                text
-                index)
-              \space)
-      index
-      (recur
-        text
-        (dec
-          index))
-     )
-    index))
-
-(defn keydown-home
-  ""
-  [event]
-  (let [textarea (.-target
-                   event)
-        text (.-value
-               textarea)
-        caret-start (.-selectionStart
-                      textarea)
-        caret-end (.-selectionEnd
-                    textarea)
-        selection-direction (.-selectionDirection
-                              textarea)
-        no-selection (= caret-start
-                        caret-end)
-        is-shift-pressed (.-shiftKey
-                           event)
-        is-at-first-place (or (= (get
-                                   text
-                                   (dec
-                                     caret-start))
-                                 \newline)
-                              (= caret-start
-                                 0))
-        start-index (atom caret-start)
-        end-index (atom caret-end)]
-    (when (and no-selection
-               is-shift-pressed
-               is-at-first-place)
-      (reset!
-        end-index
-        (find-first-sign-in-row
-          text
-          caret-start))
-     )
-    (when (and (not no-selection)
-               is-shift-pressed
-               is-at-first-place)
-      (if (= selection-direction
-             "forward")
-        (reset!
-          end-index
-          (find-first-sign-in-row
-            text
-            caret-end))
-        (reset!
-          start-index
-          (find-first-sign-in-row
-            text
-            caret-start))
-       ))
-    (when (and (not is-shift-pressed)
-               is-at-first-place)
-      (let [first-sign-index (find-first-sign-in-row
-                               text
-                               caret-start)]
-        (reset!
-          start-index
-          first-sign-index)
-        (reset!
-          end-index
-          first-sign-index))
-     )
-    (when (and is-shift-pressed
-               (not is-at-first-place))
-      (let [previous-char (get
-                            text
-                            (dec
-                              caret-start))
-            caret-start-p (if (= previous-char
-                                 \newline)
-                            caret-start
-                            (dec
-                              caret-start))
-            s-index (current-row-start-index
-                      text
-                      caret-start-p)
-            s-index (if (= s-index
-                           0)
-                      s-index
-                      (inc s-index))]
-        (reset!
-          start-index
-          s-index))
-     )
-    (when (and (not is-shift-pressed)
-               (not is-at-first-place))
-      (let [previous-char (get
-                            text
-                            (dec
-                              caret-start))
-            caret-start-p (if (= previous-char
-                                 \newline)
-                            caret-start
-                            (dec
-                              caret-start))
-            s-index (current-row-start-index
-                      text
-                      caret-start-p)
-            s-index (if (= s-index
-                           0)
-                      s-index
-                      (inc s-index))]
-        (reset!
-          start-index
-          s-index)
-        (reset!
-          end-index
-          s-index))
-     )
-    (aset
-      textarea
-      "selectionStart"
-      @start-index)
-    (aset
-      textarea
-      "selectionEnd"
-      @end-index)
-   ))
-
-(defn keydown-end
-  ""
-  [event]
-  (let [textarea (.-target
-                   event)
-        text (.-value
-               textarea)
-        caret-start (.-selectionStart
-                      textarea)
-        caret-end (.-selectionEnd
-                    textarea)
-        selection-direction (.-selectionDirection
-                              textarea)
-        no-selection (= caret-start
-                        caret-end)
-        is-shift-pressed (.-shiftKey
-                           event)
-        is-at-last-place (or (= (get
-                                  text
-                                  caret-end)
-                                \newline)
-                             (= caret-end
-                                (count
-                                  text))
-                          )
-        start-index (atom caret-start)
-        end-index (atom caret-end)]
-    (when (and no-selection  
-               is-shift-pressed
-               is-at-last-place)
-      (let [previous-char (get
-                            text
-                            (dec
-                              caret-end))
-            caret-end-p (if (= previous-char
-                               \newline)
-                            caret-end
-                            (dec
-                              caret-end))
-            last-sign-index (find-last-sign-in-row
-                              text
-                              caret-end-p)]
-        (reset!
-          start-index
-          (inc
-            last-sign-index))
-       ))
-    (when (or (and (not no-selection)
-                   is-shift-pressed)
-              (and (not no-selection)
-                   is-shift-pressed))
-      (let [part-one-count (count
-                             (.substring
-                               text
-                               0
-                               caret-start))
-            part-two (.substring
-                       text
-                       caret-start
-                       caret-end)
-            part-two-count (count
-                             part-two)
-            part-three (.substring
-                         text
-                         caret-end)
-            first-newline-index (cstring/index-of
-                                  part-two
-                                  "\n")
-            part-two-first-newline (if first-newline-index
-                                     first-newline-index
-                                     (count
-                                       part-two))
-            last-newline-index (cstring/index-of
-                                 part-three
-                                 "\n")
-            part-three-first-newline (if last-newline-index
-                                       last-newline-index
-                                       (count
-                                         part-three))
-            caret-start (+ part-one-count
-                           part-two-first-newline)
-            caret-end (if is-at-last-place
-                        caret-end
-                        (+ part-one-count
-                           part-two-count
-                           part-three-first-newline))]
-        (if (= selection-direction
-               "forward")
-          (reset!
-            end-index
-            caret-end)
-          (reset!
-            start-index
-            caret-start))
-       ))
-    (when (and (not is-shift-pressed)
-               is-at-last-place)
-      (let [previous-char (get
-                            text
-                            (dec
-                              caret-end))
-            caret-end-p (if (= previous-char
-                               \newline)
-                            caret-end
-                            (dec
-                              caret-end))
-            last-sign-index (find-last-sign-in-row
-                              text
-                              caret-end-p)]
-        (reset!
-          start-index
-          (inc
-            last-sign-index))
-        (reset!
-          end-index
-          (inc
-            last-sign-index))
-       ))
-    (when (and no-selection
-               is-shift-pressed
-               (not is-at-last-place))
-      (let [previous-char (get
-                            text
-                            (dec
-                              caret-end))
-            caret-end-p (if (= previous-char
-                               \newline)
-                            caret-end
-                            (dec
-                              caret-end))
-            e-index (current-row-end-index
-                      text
-                      caret-end-p)]
-        (reset!
-          end-index
-          e-index))
-     )
-    (when (and (not is-shift-pressed)
-               (not is-at-last-place)) 
-      (let [previous-char (get   
-                            text
-                            (dec
-                              caret-end))
-            caret-end-p (if (= previous-char
-                               \newline)
-                            caret-end
-                            (dec
-                              caret-end))
-            e-index (current-row-end-index
-                      text
-                      caret-end-p)]
-        (reset!
-          start-index
-          e-index)
-        (reset!
-          end-index
-          e-index))
-     )
-    (aset
-      textarea
-      "selectionStart"
-      @start-index)
-    (aset
-      textarea
-      "selectionEnd"
-      @end-index)
-   ))
-
 (defn find-first-sign-in-row-index
-  ""
+  "Find first sign in row space excluded"
   [event
    index]
   (let [textarea (.-target
                    event)
         text (.-value
                textarea)
-        first-sign-in-row-index (find-first-sign-in-row
+        first-sign-in-row-index (first-sign-in-row-index-recur
                                   text
                                   index)]
     first-sign-in-row-index))
 
 (defn end-of-the-row-index-recur
-  ""
+  "Find index of end of row recursion"
   [text
    index]
   (if (< index
@@ -1578,7 +1274,7 @@
  )
 
 (defn find-end-of-the-row-index
-  ""
+  "Find index of end of row"
   [event
    index]
   (let [textarea (.-target
@@ -1591,7 +1287,7 @@
     end-of-the-row-index))
 
 (defn begin-of-the-row-index-recur
-  ""
+  "Find index of beginning of row recursion"
   [text
    index]
   (if (< -1
@@ -1611,7 +1307,7 @@
     0))
 
 (defn find-begin-of-the-row-index
-  ""
+  "Find index of beginning of row"
   [event
    index]
   (let [textarea (.-target
@@ -1625,7 +1321,7 @@
     begin-of-the-row-index))
 
 (defn last-sign-in-row-index-recur
-  ""
+  "Find last sign in row space excluded recursion"
   [text
    index]
   (if (< -1
@@ -1645,7 +1341,7 @@
     0))
 
 (defn find-last-sign-in-row-index
-  ""
+  "Find last sign in row space excluded"
   [event
    index]
   (let [textarea (.-target
@@ -1659,7 +1355,7 @@
     last-sign-in-row-index))
 
 (defn keydown-home-end
-  ""
+  "Handling home and end key pressed"
   [event
    is-home
    & [is-end]]
@@ -2134,7 +1830,7 @@
  )
 
 (defn handle-keydown
-  ""
+  "Handle keydown on textarea so it effects onto highlights div too"
   [evt-p
    element
    event]
@@ -2207,7 +1903,7 @@
    ))
 
 (defn handle-keyup
-  ""
+  "Handle keyup on textarea so it effects onto highlights div too"
   [evt-p
    element
    event]
@@ -2239,7 +1935,7 @@
  )
 
 (defn handle-click
-  ""
+  "Handle click on textarea so it effects onto highlights div too"
   [evt-p
    element
    event]
@@ -2258,7 +1954,7 @@
    ))
 
 (defn handle-input
-  ""
+  "Handle input on textarea so it effects onto highlights div too"
   [evt-p
    element
    event]
@@ -2279,7 +1975,8 @@
  )
 
 (defn handle-scroll
-  ""
+  "Handle scroll from textarea to highlights div behind it
+   when scrollin in textarea scroll in highlights too"
   [evt-p
    element
    event]
@@ -2302,7 +1999,7 @@
  )
 
 (defn fill-in-highlights
-  ""
+  "Highlight text for the first time"
   [textarea
    highlights
    save-file-changes-fn

@@ -21,7 +21,7 @@
     new-content))
 
 (defn response-success-fn
-  ""
+  "All requests from this name space have universal response"
   [xhr]
   (let [response (get-response xhr)
         output (:data response)
@@ -50,7 +50,7 @@
   (md/end-please-wait))
 
 (defn build-project-fn
-  ""
+  "Build project request"
   [ent-id]
   (md/start-please-wait)
   (ajax
@@ -60,7 +60,7 @@
                 :entity-id ent-id}}))
 
 (defn build-project-evt-fn
-  ""
+  "Build project event function to be bound to action button or item"
   [evt-p
    & [sl-node
       evt]]
@@ -77,7 +77,7 @@
  )
 
 (defn clean-project-fn
-  ""
+  "Clean project request"
   [ent-id]
   (md/start-please-wait)
   (ajax
@@ -87,7 +87,7 @@
               :entity-id ent-id}}))
 
 (defn clean-project-evt-fn
-  ""
+  "Clean project event function to be bound to action button or item"
   [evt-p
    & [sl-node
       evt]]
@@ -104,7 +104,7 @@
  )
 
 (defn build-project-dependencies-fn
-  ""
+  "Build project dependencies request"
   [ent-id]
   (md/start-please-wait)
   (ajax
@@ -114,7 +114,7 @@
                 :entity-id ent-id}}))
 
 (defn build-project-dependencies-evt-fn
-  ""
+  "Build project dependencies event function to be bound to action button or item"
   [evt-p
    & [sl-node
       evt]]
@@ -131,7 +131,7 @@
  )
 
 (defn start-server-fn
-  ""
+  "Server start request"
   [ent-id]
   (md/start-please-wait)
   (ajax
@@ -142,7 +142,7 @@
               :action pem/start}}))
 
 (defn start-server-evt-fn
-  ""
+  "Server start event function to be bound to action button or item"
   [evt-p
    & [sl-node
       evt]]
@@ -159,7 +159,7 @@
  )
 
 (defn stop-server-fn
-  ""
+  "Server stop request"
   [ent-id]
   (md/start-please-wait)
   (ajax
@@ -170,7 +170,7 @@
               :action pem/stop}}))
 
 (defn stop-server-evt-fn
-  ""
+  "Server stop event function to be bound to action button or item"
   [evt-p
    & [sl-node
       evt]]
@@ -187,7 +187,7 @@
  )
 
 (defn restart-server-fn
-  ""
+  "Server restart request"
   [ent-id]
   (md/start-please-wait)
   (ajax
@@ -198,7 +198,7 @@
               :action pem/restart}}))
 
 (defn restart-server-evt-fn
-  ""
+  "Server restart event function to be bound to action button or item"
   [evt-p
    & [sl-node
       evt]]
@@ -215,7 +215,7 @@
  )
 
 (defn server-status-fn
-  ""
+  "Server status query request"
   [ent-id]
   (md/start-please-wait)
   (ajax
@@ -226,7 +226,7 @@
               :action pem/status}}))
 
 (defn server-status-evt-fn
-  ""
+  "Server status event function to be bound to action button or item"
   [evt-p
    & [sl-node
       evt]]

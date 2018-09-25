@@ -3,7 +3,7 @@
                                      menu menuitem]]))
 
 (defn menu-fn
-  ""
+  "Custom context menu"
   [new-folder-evt
    cut-evt
    copy-evt
@@ -34,7 +34,7 @@
      :id "documentMenu"}))
 
 (defn custom-popup-content-fn
-  ""
+  "Custom popup form"
   [mkdir-evt]
   (div
     [(input

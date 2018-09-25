@@ -8,7 +8,7 @@
      "project")
 
 (defn form-conf-fn
-  ""
+  "Form configuration for project entity"
   []
   {:id :_id
    :type entity-type
@@ -51,7 +51,7 @@
                   :project-type]})
 
 (defn columns-fn
-  ""
+  "Table columns for project entity"
   []
   {:projection [;:name
                 :group-id
@@ -114,7 +114,7 @@
     })
 
 (defn query-fn
-  ""
+  "Table query for project entity"
   []
   {:entity-type entity-type
    :entity-filter {}
@@ -127,7 +127,7 @@
    :collation {:locale "sr"}})
 
 (defn table-conf-fn
-  ""
+  "Table configuration for project entity"
   []
   {:query (query-fn)
    :columns (columns-fn)

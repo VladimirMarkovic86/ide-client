@@ -63,7 +63,7 @@
     new-content))
 
 (defn parse-doc-name
-  ""
+  "Parse document name from table line generated after executing command \"ls -al\""
   [line]
   (let [separators-count (atom 0)
         previous-char (atom nil)
@@ -88,7 +88,7 @@
     @doc-name))
 
 (defn get-subdocs
-  ""
+  "List documents from selected directory without [. .. .git target]"
   [absolute-path]
   (let [xhr (sjax
               {:url irurls/list-documents-url
@@ -131,7 +131,7 @@
      :sub-files @sub-files}))
 
 (defn blur-file-editors-and-tabs
-  ""
+  "Blur all file editors and tabs before seting active editor and tab"
   []
   (let [opened-files-html (md/query-selector-all
                             ".openedFile")
@@ -150,7 +150,7 @@
  )
 
 (defn focus-file-editor
-  ""
+  "Focus file editor"
   [evt-p
    element
    event]
@@ -173,7 +173,7 @@
  )
 
 (defn close-file-editor
-  ""
+  "Close file editor"
   [evt-p
    element
    event]
@@ -215,7 +215,7 @@
  )
 
 (defn save-file-changes-fn
-  ""
+  "Save changes made to active opened file"
   [& [evt-p
       element
       event]]
@@ -256,7 +256,7 @@
  )
 
 (defn save-all-file-changes-fn
-  ""
+  "Save changes made to all opened files"
   [& [evt-p
       element
       event]]
@@ -325,7 +325,7 @@
  )
 
 (defn get-subfile
-  ""
+  "Read selected file from absolute path"
   [{absolute-path :absolute-path
     file-name :file-name}]
   (let [file-path (str
@@ -454,7 +454,7 @@
  )
 
 (defn mkdir-fn
-  ""
+  "Make directory in selected directory"
   [target-el
    & [element
       event]]
@@ -513,7 +513,7 @@
   (frm/close-popup))
 
 (defn mkdir-popup-fn
-  ""
+  "Make directory popup for directory name"
   [evt-p
    element
    event]
@@ -529,7 +529,7 @@
  )
 
 (defn mkfile-fn
-  ""
+  "Make file in selected directory"
   [target-el
    & [element
       event]]
@@ -588,7 +588,7 @@
   (frm/close-popup))
 
 (defn mkfile-popup-fn
-  ""
+  "Make file popup for file name"
   [evt-p
    element
    event]
@@ -604,7 +604,7 @@
  )
 
 (defn cut-evt
-  ""
+  "Cut selected document"
   [evt-p
    element
    event]
@@ -629,7 +629,7 @@
  )
 
 (defn copy-evt
-  ""
+  "Copy selected document"
   [evt-p
    element
    event]
@@ -654,7 +654,7 @@
  )
 
 (defn paste-evt
-  ""
+  "Paste document in selected directory"
   [evt-p
    element
    event]
@@ -715,7 +715,7 @@
  )
 
 (defn delete-evt
-  ""
+  "Delete document from file system"
   [evt-p
    element
    event]
@@ -766,7 +766,7 @@
    ))
 
 (defn change-state-evt
-  ""
+  "Checked element will add/remove file that was added/modified/removed"
   [{relative-path :relative-path
     action :action
     entity-id :entity-id}
@@ -793,7 +793,7 @@
    ))
 
 (defn set-remote-url-evt
-  ""
+  "Set remote git origin"
   [{no-git-init :no-git-init
     entity-id :entity-id}
    element
@@ -816,7 +816,7 @@
    ))
 
 (defn commit-changes-evt
-  ""
+  "Commit changes to local repository"
   [entity-id
    element
    event]
@@ -840,7 +840,7 @@
  )
 
 (defn commit-and-push-changes-evt
-  ""
+  "Commit and push to git repository"
   [entity-id
    element
    event]
@@ -864,7 +864,7 @@
  )
 
 (defn push-commits-evt
-  ""
+  "Push git commits to repository"
   [entity-id
    element
    event]
@@ -882,7 +882,7 @@
  )
 
 (defn git-project-evt-success
-  ""
+  "Execute git command on selected project success"
   [xhr
    ajax-params]
   (let [response (get-response xhr)
@@ -1022,7 +1022,7 @@
   (md/end-please-wait))
 
 (defn git-project-evt
-  ""
+  "Execute git command on selected project request"
   [evt-p
    element
    event]
@@ -1049,7 +1049,7 @@
    ))
 
 (defn remove-menu
-  ""
+  "Remove of custom context menu"
   [event
    fn-event
    context-menu-evt]
@@ -1112,7 +1112,7 @@
    ))
 
 (defn context-menu-evt
-  ""
+  "Definition of context menu substitution"
   [evt-p
    element
    fn-event]
@@ -1257,7 +1257,7 @@
  )
 
 (defn display-ide-success
-  ""
+  "Display IDE success"
   [xhr]
   (reset!
     editor/undo-stack

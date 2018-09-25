@@ -21,7 +21,7 @@
     new-content))
 
 (defn response-success-fn
-  ""
+  "Display executed command output"
   [xhr]
   (let [response (get-response xhr)
         output (:data response)
@@ -41,7 +41,7 @@
   (md/end-please-wait))
 
 (defn status-project-fn
-  ""
+  "Execute git status command"
   [evt-p
    & [sl-node
       evt]]
@@ -56,7 +56,7 @@
  )
 
 (defn diff-project-fn
-  ""
+  "Execute git diff command"
   [evt-p
    & [sl-node
       evt]]

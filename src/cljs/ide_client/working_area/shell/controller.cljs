@@ -19,7 +19,7 @@
     new-content))
 
 (defn execute-command-fn-success
-  ""
+  "Execute shell command taken from input field success"
   [xhr]
   (let [response (get-response xhr)
         data (:data response)
@@ -38,7 +38,7 @@
  )
 
 (defn execute-command-fn
-  ""
+  "Execute shell command taken from input field"
   [_
    new-element
    event]

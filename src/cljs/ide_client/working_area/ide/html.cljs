@@ -4,7 +4,7 @@
             [ide-client.working-area.ide.editor :as editor]))
 
 (defn div-fn
-  ""
+  "Genrate div HTML element"
   [content
    & [attrs
       evts
@@ -18,7 +18,7 @@
  )
 
 (defn input-fn
-  ""
+  "Genrate input HTML element"
   [& [content
       attrs
       evts
@@ -68,7 +68,7 @@
     editor-el))
 
 (defn menu-fn
-  ""
+  "Generate custom menu at cursor position"
   [page-x
    page-y
    fn-event
@@ -101,7 +101,7 @@
  )
 
 (defn add-remove-file-line
-  ""
+  "Add changes to leading commit"
   [checked
    action
    file-name
@@ -139,7 +139,7 @@
    ))
 
 (defn git-popup-content
-  ""
+  "Git popup content wit ability to add/remove commit/push change"
   [remote-link
    unpushed-commits
    project-diff

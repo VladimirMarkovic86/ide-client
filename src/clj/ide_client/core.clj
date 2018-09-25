@@ -6,7 +6,7 @@
             [server-lib.core :as srvr]))
 
 (defn routing-not-found
-  ""
+  "Default routing if file is not found"
   [& args]
   {:status (stc/not-found)
    :headers {(eh/content-type) (mt/text-plain)}
