@@ -1,4 +1,4 @@
-# server
+# Integrated development environment client
 
 Integrated development environment client
 
