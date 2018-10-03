@@ -76,6 +76,33 @@
       ent-id))
  )
 
+(defn build-uberjar-fn
+  "Build uberjar request"
+  [ent-id]
+  (md/start-please-wait)
+  (ajax
+      {:url irurls/build-uberjar-url
+       :success-fn response-success-fn
+       :entity {:entity-type proent/entity-type
+                :entity-id ent-id}}))
+
+(defn build-uberjar-evt-fn
+  "Build uberjar event function to be bound to action button or item"
+  [evt-p
+   & [sl-node
+      evt]]
+  (when-let [ent-id (:ent-id evt-p)]
+    (build-uberjar-fn
+      ent-id))
+  (when-let [ent-id (aget
+                      (aget
+                        evt-p
+                        "target")
+                      "ent-id")]
+    (build-uberjar-fn
+      ent-id))
+ )
+
 (defn clean-project-fn
   "Clean project request"
   [ent-id]

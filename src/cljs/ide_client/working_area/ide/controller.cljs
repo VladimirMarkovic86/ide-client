@@ -1187,6 +1187,11 @@
             walc/build-project-evt-fn])
          (when (contains?
                  @allowed-actions
+                 imfns/build-uberjar)
+           [(get-label 1032)
+            walc/build-uberjar-evt-fn])
+         (when (contains?
+                 @allowed-actions
                  imfns/build-project-dependencies)
            [(get-label 1019)
             walc/build-project-dependencies-evt-fn])
