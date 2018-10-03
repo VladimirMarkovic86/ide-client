@@ -21,10 +21,9 @@
       nil
       1614
       {:keystore-file-path
-        "/home/vladimir/workspace/certificate/jks/ide_client.jks"
+        "certificate/ide_client.jks"
        :keystore-password
-        "ultras12"}
-      "/home/vladimir/workspace/clojurescript/projects/ide_client/resources/public")
+        "ultras12"})
     (catch Exception e
       (println (.getMessage e))
      ))
