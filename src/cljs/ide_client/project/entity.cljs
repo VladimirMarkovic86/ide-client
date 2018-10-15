@@ -120,7 +120,7 @@
    :entity-filter {}
    :projection (:projection (columns-fn))
    :projection-include true
-   :qsort {:name 1}
+   :qsort {:artifact-id 1}
    :pagination true
    :current-page 0
    :rows 25
@@ -154,7 +154,7 @@
       :entity-filter {}
       :projection [:name]
       :projection-include true
-      :qsort {:name 1}
+      :qsort {:artifact-id 1}
       :pagination false
       :collation {:locale "sr"}})
 
@@ -170,7 +170,7 @@
                    :language
                    :project-type]
       :projection-include true
-      :qsort {:name 1}
+      :qsort {:artifact-id 1}
       :pagination false
       :collation {:locale "sr"}})
 
