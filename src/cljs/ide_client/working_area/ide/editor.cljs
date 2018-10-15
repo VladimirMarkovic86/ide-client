@@ -626,6 +626,8 @@
       "clj" cljhl/patterns
       "cljs" cljhl/patterns
       "cljc" cljhl/patterns
+      "script" cljhl/patterns
+      "db" cljhl/patterns
       cljhl/patterns))
  )
 

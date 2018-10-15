@@ -29,6 +29,8 @@
        "clj"
        "cljc"
        "cljs"
+       "script"
+       "db"
        "log"})
 
 (def display-as-image
