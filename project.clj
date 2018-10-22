@@ -22,7 +22,6 @@
   :resource-paths ["resources"]
   :source-paths ["src/clj"]
   
-  ; AOT - Compailation ahead of time
   :main ^:skip-aot ide-client.core
   
   :uberjar-name "ide-client-standalone.jar"
@@ -47,6 +46,5 @@
                          :output-dir "resources/public/jsprod/out"
                          :asset-path "jsprod/out"
                          :optimizations :advanced}}
-       }}
- )
+       }})
 
