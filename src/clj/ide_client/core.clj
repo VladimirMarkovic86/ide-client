@@ -16,16 +16,19 @@
   "Start server"
   []
   (try
-    (srvr/start-server
-      routing-not-found
-      nil
-      (or (read-string
-            (System/getenv "PORT"))
-          1614)
-      {:keystore-file-path
-        "certificate/ide_client.jks"
-       :keystore-password
-        "ultras12"})
+    (let [port (System/getenv "PORT")
+          port (if port
+                 (read-string
+                   port)
+                 1614)]
+      (srvr/start-server
+        routing-not-found
+        nil
+        port
+        {:keystore-file-path
+          "certificate/ide_client.jks"
+         :keystore-password
+          "ultras12"}))
     (catch Exception e
       (println (.getMessage e))
      ))
