@@ -9,12 +9,12 @@
                  [org.clojars.vladimirmarkovic86/htmlcss-lib "0.1.0"]
                  [org.clojars.vladimirmarkovic86/js-lib "0.1.0"]
                  [org.clojars.vladimirmarkovic86/framework-lib "0.2.0"]
-                 [org.clojars.vladimirmarkovic86/utils-lib "0.1.0"]
+                 [org.clojars.vladimirmarkovic86/utils-lib "0.3.0"]
                  [org.clojars.vladimirmarkovic86/client-test-lib "0.1.0"]
                  [org.clojars.vladimirmarkovic86/ide-middle "0.1.0"]
                  [org.clojars.vladimirmarkovic86/language-lib "0.2.0"]
                  [org.clojars.vladimirmarkovic86/common-client "0.2.0"]
-                 [org.clojars.vladimirmarkovic86/server-lib "0.3.0"]
+                 [org.clojars.vladimirmarkovic86/server-lib "0.3.1"]
                  ]
 
   :min-lein-version "2.0.0"
