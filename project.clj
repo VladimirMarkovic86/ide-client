@@ -8,7 +8,7 @@
                  [org.clojars.vladimirmarkovic86/ajax-lib "0.1.0"]
                  [org.clojars.vladimirmarkovic86/htmlcss-lib "0.1.0"]
                  [org.clojars.vladimirmarkovic86/js-lib "0.1.0"]
-                 [org.clojars.vladimirmarkovic86/framework-lib "0.2.2"]
+                 [org.clojars.vladimirmarkovic86/framework-lib "0.2.3"]
                  [org.clojars.vladimirmarkovic86/utils-lib "0.3.0"]
                  [org.clojars.vladimirmarkovic86/client-test-lib "0.1.0"]
                  [org.clojars.vladimirmarkovic86/ide-middle "0.1.0"]
