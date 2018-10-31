@@ -34,6 +34,8 @@ lein run
 
 By default project listens on port 1614, open browser and go to https://ide:1614.
 
+**For this to work you must start up ide-server porject also**
+
 ## Authors
 
 * **Vladimir Markovic** - [VladimirMarkovic86](https://github.com/VladimirMarkovic86)
