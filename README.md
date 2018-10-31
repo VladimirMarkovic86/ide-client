@@ -32,7 +32,7 @@ and run project with this command:
 lein run
 ```
 
-By default project listens on port 1614, open browser and go to [ide](https://ide:1614).
+By default project listens on port 1614, open browser and go to https://ide:1614.
 
 ## Authors
 
