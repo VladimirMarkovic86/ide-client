@@ -1,36 +1,44 @@
 # Integrated development environment client
 
-Integrated development environment client
+Integrated development environment client project implements frontend part of ide project, and is hosted on server-lib.
 
-## Installation
+### Installing
 
-Download from http://gitlab:1610/VladimirMarkovic86/ide-client.
+Clone project from git by executing:
 
-## Usage
+```
+git clone git@github.com:VladimirMarkovic86/ide-client.git
 
-FIXME: explanation
+or
 
-    $ java -jar server-0.1.0-standalone.jar [args]
+git clone https://github.com/VladimirMarkovic86/ide-client.git
+```
 
-## Options
+After that execute command:
 
-FIXME: listing of options this app accepts.
+```
+cd ide-client
+```
 
-## Examples
+Add following line in hosts file:
 
-...
+```
+127.0.0.1 ide
+```
 
-### Bugs
+and run project with this command:
 
-...
+```
+lein run
+```
 
-### Any Other Sections
-### That You Think
-### Might be Useful
+By default project listens on port 1614, open browser and go to [ide](https://ide:1614).
+
+## Authors
+
+* **Vladimir Markovic** - [VladimirMarkovic86](https://github.com/VladimirMarkovic86)
 
 ## License
 
-Copyright © 2017 FIXME
+This project is licensed under the Eclipse Public License 1.0 - see the [LICENSE](LICENSE) file for details
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
