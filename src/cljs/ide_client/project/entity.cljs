@@ -2,10 +2,11 @@
   (:require [framework-lib.core :as frm :refer [gen-table]]
             [ide-middle.project.entity :as pem]
             [language-lib.core :refer [get-label]]
-            [common-client.allowed-actions.controller :refer [allowed-actions]]))
+            [common-client.allowed-actions.controller :refer [allowed-actions]]
+            [ide-middle.collection-names :refer [project-cname]]))
 
 (def entity-type
-     "project")
+     project-cname)
 
 (defn form-conf-fn
   "Form configuration for project entity"
