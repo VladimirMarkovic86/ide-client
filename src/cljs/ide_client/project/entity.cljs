@@ -40,8 +40,10 @@
             :project-type {:label (get-label 1010)
                            :input-el "radio"
                            :attrs {:required "required"}
-                           :options [pem/application
-                                     pem/library]}}
+                           :options [[(get-label 1033)
+                                      pem/application]
+                                     [(get-label 1034)
+                                      pem/library]]}}
    :fields-order [:name
                   :group-id
                   :artifact-id
