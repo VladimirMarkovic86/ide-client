@@ -28,6 +28,18 @@ input[type="date"] {
  box-shadow: none;
 }
 
+textarea {
+ border-radius: 6px;
+ border-color: blue;
+ border-width: 2px;
+ border-style: solid;
+ color: blue;
+ width: 300px;
+ height: 300px;
+ box-shadow: none;
+ resize: none;
+}
+
 input[type="button"] {
  background-color: white;
  border-color: blue;

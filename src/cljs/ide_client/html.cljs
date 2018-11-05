@@ -3,6 +3,7 @@
             [ide-middle.functionalities :as imfns]
             [common-client.allowed-actions.controller :refer [allowed-actions]]
             [ide-client.project.controller :as pc]
+            [ide-client.task.controller :as tc]
             [ide-client.working-area.controller :as wac]
             [language-lib.core :refer [get-label]]))
 
@@ -16,6 +17,13 @@
        (get-label 1001)
        {:id "aProjectId"}
        {:onclick {:evt-fn pc/nav-link}}))
+   (when (contains?
+           @allowed-actions
+           imfns/task-read)
+     (a
+       (get-label 1043)
+       {:id "aTaskId"}
+       {:onclick {:evt-fn tc/nav-link}}))
    (when (or (contains?
                @allowed-actions
                imfns/read-file)
