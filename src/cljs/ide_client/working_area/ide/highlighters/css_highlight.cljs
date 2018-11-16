@@ -448,6 +448,14 @@
      ["<cssselbracket>$2</cssselbracket>"
       "(sel)(\\(|\\)|\\[|\\]|\\{|\\})(bra)"])
 
+(def open-current-line-s
+     ["<currentline>"
+      "(currentlinetagopen)"])
+
+(def close-current-line-s
+     ["</currentline>"
+      "(currentlinetagclose)"])
+
 (def bracket-s
      ["<cssbracket>$1</cssbracket>"
       "(\\(|\\)|\\[|\\]|\\{|\\})"])
@@ -464,6 +472,8 @@
      [htmlh-s
       html-s
       selbracket-s
+      open-current-line-s
+      close-current-line-s
       bracket-s
       function-s
       keyword-s

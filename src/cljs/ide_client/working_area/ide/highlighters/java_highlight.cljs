@@ -145,6 +145,14 @@
      ["<selbracket>$2</selbracket>"
       "(sel)(\\(|\\)|\\[|\\]|\\{|\\})(bra)"])
 
+(def open-current-line-s
+     ["<currentline>"
+      "(currentlinetagopen)"])
+
+(def close-current-line-s
+     ["</currentline>"
+      "(currentlinetagclose)"])
+
 (def bracket-s
      ["<bracket>$1</bracket>"
       "(\\(|\\)|\\[|\\]|\\{|\\})"])
@@ -154,6 +162,8 @@
       html-s
       string-s
       selbracket-s
+      open-current-line-s
+      close-current-line-s
       bracket-s
       external-s
       declaration-s

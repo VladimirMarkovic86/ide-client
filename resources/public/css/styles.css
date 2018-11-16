@@ -103,11 +103,13 @@ a:hover {
  margin-right: 5px;
  background-color: red;
  padding: 3px 3px 3px 5px;
+ display: none;
 }
 
 .header div.dropDownMenuContainer:hover a,
 .header div.languageDropDownMenuContainer:hover a {
- z-index: 2;
+ z-index: 1;
+ display: block;
 }
 
 .footer {
@@ -259,6 +261,10 @@ a:hover {
  border-radius: 15px;
 }
 
+.tree .changed {
+ text-decoration-line: underline;
+}
+
 .ideFileDisplay {
  float: left;
  height: 100%;
@@ -285,7 +291,7 @@ a:hover {
 .highlights,
 .textarea {
  height: calc(100% - 88px);
- width: calc(100% - 320px);
+ width: calc(100% - 375px);
  font-size: 14px;
  font-family: monospace;
  position: absolute;
@@ -297,6 +303,7 @@ a:hover {
 .highlights {
  background-color: #001b33;
  color: white;
+ margin-left: 55px;
 }
 
 .textarea::-moz-selection {
@@ -307,6 +314,17 @@ a:hover {
 .textarea::selection {
   background: #0088ff;
   color: white;
+}
+
+.rowNumbers {
+ overflow: hidden;
+ white-space: pre;
+ word-wrap: break-word;
+ float: left;
+ font-size: 14px;
+ font-family: monospace;
+ width: 55px;
+ height: 100%;
 }
 
 /* clj, cljs and cljc file style */
@@ -532,6 +550,27 @@ jnumber {
  color: #ff0044;
 }
 
+/* git diff file style */
+
+gitoriginalstate {
+ background-color: #ba4e5b;
+}
+
+gitchangedstate {
+ background-color: #31b055;
+}
+
+/* current line style */
+
+currentline {
+ background-color: #003b70;
+}
+
+currentlinenumber {
+ background-color: #003b70;
+ font-weight: 600;
+}
+
 .tabBar {
  width: 100%;
  height: 40px;
@@ -588,10 +627,27 @@ ul.projectMenu li {
  padding: 3px;
  list-style: none;
  border-radius: 0 10px;
+ height: 19px;
 }
 
 ul.projectMenu li:hover {
  background-color: blue;
+}
+
+ul.projectMenu li ul {
+ display: none;
+}
+
+ul.projectMenu li:hover ul{
+ left: 90%;
+ margin-top: -20px;
+ position: absolute;
+ background-color: red;
+ padding: 8px;
+ display: block;
+ border-top-right-radius: 15px;
+ border-bottom-left-radius: 15px;
+ width: 200px;
 }
 
 #gitRemoteLink {

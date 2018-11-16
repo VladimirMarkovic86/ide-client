@@ -12,9 +12,19 @@
      ["<squote>$1</squote>"
       "(((\")(\"))|((\")([\\s\\S]*?)([^\\\\]\")))"])
 
+(def open-current-line-s
+     ["<currentline>"
+      "(currentlinetagopen)"])
+
+(def close-current-line-s
+     ["</currentline>"
+      "(currentlinetagclose)"])
+
 (def patterns
      [htmlh-s
       html-s
       string-s
+      open-current-line-s
+      close-current-line-s
       ])
 

@@ -166,6 +166,14 @@
      ["<jsselbracket>$2</jsselbracket>"
       "(sel)(\\(|\\)|\\[|\\]|\\{|\\})(bra)"])
 
+(def open-current-line-s
+     ["<currentline>"
+      "(currentlinetagopen)"])
+
+(def close-current-line-s
+     ["</currentline>"
+      "(currentlinetagclose)"])
+
 (def bracket-s
      ["<jsbracket>$1</jsbracket>"
       "(\\(|\\)|\\[|\\]|\\{|\\})"])
@@ -268,6 +276,8 @@
       keyword-s
       function-s
       selbracket-s
+      open-current-line-s
+      close-current-line-s
       bracket-s
       future-word-s
       constructor-s

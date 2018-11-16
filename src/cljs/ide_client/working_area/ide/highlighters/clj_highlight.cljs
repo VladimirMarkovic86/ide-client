@@ -768,11 +768,21 @@
      ["<selbracket>$2</selbracket>"
       "(sel)(\\(|\\)|\\[|\\]|\\{|\\})(bra)"])
 
+(def open-current-line-s
+     ["<currentline>"
+      "(currentlinetagopen)"])
+
+(def close-current-line-s
+     ["</currentline>"
+      "(currentlinetagclose)"])
+
 (def patterns
      [htmlh-s
       html-s
       string-s
       selbracket-s
+      open-current-line-s
+      close-current-line-s
       bracket-s
       comment-s
       boolean-s

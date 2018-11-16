@@ -101,11 +101,55 @@
         out (cstring/split
               out
               "\n")
+        xhr (sjax
+              {:url irurls/git-status-url
+               :entity {:dir-path absolute-path}})
+        response (get-response xhr)
+        data (:data response)
+        git-out (:out data)
+        git-out (cstring/split
+                  git-out
+                  "\n")
+        git-out (reduce
+                  (fn [acc
+                       element]
+                    (let [changed-doc-path (.substring
+                                             element
+                                             3
+                                             (count
+                                               element))]
+                      (conj
+                        acc
+                        changed-doc-path))
+                   )
+                  []
+                  git-out)
         sub-dirs (atom [])
         sub-files (atom [])]
     (doseq [line out]
       (let [doc-name (parse-doc-name
-                       line)]
+                       line)
+            is-changed ((fn [index]
+                          (when (< index
+                                   (count
+                                     git-out))
+                            (let [path-of-changed-file (get
+                                                         git-out
+                                                         index)
+                                  nth-level-docs (cstring/split
+                                                   path-of-changed-file
+                                                   #"/")
+                                  nth-level-doc (first
+                                                  nth-level-docs)]
+                              (if (= nth-level-doc
+                                     doc-name)
+                                true
+                                (recur
+                                  (inc
+                                    index))
+                               ))
+                           ))
+                          0)]
         (when (not
                 (or (= doc-name
                        ".")
@@ -122,11 +166,13 @@
             (swap!
               sub-dirs
               conj
-              doc-name)
+              [is-changed
+               doc-name])
             (swap!
               sub-files
               conj
-              doc-name))
+              [is-changed
+               doc-name]))
          ))
      )
     {:sub-dirs @sub-dirs
@@ -1050,6 +1096,362 @@
        ))
    ))
 
+(defn narrow-down-to-base-paths
+  ""
+  [highlighted-docs]
+  (reduce
+    (fn [acc
+         element]
+      (let [doc-path (or (.-filePath
+                           element)
+                         (.-dirPath
+                           element))
+            acc-vec (into
+                      []
+                      acc)
+            remove-from-acc (atom [])
+            add-to-acc (atom true)]
+        (if (empty?
+              acc)
+          (conj
+            acc
+            doc-path)
+          (do
+            (doseq [acc-el acc-vec]
+              (when-not (= acc-el
+                           doc-path)
+                (when (cstring/index-of
+                        acc-el
+                        doc-path)
+                  (swap!
+                    remove-from-acc
+                    conj
+                    acc-el)
+                  (swap!
+                    add-to-acc
+                    (fn [a-value
+                         new-value]
+                      (and
+                        a-value
+                        new-value))
+                    true))
+                (when (cstring/index-of
+                        doc-path
+                        acc-el)
+                  (swap!
+                    add-to-acc
+                    (fn [a-value
+                         new-value]
+                      (and
+                        a-value
+                        new-value))
+                    false))
+               ))
+            (let [acc (apply
+                        disj
+                        acc
+                        @remove-from-acc)
+                  acc (if @add-to-acc
+                        (conj
+                          acc
+                          doc-path)
+                        acc)]
+              acc))
+         ))
+     )
+    #{}
+    highlighted-docs))
+
+(defn open-files-in-editor
+  "Open files in IDE editor"
+  [files-contents]
+  (doseq [[file-path
+           file-name
+           file-content] files-contents]
+    (if (contains?
+          @opened-files
+          file-path)
+      (let [tab (md/query-selector
+                  (str
+                    "div[title=\""
+                    file-path
+                    "\"]"))
+            editor-obj (aget
+                         tab
+                         "editorDiv")]
+        (blur-file-editors-and-tabs)
+        (md/remove-class
+          editor-obj
+          "inactiveEditor")
+        (md/add-class
+          editor-obj
+          "activeEditor")
+        (md/add-class
+          tab
+          "activeTab"))
+      (let [editor-obj (waih/editor-fn
+                         file-path
+                         file-content
+                         save-file-changes-fn
+                         save-all-file-changes-fn
+                         true)
+            tab (waih/div-fn
+                  [(waih/div-fn
+                     file-name
+                     {:class "tabName"}
+                     {:onclick {:evt-fn focus-file-editor}}
+                     {:editorDiv editor-obj})
+                   (waih/div-fn
+                     "x"
+                     {:class "tabClose"}
+                     {:onclick {:evt-fn close-file-editor}}
+                     {:editorDiv editor-obj})]
+                  {:class "tab activeTab"
+                   :title file-path}
+                  nil
+                  {:editorDiv editor-obj})]
+        (blur-file-editors-and-tabs)
+        (md/append-element
+          ".ideFileDisplay"
+          editor-obj)
+        (md/append-element
+          ".tabBar"
+          tab)
+        (swap!
+          opened-files
+          conj
+          file-path))
+     ))
+  )
+
+(defn git-diffs-evt
+  "Display all selected files differences if they exists"
+  [evt-p
+   element
+   event]
+  (when-let [highlighted-docs (md/query-selector-all-on-element
+                                ".tree"
+                                ".highlightDoc")]
+    (let [absolute-paths (narrow-down-to-base-paths
+                           highlighted-docs)
+          xhr (sjax
+                {:url irurls/git-diff-url
+                 :entity {:absolute-paths absolute-paths}})
+          response (get-response xhr)
+          files-diffs (:files-diffs
+                        response)]
+      (open-files-in-editor
+        files-diffs))
+   ))
+
+(defn git-log-evt
+  "Display commits log of every selected project"
+  [evt-p
+   element
+   event]
+  (when-let [highlighted-docs (md/query-selector-all-on-element
+                                ".tree"
+                                ".highlightDoc")]
+    (md/start-please-wait)
+    (let [root-paths (atom #{})]
+      (doseq [highlighted-doc highlighted-docs]
+        (when-let [project-root-el (.closest
+                                     highlighted-doc
+                                     ".projectRoot")]
+          (when-let [root-dir-el (md/query-selector-on-element
+                                   project-root-el
+                                   ".rootDoc")]
+            (let [root-path (.-dirPath
+                              root-dir-el)]
+              (swap!
+                root-paths
+                conj
+                root-path))
+           ))
+       )
+      (let [xhr (sjax
+                  {:url irurls/git-log-url
+                   :entity {:absolute-paths @root-paths}})
+            response (get-response xhr)
+            files-logs (:files-logs
+                         response)]
+        (open-files-in-editor
+          files-logs))
+     ))
+  (md/end-please-wait))
+
+(defn git-unpushed-evt
+  "Display all unpushed commits"
+  [evt-p
+   element
+   event]
+  (when-let [highlighted-docs (md/query-selector-all-on-element
+                                ".tree"
+                                ".highlightDoc")]
+    (md/start-please-wait)
+    (let [root-paths (atom #{})]
+      (doseq [highlighted-doc highlighted-docs]
+        (when-let [project-root-el (.closest
+                                     highlighted-doc
+                                     ".projectRoot")]
+          (when-let [root-dir-el (md/query-selector-on-element
+                                   project-root-el
+                                   ".rootDoc")]
+            (let [root-path (.-dirPath
+                              root-dir-el)]
+              (swap!
+                root-paths
+                conj
+                root-path))
+           ))
+       )
+      (let [xhr (sjax
+                  {:url irurls/git-unpushed-url
+                   :entity {:absolute-paths @root-paths}})
+            response (get-response xhr)
+            files-logs (:files-unpushed
+                         response)]
+        (open-files-in-editor
+          files-logs))
+     ))
+  (md/end-please-wait))
+
+(defn git-file-change-state-evt
+  "Checked element will add/remove file that was added/modified/removed"
+  [{absolute-path :absolute-path
+    changed-file :changed-file
+    action :action}
+   element
+   event]
+  (.preventDefault
+    event)
+  (let [checked (aget
+                  element
+                  "checked")
+        action (if checked
+                 (if (= action
+                        "D")
+                   pem/git-rm
+                   pem/git-add)
+                 pem/git-reset)
+        xhr (sjax
+              {:url irurls/git-file-change-state-url
+               :entity {:action action
+                        :absolute-path absolute-path
+                        :changed-file changed-file}})])
+ )
+
+(defn git-commit-push-action-evt
+  "Execute commit and/or push on selected files"
+  [evt-p
+   element
+   event]
+  (when-let [highlighted-docs (md/query-selector-all-on-element
+                                ".tree"
+                                ".highlightDoc")]
+    (md/start-please-wait)
+    (let [root-paths (reduce
+                       (fn [acc
+                            element]
+                         (if-let [project-root-el (.closest
+                                                    element
+                                                    ".projectRoot")]
+                           (if-let [root-dir-el (md/query-selector-on-element
+                                                  project-root-el
+                                                  ".rootDoc")]
+                             (let [root-path (.-dirPath
+                                               root-dir-el)]
+                               (conj
+                                 acc
+                                 root-path))
+                             acc)
+                           acc))
+                       #{}
+                       highlighted-docs)
+          commit-message-el (md/query-selector-on-element
+                              "#popup-content"
+                              "#commitMessage")
+          commit-message (md/get-value
+                           commit-message-el)]
+      (when-not (empty?
+                  commit-message)
+        (let [xhr (sjax
+                    {:url irurls/git-commit-push-action-url
+                     :entity {:root-paths root-paths
+                              :commit-message commit-message
+                              :action evt-p}})
+              close-popup-btn (md/query-selector-on-element
+                                "#popup-window"
+                                "#close-btn")]
+          (md/dispatch-event
+            "click"
+            close-popup-btn))
+       ))
+   )
+  (md/end-please-wait))
+
+(defn git-commit-push-popup-evt
+  "Display all selected files differences if they exists"
+  [evt-p
+   element
+   event]
+  (when-let [highlighted-docs (md/query-selector-all-on-element
+                                ".tree"
+                                ".highlightDoc")]
+    (let [absolute-paths (narrow-down-to-base-paths
+                           highlighted-docs)
+          xhr (sjax
+                {:url irurls/git-commit-push-url
+                 :entity {:absolute-paths absolute-paths}})
+          response (get-response xhr)
+          changed-files (:changed-files
+                          response)]
+      (frm/popup-fn
+        {:content (waih/commit-push-popup
+                    changed-files
+                    git-file-change-state-evt
+                    git-commit-push-action-evt)
+         :heading (get-label 1061)}))
+   ))
+
+(defn versioning-project-evt
+  "Display versioning tree"
+  [evt-p
+   element
+   event]
+  (when-let [highlighted-docs (md/query-selector-all-on-element
+                                ".tree"
+                                ".highlightDoc")]
+    (let [entity-ids (atom #{})]
+      (doseq [highlighted-doc highlighted-docs]
+        (when-let [project-root-el (.closest
+                                     highlighted-doc
+                                     ".projectRoot")]
+          (when-let [root-dir-el (md/query-selector-on-element
+                                   project-root-el
+                                   ".rootDoc")]
+            (swap!
+              entity-ids
+              conj
+              (aget
+                root-dir-el
+                "ent-id"))
+           ))
+       )
+      (md/start-please-wait)
+      (let [xhr (sjax
+                  {:url irurls/versioning-project-url
+                   :entity {:entity-ids @entity-ids
+                            :entity-type proent/entity-type}})
+            response (get-response xhr)
+            result (:result response)]
+        (frm/popup-fn
+          {:content (waih/versioning-popup-content
+                      result)
+           :heading "Versioning"}))
+     ))
+  (md/end-please-wait))
+
 (defn remove-menu
   "Remove of custom context menu"
   [event
@@ -1226,7 +1628,22 @@
                  @allowed-actions
                  imfns/git-project)
            [(get-label 1014)
-            git-project-evt])
+            [[(get-label 1061)
+              git-commit-push-popup-evt]
+             [(get-label 1065)
+              git-unpushed-evt]
+             [(get-label 1064)
+              git-diffs-evt]
+             [(get-label 1067)
+              git-log-evt]
+             [(get-label 1014)
+              git-project-evt]
+             ]])
+         (when (contains?
+                 @allowed-actions
+                 imfns/versioning-project)
+           [(get-label 1059)
+            versioning-project-evt])
          (when (contains?
                  @allowed-actions
                  imfns/new-folder)
@@ -1317,7 +1734,7 @@
   "Initial function for displaying ide area"
   []
   (ajax
-    {:url rurls/get-entities-url
+    {:url irurls/projects-tree-url
      :success-fn display-ide-success
      :entity proent/ide-tree-query}))
 

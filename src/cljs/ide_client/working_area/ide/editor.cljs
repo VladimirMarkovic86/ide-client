@@ -6,7 +6,9 @@
             [ide-client.working-area.ide.highlighters.css-highlight :as csshl]
             [ide-client.working-area.ide.highlighters.js-highlight :as jshl]
             [ide-client.working-area.ide.highlighters.java-highlight :as jhl]
-            [ide-client.working-area.ide.highlighters.html-highlight :as htmlhl]))
+            [ide-client.working-area.ide.highlighters.html-highlight :as htmlhl]
+            [ide-client.working-area.ide.highlighters.diff-highlight :as diffhl]
+            [ide-client.working-area.ide.highlighters.commit-highlight :as commithl]))
 
 (def save-file-changes-fn-a (atom nil))
 
@@ -626,9 +628,106 @@
       "clj" cljhl/patterns
       "cljs" cljhl/patterns
       "cljc" cljhl/patterns
+      "html_diff" diffhl/patterns
+      "css_diff" diffhl/patterns
+      "js_diff" diffhl/patterns
+      "java_diff" diffhl/patterns
+      "clj_diff" diffhl/patterns
+      "cljs_diff" diffhl/patterns
+      "cljc_diff" diffhl/patterns
+      "commit_log" commithl/patterns
       "script" cljhl/patterns
       "db" cljhl/patterns
       cljhl/patterns))
+ )
+
+
+(defn split-with-newline
+  "Split text with newline without loosing empty rows"
+  [text]
+  (let [all-rows (atom [])
+        current-row (atom "")]
+    (doseq [c text]
+      (if (= c
+             \newline)
+        (do
+          (swap!
+            all-rows
+            conj
+            (swap!
+              current-row
+              str
+              \newline))
+          (reset!
+            current-row
+            ""))
+         (swap!
+           current-row
+           str
+           c))
+     )
+    (swap!
+      all-rows
+      conj
+      @current-row)
+    @all-rows))
+
+(defn highlight-current-line
+  "Highlight current line"
+  [text-a
+   caret-start]
+  (let [splited-text (split-with-newline
+                       @text-a)
+        count-chars (atom 0)
+        [start-index
+         end-index] ((fn [index]
+                       (when (< index
+                                (count
+                                  splited-text))
+                         (let [row-text (get
+                                          splited-text
+                                          index)
+                               row-length (count
+                                            row-text)]
+                           (swap!
+                             count-chars
+                             +
+                             row-length)
+                           (if (< caret-start
+                                  @count-chars)
+                             [(- @count-chars
+                                 row-length)
+                              @count-chars]
+                             (recur
+                               (inc
+                                 index))
+                            ))
+                        ))
+                      0)
+        end-index (dec
+                    end-index)
+        row-text-part1 (.substring
+                         @text-a
+                         0
+                         start-index)
+        row-text-part2 (.substring
+                         @text-a
+                         start-index
+                         end-index)
+        row-text-part3 (.substring
+                         @text-a
+                         end-index
+                         (count
+                           @text-a))
+        highlighted-text (str
+                           row-text-part1
+                           "currentlinetagopen"
+                           row-text-part2
+                           "currentlinetagclose"
+                           row-text-part3)]
+    (reset!
+      text-a
+      highlighted-text))
  )
 
 (defn apply-highlights
@@ -644,6 +743,9 @@
         patterns (fetch-patterns
                    file-path)]
     (highlight-brackets
+      text-a
+      caret-start)
+    (highlight-current-line
       text-a
       caret-start)
     (doseq [[tag
@@ -769,35 +871,40 @@
       text))
  )
 
-(defn split-with-newline
-  "Split text with newline without loosing empty rows"
-  [text]
-  (let [all-rows (atom [])
-        current-row (atom "")]
-    (doseq [c text]
-      (if (= c
-             \newline)
-        (do
+(defn render-row-numbers
+  "Render row numbers"
+  [highlighted-text]
+  (when-let [content highlighted-text]
+    (let [rows (split-with-newline
+                 content)
+          row-num (atom 1)
+          row-numbers (atom "")]
+      (doseq [row rows]
+        (if (cstring/index-of
+              row
+              "<currentline>")
           (swap!
-            all-rows
-            conj
-            (swap!
-              current-row
-              str
-              \newline))
-          (reset!
-            current-row
-            ""))
-         (swap!
-           current-row
-           str
-           c))
-     )
+            row-numbers
+            str
+            "<currentlinenumber>"
+            @row-num
+            "</currentlinenumber>"
+            "\n")
+          (swap!
+            row-numbers
+            str
+            @row-num
+            "\n"))
+        (swap!
+          row-num
+          inc))
     (swap!
-      all-rows
-      conj
-      @current-row)
-    @all-rows))
+      row-numbers
+      str
+      @row-num
+      "\n")
+     @row-numbers))
+ )
 
 (defn appearance-count-recur
   "Count appearances of match-string in text"
@@ -992,14 +1099,22 @@
      )
     (let [highlights (.-highlightsDiv
                        textarea)
+          numerations (.-numerationDiv
+                        textarea)
           highlighted-text (apply-highlights
-                             textarea)]
+                             textarea)
+          numerationDiv-content (render-row-numbers
+                                  highlighted-text)]
       (aset
         highlights
         "innerHTML"
         (str
           highlighted-text
           \newline))
+      (aset
+        numerations
+        "innerHTML"
+        numerationDiv-content)
       (file-changed-evt
         true))
    ))
@@ -1099,16 +1214,23 @@
      )
     (let [highlights (.-highlightsDiv
                        textarea)
+          numerations (.-numerationDiv
+                        textarea)
           highlighted-text (apply-highlights
-                             textarea)]
+                             textarea)
+          numerationDiv-content (render-row-numbers
+                                  highlighted-text)]
       (aset
         highlights
         "innerHTML"
         (str
           highlighted-text
           \newline))
-     ))
- )
+      (aset
+        numerations
+        "innerHTML"
+        numerationDiv-content))
+   ))
 
 (defn find-indent
   "Find indent in row"
@@ -1210,14 +1332,22 @@
          1))
     (let [highlights (.-highlightsDiv
                        textarea)
+          numerations (.-numerationDiv
+                        textarea)
           highlighted-text (apply-highlights
-                             textarea)]
+                             textarea)
+          numerationDiv-content (render-row-numbers
+                                  highlighted-text)]
       (aset
         highlights
         "innerHTML"
         (str
           highlighted-text
           \newline))
+      (aset
+        numerations
+        "innerHTML"
+        numerationDiv-content)
       (file-changed-evt
         true))
    ))
@@ -1913,8 +2043,12 @@
                    event)
         highlights (.-highlightsDiv
                      textarea)
+        numerations (.-numerationDiv
+                      textarea)
         highlighted-text (apply-highlights
                            textarea)
+        numerationDiv-content (render-row-numbers
+                                highlighted-text)
         key-name (.-key
                    event)]
     (when (contains?
@@ -1933,8 +2067,11 @@
         (str
           highlighted-text
           \newline))
-     ))
- )
+      (aset
+        numerations
+        "innerHTML"
+        numerationDiv-content))
+   ))
 
 (defn handle-click
   "Handle click on textarea so it effects onto highlights div too"
@@ -1945,14 +2082,22 @@
                    event)
         highlights (.-highlightsDiv
                      textarea)
+        numerations (.-numerationDiv
+                      textarea)
         highlighted-text (apply-highlights
-                           textarea)]
+                           textarea)
+        numerationDiv-content (render-row-numbers
+                                highlighted-text)]
     (aset
       highlights
       "innerHTML"
       (str
         highlighted-text
         \newline))
+    (aset
+      numerations
+      "innerHTML"
+      numerationDiv-content)
    ))
 
 (defn handle-input
@@ -1964,14 +2109,22 @@
                    event)
         highlights (.-highlightsDiv
                      textarea)
+        numerations (.-numerationDiv
+                      textarea)
         highlighted-text (apply-highlights
-                           textarea)]
+                           textarea)
+        numerationDiv-content (render-row-numbers
+                                highlighted-text)]
     (aset
       highlights
       "innerHTML"
       (str
         highlighted-text
         \newline))
+    (aset
+      numerations
+      "innerHTML"
+      numerationDiv-content)
     (file-changed-evt
       true))
  )
@@ -1989,7 +2142,9 @@
         scroll-left (.-scrollLeft
                       textarea)
         highlights (.-highlightsDiv
-                     textarea)]
+                     textarea)
+        numerations (.-numerationDiv
+                      textarea)]
     (aset
       highlights
       "scrollTop"
@@ -1997,7 +2152,11 @@
     (aset
       highlights
       "scrollLeft"
-      scroll-left))
+      scroll-left)
+    (aset
+      numerations
+      "scrollTop"
+      scroll-top))
  )
 
 (defn fill-in-highlights
@@ -2014,8 +2173,12 @@
     save-all-file-changes-fn)
   (let [file-path (.-filePath
                     textarea)
+        numerations (.-numerationDiv
+                      textarea)
         highlighted-text (apply-highlights
-                           textarea)]
+                           textarea)
+        numerationDiv-content (render-row-numbers
+                                highlighted-text)]
     (swap!
       saved-stack
       assoc
@@ -2027,5 +2190,9 @@
       (str
         highlighted-text
         \newline))
-   ))
+    (aset
+      numerations
+      "innerHTML"
+      numerationDiv-content))
+ )
 
