@@ -1722,13 +1722,21 @@
             (when (and (not is-caret-end-at-first-place)
                        is-caret-end-at-last-place)
               (when is-home
-                ;caret-start stays the same
-                (reset!
-                  caret-end-a
-                  (find-begin-of-the-row-index
-                    event
-                    caret-end)) 
-               )
+                ;caret-end stays the same
+                (when is-caret-start-at-first-place
+                  (reset!
+                    caret-start-a
+                    (find-first-sign-in-row-index
+                      event
+                      caret-start))
+                 )
+                (when-not is-caret-start-at-first-place
+                  (reset!
+                    caret-start-a
+                    (find-begin-of-the-row-index
+                      event
+                      caret-start))
+                 ))
               (when is-end
                 ;caret-start stays the same
                 (reset!
