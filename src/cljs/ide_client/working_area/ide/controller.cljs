@@ -1452,6 +1452,50 @@
      ))
   (md/end-please-wait))
 
+(defn find-text-in-files-action
+  ""
+  [evt-p
+   element
+   event]
+  (let [find-this-text-el (md/query-selector-on-element
+                            "#popup-content"
+                            "#findTextInput")
+        find-this-text (md/get-value
+                         find-this-text-el)]
+    (when-not (empty?
+                find-this-text)
+      (when-let [highlighted-docs (md/query-selector-all-on-element
+                                    ".tree"
+                                    ".highlightDoc")]
+        (let [absolute-paths (narrow-down-to-base-paths
+                               highlighted-docs)
+              xhr (sjax
+                    {:url irurls/find-text-in-files-url
+                     :entity {:absolute-paths absolute-paths
+                              :find-this-text find-this-text}})
+              response (get-response xhr)
+              result (:result
+                        response)
+              find-text-result-area-el (md/query-selector-on-element
+                                         "#popup-content"
+                                         "#foundText")]
+          (md/set-value
+            find-text-result-area-el
+            result))
+       ))
+   ))
+
+(defn find-text-in-files-evt
+  "Display find text popup form"
+  [evt-p
+   element
+   event]
+  (frm/popup-fn
+    {:content (waih/find-text-in-files-popup
+                find-text-in-files-action)
+     :heading (get-label 1068)})
+ )
+
 (defn remove-menu
   "Remove of custom context menu"
   [event
@@ -1644,6 +1688,11 @@
                  imfns/versioning-project)
            [(get-label 1059)
             versioning-project-evt])
+         (when (contains?
+                 @allowed-actions
+                 imfns/find-text-in-files)
+           [(get-label 1068)
+            find-text-in-files-evt])
          (when (contains?
                  @allowed-actions
                  imfns/new-folder)

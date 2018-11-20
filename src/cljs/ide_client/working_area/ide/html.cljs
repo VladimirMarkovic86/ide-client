@@ -389,3 +389,31 @@
        ))
    ))
 
+(defn find-text-in-files-popup
+  "Find text in files popup content"
+  [find-text-in-files-action]
+  (gen
+    (div
+      [(div
+         (input
+           ""
+           {:id "findTextInput"
+            :type "text"
+            :style {:width "500px"}}))
+       (div
+         (input
+           ""
+           {:type "button"
+            :value (get-label 1069)}
+           {:onclick {:evt-fn find-text-in-files-action}})
+        )
+       (div
+         (textarea
+           ""
+           {:id "foundText"
+            :readonly true
+            :style {:width "500px"
+                    :height "500px"}}))]
+     ))
+ )
+

@@ -641,42 +641,11 @@
       cljhl/patterns))
  )
 
-
-(defn split-with-newline
-  "Split text with newline without loosing empty rows"
-  [text]
-  (let [all-rows (atom [])
-        current-row (atom "")]
-    (doseq [c text]
-      (if (= c
-             \newline)
-        (do
-          (swap!
-            all-rows
-            conj
-            (swap!
-              current-row
-              str
-              \newline))
-          (reset!
-            current-row
-            ""))
-         (swap!
-           current-row
-           str
-           c))
-     )
-    (swap!
-      all-rows
-      conj
-      @current-row)
-    @all-rows))
-
 (defn highlight-current-line
   "Highlight current line"
   [text-a
    caret-start]
-  (let [splited-text (split-with-newline
+  (let [splited-text (utils/split-with-newline
                        @text-a)
         count-chars (atom 0)
         [start-index
@@ -875,7 +844,7 @@
   "Render row numbers"
   [highlighted-text]
   (when-let [content highlighted-text]
-    (let [rows (split-with-newline
+    (let [rows (utils/split-with-newline
                  content)
           row-num (atom 1)
           row-numbers (atom "")]
@@ -999,7 +968,7 @@
                        #"\n"
                        "\n ")
             part-two-row-count (count
-                                 (split-with-newline
+                                 (utils/split-with-newline
                                    part-two))
             caret-start (inc
                           caret-start)
@@ -1062,7 +1031,7 @@
                        #"\n "
                        "\n")
             part-two-row-count (count
-                                 (split-with-newline
+                                 (utils/split-with-newline
                                    part-two))
             caret-end (- caret-end
                          part-two-appearance-count)
