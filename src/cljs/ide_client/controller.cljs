@@ -1,5 +1,6 @@
 (ns ide-client.controller
   (:require [ajax-lib.core :refer [ajax base-url with-credentials]]
+            [websocket-lib.core :refer [base-ws-url]]
             [ide-client.html :as ht]
             [ide-middle.functionalities :as fns]
             [common-middle.request-urls :as rurls]
@@ -21,6 +22,17 @@
   (reset!
     with-credentials
     true)
+  (let [base-ws-uri (.-baseURI
+                      js/document)
+        base-ws-uri (if (< -1
+                           (.indexOf
+                             base-ws-uri
+                             "herokuapp"))
+                      "wss://ide-server-clj.herokuapp.com"
+                      "wss://ide:1604")]
+    (reset!
+      base-ws-url
+      base-ws-uri))
   #_(reset!
     base-url
     "/clojure")

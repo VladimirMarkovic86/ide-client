@@ -16,7 +16,9 @@
             [common-client.allowed-actions.controller :refer [allowed-actions]]
             [clojure.string :as cstring]
             [language-lib.core :refer [get-label]]
-            [ide-client.working-area.ide.editor :as editor]))
+            [ide-client.working-area.ide.editor :as editor]
+            [websocket-lib.core :refer [websocket]]
+            [cljs.reader :as reader]))
 
 (def display-as-text
      #{"txt"
@@ -1341,15 +1343,12 @@
                         :changed-file changed-file}})])
  )
 
-(defn git-commit-push-action-evt
-  "Execute commit and/or push on selected files"
-  [evt-p
-   element
-   event]
+(defn git-commit-push-action-ws-onopen-fn
+  "Onopen websocket event gather data from page and pass it through websocket to server"
+  [event]
   (when-let [highlighted-docs (md/query-selector-all-on-element
                                 ".tree"
                                 ".highlightDoc")]
-    (md/start-please-wait)
     (let [root-paths (reduce
                        (fn [acc
                             element]
@@ -1372,23 +1371,85 @@
                               "#popup-content"
                               "#commitMessage")
           commit-message (md/get-value
-                           commit-message-el)]
+                           commit-message-el)
+          action (aget
+                   js/document
+                   "git-action")]
+      (aset
+        js/document
+        "git-action"
+        "")
       (when-not (empty?
                   commit-message)
-        (let [xhr (sjax
-                    {:url irurls/git-commit-push-action-url
-                     :entity {:root-paths root-paths
-                              :commit-message commit-message
-                              :action evt-p}})
-              close-popup-btn (md/query-selector-on-element
-                                "#popup-window"
-                                "#close-btn")]
-          (md/dispatch-event
-            "click"
-            close-popup-btn))
-       ))
-   )
-  (md/end-please-wait))
+        (let [websocket-obj (.-target
+                              event)]
+          (.send
+            websocket-obj
+            (str
+              {:root-paths root-paths
+               :commit-message commit-message
+               :action action}))
+         ))
+     ))
+ )
+
+(defn git-commit-push-action-ws-onmessage-fn
+  "Onmessage websocket event receive message
+     when action is \"update-progress\"
+       update progress bar"
+  [event]
+  (let [response (reader/read-string
+                   (.-data
+                     event))
+        action (:action response)]
+    (when (= action
+             "update-progress")
+      (let [progress-value (:progress-value response)]
+        (md/update-progress-bar
+          progress-value))
+     ))
+ )
+
+(defn websocket-default-close
+  "Default close of websocket"
+  [event]
+  (md/end-progress-bar)
+  (let [response (reader/read-string
+                   (.-reason
+                     event))
+        action (:action response)
+        close-popup-btn (md/query-selector-on-element
+                          "#popup-window"
+                          "#close-btn")]
+    (md/dispatch-event
+      "click"
+      close-popup-btn)
+    (when (= action
+             "rejected")
+      (let [status (:status response)
+            message (:message response)]
+        (frm/popup-fn
+          {:heading status
+           :content message}))
+     ))
+ )
+
+(defn git-commit-push-action-fn
+  "Establish websocket connection with server by process-images-ws-url
+   and register onopen and onmessage functions"
+  [evt-p
+   element
+   event]
+  (aset
+    js/document
+    "git-action"
+    evt-p)
+  (md/start-progress-bar)
+  (websocket
+    irurls/git-commit-push-action-url
+    {:onopen-fn git-commit-push-action-ws-onopen-fn
+     :onmessage-fn git-commit-push-action-ws-onmessage-fn
+     :onclose-fn websocket-default-close}))
 
 (defn git-commit-push-popup-evt
   "Display all selected files differences if they exists"
@@ -1410,9 +1471,10 @@
         {:content (waih/commit-push-popup
                     changed-files
                     git-file-change-state-evt
-                    git-commit-push-action-evt)
-         :heading (get-label 1061)}))
-   ))
+                    git-commit-push-action-fn)
+         :heading (get-label 1061)})
+     ))
+ )
 
 (defn versioning-project-evt
   "Display versioning tree"

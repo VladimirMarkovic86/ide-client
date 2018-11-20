@@ -16,6 +16,7 @@
                  [org.clojars.vladimirmarkovic86/language-lib "0.2.2"]
                  [org.clojars.vladimirmarkovic86/common-client "0.3.3"]
                  [org.clojars.vladimirmarkovic86/server-lib "0.3.9"]
+                 [org.clojars.vladimirmarkovic86/websocket-lib "0.1.0"]
                  ]
 
   :min-lein-version "2.0.0"
