@@ -719,3 +719,29 @@ div.pagination div:nth-child(7) {
   content: '*';
 }
 
+.upgradeVersionProject {
+ width: 350px;
+ white-space: nowrap;
+ text-align: left;
+ text-overflow: ellipsis;
+ overflow: hidden;
+ float: left;
+ padding: 5px;
+}
+
+.upgradeVersionProjectVersion {
+ width: 50px;
+ white-space: nowrap;
+ text-align: left;
+ text-overflow: ellipsis;
+ overflow: hidden;
+ float: left;
+ padding: 5px;
+}
+
+.upgradeVersionProjectInput {
+ width: 50px;
+ float: left;
+ padding: 5px;
+}
+

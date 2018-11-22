@@ -4,7 +4,9 @@
             [ide-client.working-area.ide.editor :as editor]
             [ide-middle.project.entity :as pem]
             [language-lib.core :refer [get-label]]
-            [clojure.string :as cstring]))
+            [clojure.string :as cstring]
+            [ide-middle.functionalities :as imfns]
+            [common-client.allowed-actions.controller :refer [allowed-actions]]))
 
 (defn div-fn
   "Genrate div HTML element"
@@ -290,6 +292,68 @@
                  :white-space "pre"
                  :overflow "auto"}}))
    ))
+
+(defn upgrade-version-popup-content
+  "Upgrade version HTML popup"
+  [projects-set
+   save-changes-upgrade-version-evt
+   build-changed-upgrade-version-evt]
+  (let [projects-rows (atom [])]
+    (doseq [{project :project
+             version :version} projects-set]
+      (let [project-row (div
+                          [(div
+                             project
+                             {:title project
+                              :class "upgradeVersionProject"})
+                           (div
+                             version
+                             {:title version
+                              :class "upgradeVersionProjectVersion"})
+                           (div
+                             (input
+                               ""
+                               {:value version
+                                :type "text"
+                                :style {:width "inherit"}})
+                             {:class "upgradeVersionProjectInput"})]
+                          {:class "upgradeVersion"})]
+        (swap!
+          projects-rows
+          conj
+          project-row))
+     )
+    (gen
+      (div
+        [(div
+           @projects-rows
+           {:style {:width "500px"
+                    :height "300px"
+                    :overflow "auto"}})
+         (div
+           [(when (contains?
+                    @allowed-actions
+                    imfns/upgrade-versions-save)
+              (div
+                (input
+                  ""
+                  {:type "button"
+                   :value (get-label 1)})
+                {:style {:float "left"}}
+                {:onclick {:evt-fn save-changes-upgrade-version-evt}}))
+            (when (contains?
+                    @allowed-actions
+                    imfns/upgrade-versions-build)
+              (div
+                (input
+                  ""
+                  {:type "button"
+                   :value (get-label 1018)})
+                {:style {:float "left"}}
+                {:onclick {:evt-fn build-changed-upgrade-version-evt}}))
+            ])])
+     ))
+ )
 
 (defn commit-push-popup
   "Commit push popup"

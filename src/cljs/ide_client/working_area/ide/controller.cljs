@@ -1506,16 +1506,166 @@
                    :entity {:entity-ids @entity-ids
                             :entity-type proent/entity-type}})
             response (get-response xhr)
-            result (:result response)]
+            result (:result response)
+            result-str (atom "")]
+        (doseq [{project :project
+                 version :version
+                 dependencies :dependencies} result]
+          (swap!
+            result-str
+            str
+            "\n" project " " version "\n"
+            "dependencies:\n")
+          (doseq [{project :project
+                   version :version
+                   actual-version :actual-version} dependencies]
+            (swap!
+              result-str
+              str
+              project " " actual-version " -> " version "\n"))
+         )
         (frm/popup-fn
           {:content (waih/versioning-popup-content
-                      result)
+                      @result-str)
+           :heading "Versioning"}))
+     ))
+  (md/end-please-wait))
+
+(defn save-changes-upgrade-version-evt
+  ""
+  [evt-p
+   element
+   event]
+  (let [project-names-vector (md/query-selector-all-on-element
+                               "#popup-content"
+                               ".upgradeVersion")
+        projects-maps (reduce
+                        (fn [acc
+                             element]
+                          (let [project-el (md/query-selector-on-element
+                                             element
+                                             ".upgradeVersionProject")
+                                title (.-title
+                                        project-el)
+                                [group-id
+                                 artifact-id] (cstring/split
+                                  title
+                                  #"/"
+                                  2)
+                                new-version-el (md/query-selector-on-element
+                                                 element
+                                                 ".upgradeVersionProjectInput input")
+                                new-version (md/get-value
+                                              new-version-el)]
+                            (conj
+                              acc
+                              {:group-id group-id
+                               :artifact-id artifact-id
+                               :new-version new-version}))
+                         )
+                        []
+                        project-names-vector)
+        xhr (sjax
+              {:url irurls/upgrade-versions-save-url
+               :entity {:projects projects-maps}})
+        response (get-response xhr)
+        close-popup-btn (md/query-selector-on-element
+                          "#popup-window"
+                          "#close-btn")]
+    (md/dispatch-event
+      "click"
+      close-popup-btn))
+ )
+
+(defn build-changed-upgrade-version-evt
+  ""
+  [evt-p
+   element
+   event]
+  (md/start-please-wait)
+  (let [project-names-vector (md/query-selector-all-on-element
+                               "#popup-content"
+                               ".upgradeVersion")
+        projects-maps (reduce
+                        (fn [acc
+                             element]
+                          (let [project-el (md/query-selector-on-element
+                                             element
+                                             ".upgradeVersionProject")
+                                title (.-title
+                                        project-el)
+                                [group-id
+                                 artifact-id] (cstring/split
+                                  title
+                                  #"/"
+                                  2)
+                                new-version-el (md/query-selector-on-element
+                                                 element
+                                                 ".upgradeVersionProjectInput input")
+                                new-version (md/get-value
+                                              new-version-el)]
+                            (conj
+                              acc
+                              {:group-id group-id
+                               :artifact-id artifact-id
+                               :new-version new-version}))
+                         )
+                        []
+                        project-names-vector)
+        xhr (sjax
+              {:url irurls/upgrade-versions-build-url
+               :entity {:projects projects-maps}})
+        response (get-response xhr)
+        close-popup-btn (md/query-selector-on-element
+                          "#popup-window"
+                          "#close-btn")]
+    (md/dispatch-event
+      "click"
+      close-popup-btn))
+  (md/end-please-wait))
+
+(defn upgrade-versions-evt
+  "Display upgrade versions popup"
+  [evt-p
+   element
+   event]
+  (when-let [highlighted-docs (md/query-selector-all-on-element
+                                ".tree"
+                                ".highlightDoc")]
+    (let [entity-ids (atom #{})]
+      (doseq [highlighted-doc highlighted-docs]
+        (when-let [project-root-el (.closest
+                                     highlighted-doc
+                                     ".projectRoot")]
+          (when-let [root-dir-el (md/query-selector-on-element
+                                   project-root-el
+                                   ".rootDoc")]
+            (swap!
+              entity-ids
+              conj
+              (aget
+                root-dir-el
+                "ent-id"))
+           ))
+       )
+      (md/start-please-wait)
+      (let [xhr (sjax
+                  {:url irurls/upgrade-versions-url
+                   :entity {:entity-ids @entity-ids
+                            :entity-type proent/entity-type}})
+            response (get-response xhr)
+            result (:result response)]
+        (frm/popup-fn
+          {:content (waih/upgrade-version-popup-content
+                      result
+                      save-changes-upgrade-version-evt
+                      build-changed-upgrade-version-evt)
            :heading "Versioning"}))
      ))
   (md/end-please-wait))
 
 (defn find-text-in-files-action
-  ""
+  "Find text in selected files and dirs"
   [evt-p
    element
    event]
@@ -1750,6 +1900,11 @@
                  imfns/versioning-project)
            [(get-label 1059)
             versioning-project-evt])
+         (when (contains?
+                 @allowed-actions
+                 imfns/versioning-project)
+           [(get-label 1070)
+            upgrade-versions-evt])
          (when (contains?
                  @allowed-actions
                  imfns/find-text-in-files)
