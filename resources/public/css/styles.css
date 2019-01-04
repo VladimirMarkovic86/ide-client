@@ -586,6 +586,7 @@ currentlinenumber {
  border: 1px solid #001b33;
  overflow: hidden;
  color: white;
+ float: left;
 }
 
 .tabName {
