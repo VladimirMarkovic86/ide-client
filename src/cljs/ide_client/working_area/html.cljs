@@ -1,9 +1,13 @@
 (ns ide-client.working-area.html
-  (:require [htmlcss-lib.core :refer [gen div a input label
-                                      textarea img video source]]
+  (:require [htmlcss-lib.core :refer [gen a input textarea img video source]]
             [common-client.allowed-actions.controller :refer [allowed-actions]]
             [language-lib.core :refer [get-label]]
-            [ide-middle.functionalities :as imfns]))
+            [ide-middle.functionalities :as imfns]
+            [ide-client.working-area.shell.html :as icwash]
+            [ide-client.working-area.file-system.html :as icwafsh]
+            [ide-client.working-area.leiningen.html :as icwalh]
+            [ide-client.working-area.git.html :as icwagh]
+            [ide-client.working-area.ide.html :as icwaih]))
 
 (defn textarea-fn
   "Generate textarea HTML element"
@@ -73,115 +77,59 @@
  )
 
 (defn nav
-  "Generate ul HTML element
-   that represents navigation menu"
-  [shell-evts
-   file-system-evts
-   leiningen-evts
-   git-evts
-   ide-evts]
-  (gen
-    [(when (contains?
-             @allowed-actions
-             imfns/execute-shell-command)
-       (div
-         (a
-           (get-label 1011)
-           {:id "aShellId"}
-           shell-evts))
-      )
-     (when (contains?
-             @allowed-actions
-             imfns/list-documents)
-       (div
-         (a
-           (get-label 1012)
-           {:id "aFileSystemId"}
-           file-system-evts))
-      )
-     (when (and (contains?
-                  @allowed-actions
-                  imfns/project-read)
-                (or (contains?
-                      @allowed-actions
-                      imfns/build-project)
-                    (contains?
-                      @allowed-actions
-                      imfns/build-project-dependencies)
-                    (contains?
-                      @allowed-actions
-                      imfns/clean-project)
-                    (contains?
-                      @allowed-actions
-                      imfns/run-project))
-            )
-       (div
-         (a
-           (get-label 1013)
-           {:id "aLeiningenId"}
-           leiningen-evts))
-      )
-     (when (and (contains?
-                  @allowed-actions
-                  imfns/project-read)
-                (or (contains?
-                      @allowed-actions
-                      imfns/git-project)
-                    (contains?
-                      @allowed-actions
-                      imfns/git-status))
-            )
-       (div
-         (a
-           (get-label 1014)
-           {:id "aGitId"}
-           git-evts))
-      )
-     (when (and (contains?
-                  @allowed-actions
-                  imfns/project-read)
-                (or (contains?
-                      @allowed-actions
-                      imfns/new-folder)
-                    (contains?
-                      @allowed-actions
-                      imfns/new-file)
-                    (contains?
-                      @allowed-actions
-                      imfns/move-document)
-                    (contains?
-                      @allowed-actions
-                      imfns/copy-document)
-                    (contains?
-                      @allowed-actions
-                      imfns/delete-document)
-                    (contains?
-                      @allowed-actions
-                      imfns/build-project)
-                    (contains?
-                      @allowed-actions
-                      imfns/build-project-dependencies)
-                    (contains?
-                      @allowed-actions
-                      imfns/clean-project)
-                    (contains?
-                      @allowed-actions
-                      imfns/run-project)
-                    (contains?
-                      @allowed-actions
-                      imfns/git-project)
-                    (contains?
-                      @allowed-actions
-                      imfns/git-status)
-                    (contains?
-                      @allowed-actions
-                      imfns/save-file-changes))
-                )
-       (div
-         (a
-           (get-label 1015)
-           {:id "aIDEId"}
-           ide-evts))
-      )])
+  "Returns map of menu item and it's sub items"
+  []
+  (when (or (contains?
+              @allowed-actions
+              imfns/read-file)
+            (contains?
+              @allowed-actions
+              imfns/execute-shell-command)
+            (contains?
+              @allowed-actions
+              imfns/list-documents)
+            (contains?
+              @allowed-actions
+              imfns/new-folder)
+            (contains?
+              @allowed-actions
+              imfns/new-file)
+            (contains?
+              @allowed-actions
+              imfns/move-document)
+            (contains?
+              @allowed-actions
+              imfns/copy-document)
+            (contains?
+              @allowed-actions
+              imfns/delete-document)
+            (contains?
+              @allowed-actions
+              imfns/build-project)
+            (contains?
+              @allowed-actions
+              imfns/build-project-dependencies)
+            (contains?
+              @allowed-actions
+              imfns/clean-project)
+            (contains?
+              @allowed-actions
+              imfns/run-project)
+            (contains?
+              @allowed-actions
+              imfns/git-project)
+            (contains?
+              @allowed-actions
+              imfns/git-status)
+            (contains?
+              @allowed-actions
+              imfns/save-file-changes))
+    {:label (get-label 1002)
+     :id "working-area-nav-id"
+     :sub-menu [(icwash/nav)
+                (icwafsh/nav)
+                (icwalh/nav)
+                ;(icwagh/nav)
+                (icwaih/nav)]})
  )
 

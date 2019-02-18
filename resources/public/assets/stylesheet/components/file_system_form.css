@@ -1,0 +1,46 @@
+.file-system-area {
+ max-width: 767px;
+ width: calc(100% - 20px);
+ height: 100%;
+}
+.file-system-area .display-content div {
+ background-color: #f3f3f3;
+ padding: 3px 10px;
+ border-radius: 15px;
+ margin-bottom: 10px;
+}
+.file-system-area #absolute-path {
+ 
+}
+.file-system-area #files-display {
+ height: 400px;
+ overflow: auto;
+ display: grid;
+ align-content: baseline;
+}
+.file-system-area #files-display a:hover {
+ color: #0088cc;
+ cursor: pointer;
+}
+.file-system-area #display-file {
+ height: 300px;
+ padding: 0;
+}
+.file-system-area #display-file textarea {
+ background-color: #a5a5a522;
+ padding: 10px;
+ border: 2px solid #a5a5a599;
+ border-radius: 15px;
+ overflow: auto;
+ resize: none;
+ height: calc(100% - 24px);
+ width: calc(100% - 24px);
+}
+/* Computer screen */
+@media only screen
+and (min-width: 768px) {
+}
+/* Grand Neo */
+@media only screen
+and (max-width: 767px) {
+}

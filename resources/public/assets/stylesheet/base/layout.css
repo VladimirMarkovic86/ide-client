@@ -1,0 +1,43 @@
+html,
+body,
+body > div:first-child {
+ height: 100%;
+ width: 100%;
+}
+/* Computer screen */
+@media only screen
+and (min-width: 768px) {
+ header {
+  height: 50px;
+  width: 100%;
+  top: 0;
+  position: absolute;
+ }
+ aside {
+  height: calc(100% - 90px);
+  width: 170px;
+  top: 50px;
+  position: absolute;
+  overflow: hidden;
+ }
+ section {
+  height: calc(100% - 110px);
+  width: calc(100% - 190px);
+  position: absolute;
+  top: 50px;
+  left: 170px;
+ }
+ footer {
+  height: 40px;
+  width: 100%;
+  bottom: 0;
+  position: absolute;
+ }
+}
+/* Grand Neo */
+@media only screen
+and (max-width: 767px) {
+ header {
+  height: 50px;
+ }
+}

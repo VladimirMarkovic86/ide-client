@@ -1,0 +1,441 @@
+.tree {
+ -moz-user-select: none;
+ user-select: none;
+ color: white;
+ background-color: #001b33;
+ cursor: default;
+ width: 300px;
+ height: 100%;
+ float: left;
+ overflow: auto;
+}
+.tree div {
+ min-height: 25px;
+}
+.tree .sign {
+ float: left;
+ width: 20px;
+}
+.tree .pointer {
+ cursor: pointer;
+}
+.tree .docName {
+ float: left;
+ max-width: 180px;
+}
+.tree .line {
+ width: 200px;
+}
+.tree .subarea {
+ margin-left: 20px;
+ min-height: 0px;
+}
+.tree .subareaEmpty {
+ min-height: 0px;
+}
+.tree .highlightDoc {
+ background-color: #0088ff;
+ color: white;
+ border-radius: 15px;
+}
+.tree .changed {
+ text-decoration-line: underline;
+}
+.ideFileDisplay {
+ float: left;
+ height: 100%;
+ width: calc(100% - 300px);
+ background-color: #001b33;
+ color: white;
+}
+.ideFileDisplay .openedFile {
+ width: 100%;
+ height: calc(100% - 67px);
+}
+.ideFileDisplay textarea.textarea {
+ z-index: 1;
+ background: transparent;
+ color: transparent;
+ caret-color: white;
+ border: none;
+ resize: none;
+ box-sizing: border-box;
+}
+.ideFileDisplay .highlights,
+.ideFileDisplay textarea.textarea {
+ height: calc(100% - 88px);
+ width: calc(100% - 375px);
+ font: 300 16px/22px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+ font-size: 14px;
+ font-family: monospace;
+ position: absolute;
+ overflow: auto;
+ white-space: pre;
+ word-wrap: break-word;
+}
+.ideFileDisplay .highlights {
+ background-color: #001b33;
+ color: white;
+ margin-left: 55px;
+}
+.ideFileDisplay textarea.textarea::-moz-selection {
+  background: #0088ff;
+  color: white;
+}
+.ideFileDisplay textarea.textarea::selection {
+  background: #0088ff;
+  color: white;
+}
+.ideFileDisplay .rowNumbers {
+ overflow: hidden;
+ white-space: pre;
+ word-wrap: break-word;
+ float: left;
+ font: 300 16px/22px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+ font-size: 14px;
+ font-family: monospace;
+ width: 55px;
+ height: 100%;
+}
+
+/* clj, cljs and cljc file style */
+
+.ideFileDisplay bracket {
+ color: #7af4b4;
+}
+.ideFileDisplay selbracket {
+ background-color: #4f94cd;
+}
+.ideFileDisplay keyword {
+ color: #ff9d00;
+}
+.ideFileDisplay function {
+ color: #cccccc;
+}
+.ideFileDisplay boolean,
+.ideFileDisplay number {
+ color: red;
+}
+.ideFileDisplay htag {
+ color: #80ffbb;
+}
+.ideFileDisplay htagname {
+ color: #cccccc;
+}
+.ideFileDisplay comment,
+.ideFileDisplay comment bracket,
+.ideFileDisplay comment keyword,
+.ideFileDisplay comment function,
+.ideFileDisplay comment boolean,
+.ideFileDisplay comment squote,
+.ideFileDisplay comment number {
+ color: #0088ff;
+}
+.ideFileDisplay squote,
+.ideFileDisplay squote keyword,
+.ideFileDisplay squote function,
+.ideFileDisplay squote comment,
+.ideFileDisplay squote bracket,
+.ideFileDisplay squote boolean,
+.ideFileDisplay squote number {
+ color: #3ad900;
+}
+
+/* css file style */
+
+.ideFileDisplay cssfunction,
+.ideFileDisplay cssfunction selectortagname {
+ color: #cccccc;
+}
+.ideFileDisplay selectorclass,
+.ideFileDisplay selectorclass selectortagname,
+.ideFileDisplay selectorclass selectortagname knownvalue,
+.ideFileDisplay selectorclass knownvalue,
+.ideFileDisplay selectorclass knownvalue selectortagname {
+ color: #cccccc;
+}
+.ideFileDisplay selectortagname,
+.ideFileDisplay selectortagname knownvalue {
+ color: #80ffbb;
+}
+.ideFileDisplay cssbracket {
+ color: white;
+}
+.ideFileDisplay cssselbracket {
+ background-color: #4f94cd;
+}
+.ideFileDisplay colorhex,
+.ideFileDisplay colorhex selectorid,
+.ideFileDisplay colorhex selectorid selectortagname,
+.ideFileDisplay color {
+ color: #ff0044;
+}
+.ideFileDisplay dimension,
+.ideFileDisplay decimal {
+ color: #ff0044;
+}
+.ideFileDisplay knownvalue,
+.ideFileDisplay knownvalue selectortagname {
+ color: #ffee80;
+}
+.ideFileDisplay selectorid,
+.ideFileDisplay selectorid selectortagname,
+.ideFileDisplay selectorid selectortagname knownvalue,
+.ideFileDisplay csskeyword,
+.ideFileDisplay csskeyword knownvalue,
+.ideFileDisplay csskeyword selectortagname,
+.ideFileDisplay csskeyword selectortagname knownvalue
+.ideFileDisplay csskeyword selectortagname knownvalue selectortagname,
+.ideFileDisplay csskeyword color,
+.ideFileDisplay important,
+.ideFileDisplay important selectortagname {
+ color: #ff9d00;
+}
+.ideFileDisplay csscomment,
+.ideFileDisplay csscomment selectorid,
+.ideFileDisplay csscomment selectorclass,
+.ideFileDisplay csscomment selectortagname,
+.ideFileDisplay csscomment knownvalue,
+.ideFileDisplay csscomment color,
+.ideFileDisplay csscomment important,
+.ideFileDisplay csscomment csskeyword,
+.ideFileDisplay csscomment colorhex {
+ color: #0088ff;
+}
+
+/* javascript file style */
+
+.ideFileDisplay jskeyword,
+.ideFileDisplay jsfunction,
+.ideFileDisplay jsfunction jsconstructor {
+ color: #ff9d00;
+ font-weight: 600;
+}
+.ideFileDisplay jsboolean {
+ color: #ff0044;
+}
+.ideFileDisplay jstype {
+ color: #80ffbb;
+}
+.ideFileDisplay jssquote,
+.ideFileDisplay jssquote jskeyword,
+.ideFileDisplay jssquote htag,
+.ideFileDisplay jssquote htagname,
+.ideFileDisplay jssquote jsundefined,
+.ideFileDisplay jsapostrophe,
+.ideFileDisplay jsapostrophe jskeyword,
+.ideFileDisplay jsapostrophe htag,
+.ideFileDisplay jsapostrophe htagname,
+.ideFileDisplay jsapostrophe jsundefined {
+ color: #3ad900;
+}
+.ideFileDisplay jsundefined {
+ color: #ff0044;
+ font-weight: 600;
+}
+.ideFileDisplay jsselbracket {
+ background-color: #4f94cd;
+}
+.ideFileDisplay jsbracket {
+ color: white;
+}
+.ideFileDisplay jsproperties {
+ color: #ff9d00;
+}
+.ideFileDisplay jsconstructor {
+ color: #80ffbb;
+}
+.ideFileDisplay jsfuturewords {
+ background-color: #990000;
+ font-weight: 600;
+}
+
+/* java file style */
+
+.ideFileDisplay jexternal {
+ color: #cccccc;
+}
+.ideFileDisplay jdeclaration {
+ color: #80ffbb;
+}
+.ideFileDisplay jtype,
+.ideFileDisplay jtype jkeyword {
+ color: #80ffbb;
+}
+
+jstorageclass {
+ color: #80ffbb;
+}
+.ideFileDisplay jscopedeclaration {
+ color: #80ffbb;
+}
+.ideFileDisplay jkeyword {
+ color: #ff9d00;
+}
+.ideFileDisplay jreserved {
+ background-color: #990000;
+ font-weight: 600;
+}
+.ideFileDisplay jnullvalue {
+ color: #ff0044;
+ font-weight: 600;
+}
+.ideFileDisplay jboolean {
+ color: #ff0044;
+}
+.ideFileDisplay jnumber {
+ color: #ff0044;
+}
+
+/* git diff file style */
+
+.ideFileDisplay gitoriginalstate {
+ background-color: #ba4e5b;
+}
+.ideFileDisplay gitchangedstate {
+ background-color: #31b055;
+}
+
+/* current line style */
+
+.ideFileDisplay currentline {
+ background-color: #003b70;
+}
+.ideFileDisplay currentlinenumber {
+ background-color: #003b70;
+ font-weight: 600;
+}
+.ideFileDisplay .tabBar {
+ width: 100%;
+ height: 40px;
+ overflow-x: scroll;
+ cursor: default;
+ background-color: #001b33;
+ display: -webkit-box;
+}
+.ideFileDisplay .tab {
+ max-width: 100px;
+ height: 28px;
+ border: 1px solid #001b33;
+ overflow: hidden;
+ color: white;
+ float: left;
+}
+.ideFileDisplay .tabName {
+ float: left;
+ width: calc(80% - 20px);
+ overflow: hidden;
+ padding: 5px;
+}
+.ideFileDisplay .tabClose {
+ float: right;
+ text-align: center;
+ background-color: red;
+ width: 20px;
+ height: 27px;
+}
+.ideFileDisplay .activeTab {
+ background-color: #0088ff;
+ color: white;
+ border: 1px solid white;
+}
+.ideFileDisplay .inactiveEditor {
+ display: none;
+}
+ul.projectMenu  {
+ position: absolute;
+ background-color: #0088cc;
+ color: white;
+ padding: 8px;
+ cursor: default;
+ border-radius: 0 10px;
+ z-index: 1;
+ margin-top: 0;
+}
+ul.projectMenu li {
+ padding: 3px;
+ list-style: none;
+ border-radius: 0 10px;
+ height: 19px;
+}
+ul.projectMenu li:hover {
+ background-color: white;
+ color: #0088cc;
+}
+ul.projectMenu li ul {
+ display: none;
+}
+ul.projectMenu li:hover ul{
+ left: 90%;
+ margin-top: -20px;
+ position: absolute;
+ background-color: #0088cc;
+ color: white;
+ padding: 8px;
+ display: block;
+ border-top-right-radius: 15px;
+ border-bottom-left-radius: 15px;
+ width: 200px;
+}
+#gitRemoteLink {
+ display: flex;
+ justify-content: center;
+}
+#gitRemoteLink input[type="text"] {
+ width: 100%;
+}
+textarea#unpushedCommits,
+textarea#commitMessage {
+ width: 400px;
+ height: 100px;
+ resize: none;
+}
+#addRemoveFiles {
+ width: 400px;
+ height: 200px;
+ overflow: auto;
+}
+#addRemoveFiles > div {
+ height: 30px;
+}
+#popup-content > div {
+ margin-bottom: 10px;
+}
+.ideFileDisplay .tabName.starChanged::before {
+  content: '*';
+}
+.upgradeVersionProject,
+.upgradeVersionProjectVersion {
+ line-height: 34px;
+}
+.upgradeVersionProject {
+ width: 340px;
+ white-space: nowrap;
+ text-align: left;
+ text-overflow: ellipsis;
+ overflow: hidden;
+ float: left;
+ padding: 5px;
+}
+.upgradeVersionProjectVersion {
+ width: 50px;
+ white-space: nowrap;
+ text-align: left;
+ text-overflow: ellipsis;
+ overflow: hidden;
+ float: left;
+ padding: 5px;
+}
+.upgradeVersionProjectInput {
+ width: 50px;
+ float: left;
+ padding: 5px;
+}
+/* Computer screen */
+@media only screen
+and (min-width: 768px) {
+}
+/* Grand Neo */
+@media only screen
+and (max-width: 767px) {
+}

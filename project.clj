@@ -11,7 +11,7 @@
                  [org.clojars.vladimirmarkovic86/framework-lib "0.2.17"]
                  [org.clojars.vladimirmarkovic86/utils-lib "0.4.3"]
                  [org.clojars.vladimirmarkovic86/client-test-lib "0.2.5"]
-                 [org.clojars.vladimirmarkovic86/ide-middle "0.2.8"]
+                 [org.clojars.vladimirmarkovic86/ide-middle "0.2.9"]
                  [org.clojars.vladimirmarkovic86/common-middle "0.2.5"]
                  [org.clojars.vladimirmarkovic86/language-lib "0.2.11"]
                  [org.clojars.vladimirmarkovic86/common-client "0.3.13"]
@@ -22,7 +22,7 @@
   :min-lein-version "2.0.0"
   
   :resource-paths ["resources"]
-  :source-paths ["src/clj"]
+  :source-paths ["src/clj" "src/cljs"]
   
   :main ^:skip-aot ide-client.core
   
@@ -37,16 +37,16 @@
       {:dev
         {:source-paths ["src/cljs"]
          :compiler     {:main ide-client.controller
-                        :output-to "resources/public/js/main.js"
-                        :output-dir "resources/public/js/out"
-                        :asset-path "js/out"
+                        :output-to "resources/public/assets/js/main.js"
+                        :output-dir "resources/public/assets/js/out"
+                        :asset-path "assets/js/out"
                         :pretty-print true}}
        :prod
          {:source-paths ["src/cljs"]
           :compiler     {:main ide-client.controller
-                         :output-to "resources/public/jsprod/main.js"
-                         :output-dir "resources/public/jsprod/out"
-                         :asset-path "jsprod/out"
+                         :output-to "resources/public/assets/jsprod/main.js"
+                         :output-dir "resources/public/assets/jsprod/out"
+                         :asset-path "assets/jsprod/out"
                          :optimizations :advanced}}
        }})
 

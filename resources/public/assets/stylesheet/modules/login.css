@@ -1,0 +1,92 @@
+.login label {
+ color: #0088cc;
+ cursor: pointer;
+ font-weight: bolder;
+}
+.login input:not(.btn) {
+ border: 1px solid #0088cc;
+ border-radius: 5px;
+ color: #0088cc;
+ display: block;
+ margin: 5px 0 27px 0;
+ padding: 5px 8px;
+ width: calc(100% - 18px);
+}
+.login input[type="checkbox"] {
+ width: auto;
+}
+.login legend {
+ color: #0088cc;
+}
+.login .btn {
+ padding: 11px 30px;
+ width: 100%;
+}
+.login .btn:first-child {
+ margin-bottom: 10px;
+}
+.login label.error {
+ color: orangered;
+}
+.login label.error input {
+ box-shadow: 0 0 10px orangered;
+}
+.login label.error span {
+ display: none;
+}
+.login label.error:hover span {
+ display: block;
+ position: absolute;
+ background-color: orangered;
+ color: white;
+ border-radius: 5px;
+ padding: 2px 4px;
+ margin-top: -25px;
+}
+.login label.error:hover span::before {
+ content: "";
+ border-left: 10px solid transparent;
+ border-right: 10px solid transparent;
+ border-bottom: 10px solid orangered;
+ position: absolute;
+ top: -10px;
+ left: 10px;
+}
+/* Computer screen */
+@media only screen
+and (min-width: 768px) {
+ .login {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  justify-content: center;
+  align-content: center;
+  background-color: white;
+ }
+ .login > div:first-child {
+  padding: 30px;
+  border: 3px solid #0088cc;
+  border-radius: 15px;
+  display: grid;
+  justify-content: center;
+  align-content: center;
+  background-color: #f9f9f9;
+ }
+}
+/* Grand Neo */
+@media only screen
+and (max-width: 767px) {
+ body > div:first-child,
+ .login {
+  background-color: #f9f9f9;
+ }
+ .login {
+  width: 100%;
+ }
+ .login > div:first-child {
+  padding: 30px;
+  display: grid;
+  justify-content: center;
+  align-content: center;
+ }
+}

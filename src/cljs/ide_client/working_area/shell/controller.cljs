@@ -1,9 +1,8 @@
 (ns ide-client.working-area.shell.controller
-  (:require [js-lib.core :as md]
+  (:require [htmlcss-lib.core :refer [gen div textarea input]]
+            [js-lib.core :as md]
             [ajax-lib.core :refer [ajax get-response]]
             [ide-middle.request-urls :as irurls]
-            [ide-client.working-area.shell.html :as shh]
-            [ide-client.working-area.html :as wah]
             [ide-client.project.entity :as proent]
             [ide-client.utils :as utils]
             [cljs.reader :as reader]))
@@ -30,10 +29,10 @@
         (:err data))
      )
     (md/set-value
-      "#shellTerminalOutput textarea"
+      "#shell-terminal-output textarea"
       @result)
     (md/set-value
-      "#executeCommandLine"
+      "#execute-command-line"
       ""))
  )
 
@@ -42,15 +41,34 @@
   [_
    new-element
    event]
-  (when (= (aget
-             event
-             "keyCode")
+  (when (= (.-keyCode
+             event)
            13)
     (ajax
       {:url irurls/execute-shell-command-url
        :success-fn execute-command-fn-success
-       :entity {:command (md/get-value "#executeCommandLine")}}
-     ))
+       :entity {:command (md/get-value "#execute-command-line")}})
+   ))
+
+(defn shell-pure-html
+  "Construct html chat view and append it"
+  []
+  (gen
+    (div 
+      [(div
+         (textarea
+           ""
+           {:readonly true})
+         {:id "shell-terminal-output"})
+       (div
+         (input
+           ""
+           {:id "execute-command-line"
+            :placeholder "Shell command"
+            :style {:width "calc(100% - 10px)"}}
+           {:onkeyup {:evt-fn execute-command-fn}})
+         {:id "shell-command-line"})]
+      {:class "shell-area"}))
  )
 
 (defn display-shell
@@ -58,14 +76,6 @@
   []
   (empty-then-append
     ".content"
-    (shh/shell-area-html-fn))
-  (empty-then-append
-    "#shellTerminalOutput"
-    (wah/textarea-fn))
-  (empty-then-append
-    "#shellCommandLine"
-    (wah/input-fn
-      "executeCommandLine"
-      {:onkeyup {:evt-fn execute-command-fn}}))
+    (shell-pure-html))
  )
 

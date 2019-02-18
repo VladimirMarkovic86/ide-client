@@ -1,0 +1,17 @@
+.search {
+ margin: 10px 0;
+}
+.search label {
+ color: #0088cc;
+ cursor: pointer;
+ font-weight: bolder;
+}
+.search input {
+ border: 1px solid #0088cc;
+ border-radius: 5px;
+ color: #0088cc;
+ display: block;
+ margin: 5px 0;
+ padding: 5px 8px;
+ width: calc(100% - 20px);
+}

@@ -1,10 +1,10 @@
 (ns ide-client.working-area.git.controller
-  (:require [js-lib.core :as md]
+  (:require [htmlcss-lib.core :refer [div]]
+            [js-lib.core :as md]
             [framework-lib.core :as frm]
             [ide-client.project.entity :as proent]
             [ajax-lib.core :refer [ajax get-response]]
             [ide-middle.request-urls :as irurls]
-            [ide-client.working-area.git.html :as walh]
             [ide-middle.project.entity :as pem]
             [ide-middle.functionalities :as imfns]
             [common-client.allowed-actions.controller :refer [allowed-actions]]
@@ -20,6 +20,16 @@
     selector
     new-content))
 
+(defn div-fn
+  "Generate div HTML element"
+  [content
+   & [attrs
+      evts]]
+  (div
+    content
+    attrs
+    evts))
+
 (defn response-success-fn
   "Display executed command output"
   [xhr]
@@ -31,7 +41,7 @@
       (swap!
         display-output
         conj
-        (walh/div-fn
+        (div-fn
           project-out))
      )
     (frm/popup-fn

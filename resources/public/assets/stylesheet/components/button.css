@@ -1,0 +1,23 @@
+.btn {
+ border-radius: 5px;
+ color: #0088cc;
+ cursor: pointer;
+ display: inline-block;
+ font-weight: bolder;
+ letter-spacing: .5px;
+ margin: 0;
+ text-transform: uppercase;
+ border: 1px solid #0088cc;
+ background-color: white;
+}
+.btn:hover {
+ background-color: #0088cc;
+ color: white;
+}
+.btn-default {
+ background-color: #0088cc;
+ color: white;
+}
+.btn-default:hover {
+ color: orangered;
+}

@@ -1,0 +1,136 @@
+.entities table {
+ border-collapse: separate;
+ border-spacing: 0;
+ color: #4a4a4d;
+ width: 100%;
+}
+.entities th,
+.entities td {
+ max-width: 0;
+ overflow: hidden;
+ text-overflow: ellipsis;
+ white-space: nowrap;
+ text-align: center;
+ vertical-align: middle;
+}
+.entities thead tr:first-child th {
+ padding: 10px 5px;
+ font-weight: bolder;
+}
+.entities td {
+ border-bottom: 1px solid #cecfd5;
+ border-right: 1px solid #cecfd5;
+ padding: 2px 5px;
+}
+.entities td:first-child {
+ border-left: 1px solid #cecfd5;
+}
+.entities td:last-child {
+ border-right: 0;
+}
+.entities thead {
+ background-color: #0088cc;
+ color: #fff;
+ font-size: 11px;
+ text-transform: uppercase;
+}
+.entities tbody tr:nth-child(even) {
+ background-color: #f0f0f2;
+}
+.entities .pagination {
+ display: flex;
+ justify-content: center;
+ background-color: gray;
+ padding: 3px 0;
+}
+.entities .pagination div {
+ margin-left: 10px;
+}
+.entities .pagination .current-page {
+ cursor: default;
+ font-weight: bold;
+ font-size: medium;
+}
+.entities .pagination > div:not(.current-page) {
+ cursor: pointer;
+ font-weight: bolder;
+}
+.entities .pagination > div:empty {
+ cursor: default;
+}
+.entities .pagination > div::selection {
+ background-color: transparent;
+ color: inherit;
+}
+.entities .pagination > div:not(.current-page):hover {
+ color: orangered;
+}
+.entities .pagination div:nth-child(1) {
+ min-width: 30px;
+}
+.entities .pagination div:nth-child(2) {
+ min-width: 62px;
+}
+.entities .pagination div:nth-child(3),
+.entities .pagination div:nth-child(4),
+.entities .pagination div:nth-child(5) {
+ min-width: 27px;
+}
+.entities .pagination div:nth-child(6) {
+ min-width: 32px;
+}
+.entities .pagination div:nth-child(7) {
+ min-width: 27px;
+}
+.entities .action {
+ cursor: pointer;
+ background-color: #0088cc;
+ color: white;
+ transition-property: background-color, color, font-weight;
+ transition-duration: .1s;
+ transition-timing-function: linear;
+}
+.entities .action:hover {
+ background-color: orangered;
+ color: white;
+ font-weight: bolder;
+}
+.entities .no-results {
+ color: #0088cc;
+ font-size: 24px;
+ font-weight: bolder;
+ text-align: center;
+ border: 1px solid #0088cc;
+ border-radius: 5px;
+ padding: 10px;
+}
+/* Computer screen */
+@media only screen
+and (min-width: 768px) {
+ 
+}
+/* Grand Neo */
+@media only screen
+and (max-width: 767px) {
+ .action.details,
+ .action.edit,
+ .action.delete,
+ .action.details:hover,
+ .action.edit:hover,
+ .action.delete:hover {
+  color: transparent;
+  background-size: contain;
+  background-origin: content-box;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+ }
+ .action.details {
+  background-image: url("../../images/details.png");
+ }
+ .action.edit {
+  background-image: url("../../images/edit.png");
+ }
+ .action.delete {
+  background-image: url("../../images/delete.png");
+ }
+}

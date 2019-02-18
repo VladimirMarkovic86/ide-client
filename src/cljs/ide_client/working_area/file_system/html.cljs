@@ -1,88 +1,16 @@
 (ns ide-client.working-area.file-system.html
- (:require [htmlcss-lib.core :refer [gen div select option input
-                                     menu menuitem]]))
+  (:require [language-lib.core :refer [get-label]]
+            [common-client.allowed-actions.controller :refer [allowed-actions]]
+            [ide-middle.functionalities :as imfns]
+            [ide-client.working-area.file-system.controller :as icwafsc]))
 
-(defn menu-fn
-  "Custom context menu"
-  [new-folder-evt
-   cut-evt
-   copy-evt
-   delete-evt
-   paste-evt]
-  (menu
-    [(menuitem
-       ""
-       {:label "New folder"}
-       new-folder-evt)
-     (menuitem
-       ""
-       {:label "Cut"}
-       cut-evt)
-     (menuitem
-       ""
-       {:label "Copy"}
-       copy-evt)
-     (menuitem
-       ""
-       {:label "Delete"}
-       delete-evt)
-     (menuitem
-       ""
-       {:label "Paste"}
-       paste-evt)]
-    {:type "context"
-     :id "documentMenu"}))
-
-(defn custom-popup-content-fn
-  "Custom popup form"
-  [mkdir-evt]
-  (div
-    [(input
-       ""
-       {:id "popupInputId"
-        :type "text"})
-     (input
-       ""
-       {:value "Create"
-        :type "button"}
-       mkdir-evt)]))
-
-(defn file-system-area-html-fn
-  "Generate shell HTML"
-  [new-folder-evt
-   cut-evt
-   copy-evt
-   delete-evt
-   paste-evt]
-  (gen
-    (div 
-      [(div
-         [(div
-            ""
-            {:id "absolutePath"
-             :style {:width "100%"}})
-          (div
-            ""
-            {:id "filesDisplay"
-             :style {:width "100%"
-                     :height "500px"
-                     :overflow "auto"
-                     :display "grid"
-                     :align-content "baseline"}})
-          (div
-            ""
-            {:id "displayFile"
-             :style {:width "100%"
-                     :height "500px"}})])
-       (menu-fn
-         new-folder-evt
-         cut-evt
-         copy-evt
-         delete-evt
-         paste-evt)]
-      {:class "fileSystemArea"
-       :style {:width "100%"
-               :height "100%"}
-       :contextmenu "documentMenu"}))
- )
+(defn nav
+  "Returns map of menu item and it's sub items"
+  []
+  (when (contains?
+          @allowed-actions
+          imfns/list-documents)
+    {:label (get-label 1012)
+     :id "file-system-area-nav-id"
+     :evt-fn icwafsc/display-file-system}))
 

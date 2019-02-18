@@ -1,0 +1,32 @@
+.logo-img {
+ background-image: url("../../images/logo.png");
+ background-repeat: no-repeat;
+}
+.default-user-img {
+ background-image: url("../../images/user.png");
+ background-repeat: no-repeat;
+}
+.logout-img {
+ background-image: url("../../images/log_out.png");
+ background-repeat: no-repeat;
+}
+.us-flag-img {
+ background-image: url("../../images/lang/us_flag.png");
+ background-repeat: no-repeat;
+}
+.rs-flag-img {
+ background-image: url("../../images/lang/rs_flag.png");
+ background-repeat: no-repeat;
+}
+.details-img {
+ background-image: url("../../images/details.png");
+ background-repeat: no-repeat;
+}
+.edit-img {
+ background-image: url("../../images/edit.png");
+ background-repeat: no-repeat;
+}
+.delete-img {
+ background-image: url("../../images/delete.png");
+ background-repeat: no-repeat;
+}

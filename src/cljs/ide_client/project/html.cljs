@@ -1,26 +1,34 @@
 (ns ide-client.project.html
-  (:require [htmlcss-lib.core :refer [gen div a]]
-            [framework-lib.core :refer [create-entity gen-table]]
+  (:require [framework-lib.core :refer [create-entity gen-table]]
+            [common-client.allowed-actions.controller :refer [allowed-actions]]
+            [language-lib.core :refer [get-label]]
             [ide-client.project.entity :refer [table-conf-fn]]
-            [language-lib.core :refer [get-label]]))
+            [ide-middle.functionalities :as imfns]))
 
 (defn nav
-  "Generate ul HTML element
-   that represents navigation menu"
+  "Returns map of menu item and it's sub items"
   []
-  (gen
-    [(div
-       (a
-         (get-label 4)
-         {:id "aCreateId"}
-         {:onclick {:evt-fn create-entity
-                    :evt-p (table-conf-fn)}}))
-     (div
-       (a
-         (get-label 5)
-         nil
-         {:onclick {:evt-fn gen-table
-                    :evt-p (table-conf-fn)}})
-      )])
- )
+  (when (or (contains?
+              @allowed-actions
+              imfns/project-create)
+            (contains?
+              @allowed-actions
+              imfns/project-read))
+    {:label (get-label 1001)
+     :id "project-nav-id"
+     :sub-menu [(when (contains?
+                        @allowed-actions
+                        imfns/project-create)
+                  {:label (get-label 4)
+                   :id "project-create-nav-id"
+                   :evt-fn create-entity
+                   :evt-p (table-conf-fn)})
+                (when (contains?
+                        @allowed-actions
+                        imfns/project-read)
+                  {:label (get-label 5)
+                   :id "project-show-all-nav-id"
+                   :evt-fn gen-table
+                   :evt-p (table-conf-fn)})]}
+   ))
 

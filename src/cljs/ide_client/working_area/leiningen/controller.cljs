@@ -1,10 +1,10 @@
 (ns ide-client.working-area.leiningen.controller
-  (:require [js-lib.core :as md]
+  (:require [htmlcss-lib.core :refer [div]]
+            [js-lib.core :as md]
             [framework-lib.core :as frm]
             [ide-client.project.entity :as proent]
             [ajax-lib.core :refer [ajax get-response]]
             [ide-middle.request-urls :as irurls]
-            [ide-client.working-area.leiningen.html :as walh]
             [ide-middle.project.entity :as pem]
             [ide-middle.functionalities :as imfns]
             [common-client.allowed-actions.controller :refer [allowed-actions]]
@@ -19,6 +19,18 @@
   (md/append-element
     selector
     new-content))
+
+(defn div-fn
+  "Generate div html"
+  [content
+   & [attrs
+      evts
+      dyn-attrs]]
+  (div
+    content
+    attrs
+    evts
+    dyn-attrs))
 
 (defn response-success-fn
   "All requests from this name space have universal response"
@@ -39,7 +51,7 @@
       ":\n"
       (:err output))
     (frm/popup-fn
-      {:content (walh/div-fn
+      {:content (div-fn
                   @display-output
                   {:style {:white-space "pre-wrap"
                            :word-wrap "break-word"
@@ -68,9 +80,8 @@
     (build-project-fn
       ent-id))
   (when-let [ent-id (aget
-                      (aget
-                        evt-p
-                        "target")
+                      (.-target
+                        evt-p)
                       "ent-id")]
     (build-project-fn
       ent-id))
@@ -95,9 +106,8 @@
     (build-uberjar-fn
       ent-id))
   (when-let [ent-id (aget
-                      (aget
-                        evt-p
-                        "target")
+                      (.-target
+                        evt-p)
                       "ent-id")]
     (build-uberjar-fn
       ent-id))
@@ -122,9 +132,8 @@
     (clean-project-fn
       ent-id))
   (when-let [ent-id (aget
-                      (aget
-                        evt-p
-                        "target")
+                      (.-target
+                        evt-p)
                       "ent-id")]
     (clean-project-fn
       ent-id))
@@ -149,9 +158,8 @@
     (build-project-dependencies-fn
       ent-id))
   (when-let [ent-id (aget
-                      (aget
-                        evt-p
-                        "target")
+                      (.-target
+                        evt-p)
                       "ent-id")]
     (build-project-dependencies-fn
       ent-id))
@@ -177,9 +185,8 @@
     (start-server-fn
       ent-id))
   (when-let [ent-id (aget
-                      (aget
-                        evt-p
-                        "target")
+                      (.-target
+                        evt-p)
                       "ent-id")]
     (start-server-fn
       ent-id))
@@ -205,9 +212,8 @@
     (stop-server-fn
       ent-id))
   (when-let [ent-id (aget
-                      (aget
-                        evt-p
-                        "target")
+                      (.-target
+                        evt-p)
                       "ent-id")]
     (stop-server-fn
       ent-id))
@@ -233,9 +239,8 @@
     (restart-server-fn
       ent-id))
   (when-let [ent-id (aget
-                      (aget
-                        evt-p
-                        "target")
+                      (.-target
+                        evt-p)
                       "ent-id")]
     (restart-server-fn
       ent-id))
@@ -261,9 +266,8 @@
     (server-status-fn
       ent-id))
   (when-let [ent-id (aget
-                      (aget
-                        evt-p
-                        "target")
+                      (.-target
+                        evt-p)
                       "ent-id")]
     (server-status-fn
       ent-id))
@@ -273,7 +277,7 @@
   "Initial function for displaying shell area"
   []
   (let [table-conf (assoc
-                     (proent/table-conf-fn)
+                     (proent/lein-table-conf-fn)
                      :actions
                      [(when (contains?
                               @allowed-actions

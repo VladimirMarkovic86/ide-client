@@ -1,0 +1,70 @@
+.account-menu {
+ position: absolute;
+ right: 0;
+ height: 50px;
+ z-index: 1;
+ padding: 0 10px;
+ overflow: hidden;
+ background-color: #0088cc;
+ color: white;
+ font-size: 16px;
+ cursor: default;
+ border-bottom-left-radius: 10px;
+ border-bottom-right-radius: 10px;
+ transition-property: height;
+ transition-duration: .1s;
+ transition-timing-function: linear;
+}
+.account-menu > div:first-of-type {
+ display: table-cell;
+ height: 50px;
+ vertical-align: middle;
+ line-height: 32px;
+ font-weight: bold;
+}
+.account-menu .default-user-img,
+.account-menu .default-user-img + div,
+.account-menu .logout-img,
+.account-menu .logout-img + div {
+ float: left;
+}
+.account-menu .default-user-img,
+.account-menu .logout-img {
+ height: 32px;
+ width: 32px;
+ background-size: contain;
+}
+.account-menu .default-user-img + div,
+.account-menu .logout-img + div {
+ margin-left: 10px;
+ font-weight: bold;
+}
+.account-menu:hover {
+ height: 95px;
+}
+.account-menu .account-items > div {
+ height: 32px;
+ line-height: 32px;
+ padding: 5px 0;
+}
+.account-menu .account-items > div,
+.account-menu .account-items > div * {
+ cursor: pointer;
+}
+.account-menu .account-items > div:hover {
+ color: orangered;
+}
+/* Computer screen */
+@media only screen
+and (min-width: 768px) {
+ .account-menu {
+  min-width: 180px;
+ }
+}
+/* Grand Neo */
+@media only screen
+and (max-width: 767px) {
+ .account-menu {
+  width: calc(40% - 20px);
+ }
+}

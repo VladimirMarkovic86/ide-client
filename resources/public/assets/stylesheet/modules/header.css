@@ -1,0 +1,19 @@
+header {
+ background-color: #0088cc;
+ color: white;
+}
+header .logo {
+ height: 50px;
+ position: fixed;
+ top: 10px;
+ left: 10px;
+}
+header .logo,
+header .logo * {
+ cursor: pointer;
+}
+header .logo-img {
+ height: 32px;
+ width: 60px;
+ background-size: contain;
+}

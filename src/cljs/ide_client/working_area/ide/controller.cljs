@@ -1,5 +1,7 @@
 (ns ide-client.working-area.ide.controller
-  (:require [js-lib.core :as md]
+  (:require [htmlcss-lib.core :refer [gen div textarea pre
+                                      ul li input a img video source]]
+            [js-lib.core :as md]
             [framework-lib.core :as frm]
             [framework-lib.tree :as tree]
             [ide-client.project.entity :as proent]
@@ -7,10 +9,7 @@
             [ajax-lib.http.request-header :as rh]
             [common-middle.request-urls :as rurls]
             [ide-middle.request-urls :as irurls]
-            [ide-client.working-area.html :as wah]
-            [ide-client.working-area.ide.html :as waih]
             [ide-client.working-area.leiningen.controller :as walc]
-            [ide-client.working-area.file-system.html :as fsh]
             [ide-middle.project.entity :as pem]
             [ide-middle.functionalities :as imfns]
             [common-client.allowed-actions.controller :refer [allowed-actions]]
@@ -374,6 +373,521 @@
      ))
  )
 
+(defn div-fn
+  "Genrate div HTML element"
+  [content
+   & [attrs
+      evts
+      dyn-attrs]]
+  (gen
+    (div
+      content
+      attrs
+      evts
+      dyn-attrs))
+ )
+
+(defn input-fn
+  "Genrate input HTML element"
+  [& [content
+      attrs
+      evts
+      dyn-attrs]]
+  (gen
+    (input
+      content
+      attrs
+      evts
+      dyn-attrs))
+ )
+
+(defn editor-fn
+  "Generate textarea HTML element"
+  [file-path
+   content
+   save-file-changes-fn
+   save-all-file-changes-fn
+   & [read-only]]
+  (let [highlights-el (gen
+                        (div
+                          ""
+                          {:class "highlights"}))
+        attrs {:class "textarea"
+               :spellcheck false}
+        attrs (if read-only
+                (assoc
+                  attrs
+                  :readonly true)
+                attrs)
+        numeration-el (gen
+                        (div
+                          ""
+                          {:class "rowNumbers"}))
+        textarea-el (gen
+                      (textarea
+                        (if-let [content content]
+                          content
+                          "")
+                        attrs
+                        {:oninput {:evt-fn editor/handle-input}
+                         :onkeydown {:evt-fn editor/handle-keydown}
+                         :onkeyup {:evt-fn editor/handle-keyup}
+                         :onclick {:evt-fn editor/handle-click}
+                         :onscroll {:evt-fn editor/handle-scroll}}
+                        {:filePath file-path
+                         :highlightsDiv highlights-el
+                         :numerationDiv numeration-el}))
+        editor-el (gen
+                    (div
+                      [numeration-el
+                       textarea-el
+                       highlights-el]
+                      {:class "openedFile activeEditor"}))]
+    (editor/fill-in-highlights
+      textarea-el
+      highlights-el
+      save-file-changes-fn
+      save-all-file-changes-fn)
+    editor-el))
+
+(defn menu-fn
+  "Generate custom menu at cursor position"
+  [page-x
+   page-y
+   fn-event
+   menu-items]
+  (let [menu-item-htmls (atom [])]
+    (doseq [[item-label
+             item-event] menu-items]
+      (when (vector?
+              item-event)
+        (let [sub-menu-el (atom [])]
+          (doseq [[sub-item-label
+                   sub-item-event] item-event]
+            (swap!
+              sub-menu-el
+              conj
+              (li
+                sub-item-label
+                nil
+                {:onclick {:evt-fn sub-item-event
+                           :evt-p fn-event}}))
+           )
+          (swap!
+            menu-item-htmls
+            conj
+            (li
+              [(a
+                 item-label)
+               (ul
+                 @sub-menu-el)])
+           ))
+       )
+      (when (and item-label
+                 item-event
+                 (fn?
+                   item-event))
+        (swap!
+          menu-item-htmls
+          conj
+          (li
+            item-label
+            nil
+            {:onclick {:evt-fn item-event
+                       :evt-p fn-event}}))
+       ))
+    (gen
+      (ul
+        @menu-item-htmls
+        {:class "projectMenu"
+         :style {:left (str
+                         page-x
+                         "px")
+                 :top (str
+                        page-y
+                        "px")}})
+     ))
+ )
+
+(defn add-remove-file-line
+  "Add changes to leading commit"
+  [checked
+   action
+   file-name
+   change-state-evt
+   entity-id]
+  (let [checkbox-attrs {:type "checkbox"
+                        :style {:float "left"}}
+        checkbox-attrs (if checked
+                         (assoc
+                           checkbox-attrs
+                           :checked
+                           "checked")
+                         checkbox-attrs)]
+    (div
+      [(input
+         ""
+         checkbox-attrs
+         {:onchange {:evt-fn change-state-evt
+                     :evt-p {:relative-path file-name
+                             :action action
+                             :entity-id entity-id}}
+          })
+       (div
+         action
+         {:style {:float "left"
+                  :padding "0 5px"}})
+       (div
+         file-name
+         {:title file-name
+          :style {:float "left"
+                  :text-overflow "ellipsis"
+                  :white-space "nowrap"
+                  :overflow "hidden"
+                  :width "320px"}})])
+   ))
+
+(defn git-popup-content
+  "Git popup content wit ability to add/remove commit/push change"
+  [remote-link
+   unpushed-commits
+   project-diff
+   file-paths
+   change-state-evt
+   entity-id
+   set-remote-url-evt
+   no-git-init
+   commit-changes-evt
+   commit-and-push-changes-evt
+   push-commits-evt]
+  (gen
+    [(div
+       [(input
+          ""
+          {:id "newRemoteURL"
+           :value remote-link
+           :type "text"})
+        (input
+          ""
+          {:type "button"
+           :value (get-label 1066)
+           :class "btn"}
+          {:onclick {:evt-fn set-remote-url-evt
+                     :evt-p {:no-git-init no-git-init
+                             :entity-id entity-id}}
+           })]
+       {:id "gitRemoteLink"})
+       (div
+         [(div
+            (get-label 1065))
+          (textarea
+            unpushed-commits
+            {:style {:width "400px"
+                     :height "100px"
+                     :resize "none"}
+             :readonly true})]
+         {:id "unpushedCommits"})
+       (div
+         (let [files (atom [])]
+           (doseq [[checked
+                    action
+                    file-path] file-paths]
+             (swap!
+               files
+               conj
+               (add-remove-file-line
+                 checked
+                 action
+                 file-path
+                 change-state-evt
+                 entity-id))
+            )
+           @files)
+         {:id "addRemoveFiles"})
+       (div
+         [(div
+            (get-label 1064))
+          (textarea
+            project-diff
+            {:style {:width "400px"
+                     :height "100px"
+                     :resize "none"}
+             :readonly true})]
+         {:id "changeDifferences"})
+       (div
+         [(div
+            (get-label 1063))
+          (textarea
+            ""
+            {:style {:width "400px"
+                     :height "100px"
+                     :resize "none"}})]
+         {:id "commitMessage"})
+       (div
+         [(input
+            ""
+            {:value (get-label 1060)
+             :type "button"
+             :class "btn"}
+            {:onclick {:evt-fn commit-changes-evt
+                       :evt-p entity-id}})
+          (input
+            ""
+            {:value (get-label 1061)
+             :type "button"
+             :class "btn"}
+            {:onclick {:evt-fn commit-and-push-changes-evt
+                       :evt-p entity-id}})
+          (input
+            ""
+            {:value (get-label 1062)
+             :type "button"
+             :class "btn"}
+            {:onclick {:evt-fn push-commits-evt
+                       :evt-p entity-id}})]
+         {:id "buttonsPanel"})]
+   ))
+
+(defn versioning-popup-content
+  "Versioning HTML popup"
+  [text-content]
+  (gen
+    (div
+      (textarea
+        text-content
+        {:readonly true
+         :style {:width "500px"
+                 :height "300px"
+                 :white-space "pre"
+                 :resize "none"
+                 :overflow "auto"}}))
+   ))
+
+(defn upgrade-version-popup-content
+  "Upgrade version HTML popup"
+  [projects-set
+   save-changes-upgrade-version-evt
+   build-changed-upgrade-version-evt]
+  (let [projects-rows (atom [])]
+    (doseq [{project :project
+             version :version} projects-set]
+      (let [project-row (div
+                          [(div
+                             project
+                             {:title project
+                              :class "upgradeVersionProject"})
+                           (div
+                             version
+                             {:title version
+                              :class "upgradeVersionProjectVersion"})
+                           (div
+                             (input
+                               ""
+                               {:value version
+                                :type "text"
+                                :style {:width "inherit"}})
+                             {:class "upgradeVersionProjectInput"})]
+                          {:class "upgradeVersion"})]
+        (swap!
+          projects-rows
+          conj
+          project-row))
+     )
+    (gen
+      (div
+        [(div
+           @projects-rows
+           {:style {:width "500px"
+                    :height "300px"
+                    :overflow "auto"}})
+         (div
+           [(when (contains?
+                    @allowed-actions
+                    imfns/upgrade-versions-save)
+              (div
+                (input
+                  ""
+                  {:type "button"
+                   :value (get-label 1)
+                   :class "btn"})
+                {:style {:float "left"}}
+                {:onclick {:evt-fn save-changes-upgrade-version-evt}}))
+            (when (contains?
+                    @allowed-actions
+                    imfns/upgrade-versions-build)
+              (div
+                (input
+                  ""
+                  {:type "button"
+                   :value (get-label 1018)
+                   :class "btn"})
+                {:style {:float "left"}}
+                {:onclick {:evt-fn build-changed-upgrade-version-evt}}))
+            ])])
+     ))
+ )
+
+(defn commit-push-popup
+  "Commit push popup"
+  [changed-files
+   change-state-evt
+   git-commit-push-action-evt]
+  (let [popup-content (atom [])]
+    (doseq [[absolute-path
+             changed-file
+             checked
+             action] changed-files]
+      (let [checkbox-attrs {:type "checkbox"
+                            :style {:float "left"}}
+            checkbox-attrs (if checked
+                             (assoc
+                               checkbox-attrs
+                               :checked
+                               "checked")
+                             checkbox-attrs)
+            checkbox-div (div
+                           [(input
+                              ""
+                              checkbox-attrs
+                              {:onchange {:evt-fn change-state-evt
+                                          :evt-p {:absolute-path absolute-path
+                                                  :changed-file changed-file
+                                                  :action action}}
+                               })
+                            (div
+                              action
+                              {:style {:float "left"
+                                       :padding "0 5px"}})
+                            (div
+                              changed-file
+                              {:title (str
+                                        absolute-path
+                                        "/"
+                                        changed-file)
+                               :style {:float "left"
+                                       :text-overflow "ellipsis"
+                                       :white-space "nowrap"
+                                       :overflow "hidden"
+                                       :width "400px"}})]
+                           {:style {:height "20px"
+                                    :width "450px"}})]
+        (swap!
+          popup-content
+          conj
+          checkbox-div))
+     )
+    (let [textarea-div (div
+                         [(div
+                            (get-label 1063))
+                          (div
+                            (textarea
+                              ""
+                              {:id "commitMessage"
+                               :style {:width "490px"
+                                       :height "130px"}}))]
+                         {:style {:margin-top "20px"}})
+          buttons-div (div
+                        [(div
+                           (input
+                             ""
+                             {:type "button"
+                              :value (get-label 1060)
+                              :class "btn"
+                              :style {:float "left"}}
+                             {:onclick {:evt-fn git-commit-push-action-evt
+                                        :evt-p pem/git-commit}}))
+                         (div
+                           (input
+                             ""
+                             {:type "button"
+                              :value (get-label 1061)
+                              :class "btn"
+                              :style {:float "left"}}
+                             {:onclick {:evt-fn git-commit-push-action-evt
+                                        :evt-p pem/git-commit-push}}))
+                         (div
+                           (input
+                             ""
+                             {:type "button"
+                              :value (get-label 1062)
+                              :class "btn"
+                              :style {:float "left"}}
+                             {:onclick {:evt-fn git-commit-push-action-evt
+                                        :evt-p pem/git-push}}))]
+                       )]
+      (gen
+        (div
+          [(div
+             @popup-content
+             {:style {:width "500px"
+                      :max-height "200px"
+                      :overflow "auto"}})
+           (div
+             [textarea-div
+              buttons-div])])
+       ))
+   ))
+
+(defn find-text-in-files-popup
+  "Find text in files popup content"
+  [find-text-in-files-action]
+  (gen
+    (div
+      [(div
+         (input
+           ""
+           {:id "findTextInput"
+            :type "text"
+            :style {:width "500px"}}))
+       (div
+         (input
+           ""
+           {:type "button"
+            :class "btn"
+            :value (get-label 1069)}
+           {:onclick {:evt-fn find-text-in-files-action}})
+        )
+       (div
+         (textarea
+           ""
+           {:id "foundText"
+            :readonly true
+            :style {:width "500px"
+                    :height "500px"
+                    :resize "none"}}))]
+     ))
+ )
+
+(defn image-fn
+  "Generate image HTML element"
+  [& [src]]
+  (gen
+    (img
+      ""
+      {:src (if-let [src src]
+              src
+              "")
+       :style {:max-width "150px"
+               :max-height "150px"}}))
+ )
+
+(defn video-fn
+  "Generate image HTML element"
+  [& [src
+      mtype]]
+  (gen
+    (video
+      (source
+        ""
+        {:src (if-let [src src]
+                src
+                "")
+         :type mtype})
+      {:width "150px"
+       :height "150px"
+       :controls true}))
+ )
+
 (defn get-subfile
   "Read selected file from absolute path"
   [{absolute-path :absolute-path
@@ -442,18 +956,18 @@
           (md/add-class
             tab
             "activeTab"))
-        (let [editor-obj (waih/editor-fn
+        (let [editor-obj (editor-fn
                            file-path
                            response
                            save-file-changes-fn
                            save-all-file-changes-fn)
-              tab (waih/div-fn
-                    [(waih/div-fn
+              tab (div-fn
+                    [(div-fn
                        file-name
                        {:class "tabName"}
                        {:onclick {:evt-fn focus-file-editor}}
                        {:editorDiv editor-obj})
-                     (waih/div-fn
+                     (div-fn
                        "x"
                        {:class "tabClose"}
                        {:onclick {:evt-fn close-file-editor}}
@@ -481,7 +995,7 @@
             image-url (.createObjectURL
                         url-creator
                         response)
-            image-obj (wah/image-fn
+            image-obj (image-fn
                         image-url)]
         (md/append-element
           ".ideFileDisplay"
@@ -494,7 +1008,7 @@
             video-url (.createObjectURL
                         url-creator
                         response)
-            video-obj (wah/video-fn
+            video-obj (video-fn
                         video-url
                         nil)]
         (md/append-element
@@ -562,12 +1076,26 @@
      ))
   (frm/close-popup))
 
+(defn custom-popup-content-fn
+  "Custom popup form"
+  [mkdir-evt]
+  (div
+    [(input
+       ""
+       {:id "popupInputId"
+        :type "text"})
+     (input
+       ""
+       {:value "Create"
+        :type "button"}
+       mkdir-evt)]))
+
 (defn mkdir-popup-fn
   "Make directory popup for directory name"
   [evt-p
    element
    event]
-  (let [content (fsh/custom-popup-content-fn
+  (let [content (custom-popup-content-fn
                   {:onclick {:evt-fn mkdir-fn
                              :evt-p (aget
                                       evt-p
@@ -642,7 +1170,7 @@
   [evt-p
    element
    event]
-  (let [content (fsh/custom-popup-content-fn
+  (let [content (custom-popup-content-fn
                   {:onclick {:evt-fn mkfile-fn
                              :evt-p (aget
                                       evt-p
@@ -849,7 +1377,7 @@
    element
    event]
   (let [remote-url-input (md/query-selector-on-element
-                           "#popup-content"
+                           ".popup-content"
                            "#newRemoteURL")
         remote-url-value (md/get-value
                            remote-url-input)
@@ -871,7 +1399,7 @@
    element
    event]
   (let [commit-message-textarea (md/query-selector-on-element
-                                  "#popup-content"
+                                  ".popup-content"
                                   "#commitMessage textarea")
         commit-message (md/get-value
                          commit-message-textarea)
@@ -882,8 +1410,8 @@
                         :action pem/git-commit
                         :commit-message commit-message}})
         close-popup-btn (md/query-selector-on-element
-                          "#popup-window"
-                          "#close-btn")]
+                          ".popup-window"
+                          ".close-btn")]
     (md/dispatch-event
       "click"
       close-popup-btn))
@@ -895,7 +1423,7 @@
    element
    event]
   (let [commit-message-textarea (md/query-selector-on-element
-                                  "#popup-content"
+                                  ".popup-content"
                                   "#commitMessage textarea")
         commit-message (md/get-value
                          commit-message-textarea)
@@ -906,8 +1434,8 @@
                         :action pem/git-commit-push
                         :commit-message commit-message}})
         close-popup-btn (md/query-selector-on-element
-                          "#popup-window"
-                          "#close-btn")]
+                          ".popup-window"
+                          ".close-btn")]
     (md/dispatch-event
       "click"
       close-popup-btn))
@@ -924,8 +1452,8 @@
                         :entity-type proent/entity-type
                         :action pem/git-push}})
         close-popup-btn (md/query-selector-on-element
-                          "#popup-window"
-                          "#close-btn")]
+                          ".popup-window"
+                          ".close-btn")]
     (md/dispatch-event
       "click"
       close-popup-btn))
@@ -960,7 +1488,7 @@
                   -1))
       (reset!
         popup-content
-        (waih/git-popup-content
+        (git-popup-content
           git-remote-url
           unpushed-commits
           project-diff
@@ -980,7 +1508,7 @@
                      -1))
       (reset!
         popup-content
-        (waih/git-popup-content
+        (git-popup-content
           git-remote-url
           unpushed-commits
           project-diff
@@ -1052,7 +1580,7 @@
          )
         (reset!
           popup-content
-          (waih/git-popup-content
+          (git-popup-content
             git-remote-url
             unpushed-commits
             project-diff
@@ -1191,19 +1719,19 @@
         (md/add-class
           tab
           "activeTab"))
-      (let [editor-obj (waih/editor-fn
+      (let [editor-obj (editor-fn
                          file-path
                          file-content
                          save-file-changes-fn
                          save-all-file-changes-fn
                          true)
-            tab (waih/div-fn
-                  [(waih/div-fn
+            tab (div-fn
+                  [(div-fn
                      file-name
                      {:class "tabName"}
                      {:onclick {:evt-fn focus-file-editor}}
                      {:editorDiv editor-obj})
-                   (waih/div-fn
+                   (div-fn
                      "x"
                      {:class "tabClose"}
                      {:onclick {:evt-fn close-file-editor}}
@@ -1368,7 +1896,7 @@
                        #{}
                        highlighted-docs)
           commit-message-el (md/query-selector-on-element
-                              "#popup-content"
+                              ".popup-content"
                               "#commitMessage")
           commit-message (md/get-value
                            commit-message-el)
@@ -1419,8 +1947,8 @@
                      event))
         action (:action response)
         close-popup-btn (md/query-selector-on-element
-                          "#popup-window"
-                          "#close-btn")]
+                          ".popup-window"
+                          ".close-btn")]
     (md/dispatch-event
       "click"
       close-popup-btn)
@@ -1468,7 +1996,7 @@
           changed-files (:changed-files
                           response)]
       (frm/popup-fn
-        {:content (waih/commit-push-popup
+        {:content (commit-push-popup
                     changed-files
                     git-file-change-state-evt
                     git-commit-push-action-fn)
@@ -1525,7 +2053,7 @@
               project " " actual-version " -> " version "\n"))
          )
         (frm/popup-fn
-          {:content (waih/versioning-popup-content
+          {:content (versioning-popup-content
                       @result-str)
            :heading "Versioning"}))
      ))
@@ -1537,7 +2065,7 @@
    element
    event]
   (let [project-names-vector (md/query-selector-all-on-element
-                               "#popup-content"
+                               ".popup-content"
                                ".upgradeVersion")
         projects-maps (reduce
                         (fn [acc
@@ -1570,8 +2098,8 @@
                :entity {:projects projects-maps}})
         response (get-response xhr)
         close-popup-btn (md/query-selector-on-element
-                          "#popup-window"
-                          "#close-btn")]
+                          ".popup-window"
+                          ".close-btn")]
     (md/dispatch-event
       "click"
       close-popup-btn))
@@ -1584,7 +2112,7 @@
    event]
   (md/start-please-wait)
   (let [project-names-vector (md/query-selector-all-on-element
-                               "#popup-content"
+                               ".popup-content"
                                ".upgradeVersion")
         projects-maps (reduce
                         (fn [acc
@@ -1617,8 +2145,8 @@
                :entity {:projects projects-maps}})
         response (get-response xhr)
         close-popup-btn (md/query-selector-on-element
-                          "#popup-window"
-                          "#close-btn")]
+                          ".popup-window"
+                          ".close-btn")]
     (md/dispatch-event
       "click"
       close-popup-btn))
@@ -1656,7 +2184,7 @@
             response (get-response xhr)
             result (:result response)]
         (frm/popup-fn
-          {:content (waih/upgrade-version-popup-content
+          {:content (upgrade-version-popup-content
                       result
                       save-changes-upgrade-version-evt
                       build-changed-upgrade-version-evt)
@@ -1670,7 +2198,7 @@
    element
    event]
   (let [find-this-text-el (md/query-selector-on-element
-                            "#popup-content"
+                            ".popup-content"
                             "#findTextInput")
         find-this-text (md/get-value
                          find-this-text-el)]
@@ -1689,7 +2217,7 @@
               result (:result
                         response)
               find-text-result-area-el (md/query-selector-on-element
-                                         "#popup-content"
+                                         ".popup-content"
                                          "#foundText")]
           (md/set-value
             find-text-result-area-el
@@ -1703,7 +2231,7 @@
    element
    event]
   (frm/popup-fn
-    {:content (waih/find-text-in-files-popup
+    {:content (find-text-in-files-popup
                 find-text-in-files-action)
      :heading (get-label 1068)})
  )
@@ -1836,7 +2364,7 @@
                  "pageY")]
     (md/append-element
       "body"
-      (waih/menu-fn
+      (menu-fn
         page-x
         page-y
         fn-event
@@ -1971,8 +2499,8 @@
       tree-node)
     (md/append-element
       ".content"
-      (waih/div-fn
-        (waih/div-fn
+      (div-fn
+        (div-fn
           ""
           {:class "tabBar"})
         {:class "ideFileDisplay"}))
@@ -1981,17 +2509,19 @@
             imfns/save-file-changes)
       (md/prepend-element
         ".ideFileDisplay"
-        (waih/input-fn
+        (input-fn
           ""
           {:value (get-label 1026)
-           :type "button"}
+           :type "button"
+           :class "btn"}
           {:onclick {:evt-fn save-all-file-changes-fn}}))
       (md/prepend-element
         ".ideFileDisplay"
-        (waih/input-fn
+        (input-fn
           ""
           {:value (get-label 1)
-           :type "button"}
+           :type "button"
+           :class "btn"}
           {:onclick {:evt-fn save-file-changes-fn}}))
      ))
  )

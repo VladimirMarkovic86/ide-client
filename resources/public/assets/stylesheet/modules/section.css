@@ -1,0 +1,16 @@
+section {
+ overflow: auto;
+ padding: 10px;
+}
+/* Computer screen */
+@media only screen
+and (min-width: 768px) {
+
+}
+/* Grand Neo */
+@media only screen
+and (max-width: 767px) {
+ section {
+  background-color: #f9f9f9;
+ }
+}

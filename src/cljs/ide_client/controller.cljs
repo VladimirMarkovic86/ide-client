@@ -9,6 +9,7 @@
                                                     main-page
                                                     logout
                                                     custom-menu
+                                                    home-page-content
                                                     logout-fn
                                                     logout-success
                                                     logout-success-fn]]))
@@ -16,9 +17,17 @@
 (defn am-i-logged-in
   "Check if session is active"
   []
-  (reset!
-    base-url
-    "https://ide:1604")
+  (let [base-uri (.-baseURI
+                   js/document)
+        base-uri (if (< -1
+                        (.indexOf
+                          base-uri
+                          "herokuapp"))
+                   "https://ide-server-clj.herokuapp.com"
+                   "https://ide:1604")]
+    (reset!
+      base-url
+      base-uri))
   (reset!
     with-credentials
     true)
@@ -39,6 +48,9 @@
   (reset!
     custom-menu
     ht/custom-menu)
+  (reset!
+    home-page-content
+    (ht/home-page-content))
   (reset!
     logout-fn
     logout)

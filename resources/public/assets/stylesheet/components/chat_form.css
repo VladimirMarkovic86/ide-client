@@ -1,0 +1,53 @@
+.chat .chat-commands,
+.chat .chat-history,
+.chat .chat-message {
+ max-width: 767px;
+ width: calc(100% - 20px);
+}
+.chat .chat-history {
+ background-color: #a5a5a522;
+ padding: 10px;
+ border-radius: 15px;
+ height: 300px;
+ overflow: auto;
+}
+.chat .contacts-message {
+ background-color: #a5a5a566;
+ padding: 5px;
+ border-radius: 15px;
+}
+.chat .my-message {
+ background-color: #0088cc66;
+ padding: 5px;
+ border-radius: 15px;
+}
+.chat .my-message-container,
+.chat .contacts-message-container {
+ display: grid;
+ padding: 5px 0;
+}
+.chat .my-message-container {
+ justify-content: end;
+}
+.chat .contacts-message-container {
+ justify-content: start;
+}
+.chat input,
+.chat select {
+ box-sizing: content-box;
+ width: 100%;
+ display: block;
+ border: 1px solid #0088cc;
+ border-radius: 5px;
+ color: #0088cc;
+ margin: 5px 0;
+ padding: 5px 8px;
+}
+/* Computer screen */
+@media only screen
+and (min-width: 768px) {
+}
+/* Grand Neo */
+@media only screen
+and (max-width: 767px) {
+}

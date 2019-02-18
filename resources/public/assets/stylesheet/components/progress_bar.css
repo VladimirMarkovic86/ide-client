@@ -1,0 +1,28 @@
+.progress-bar-background {
+ position: fixed;
+ top: 0;
+ left: 0;
+ width: 100%;
+ height: 100%;
+ display: grid;
+ justify-content: center;
+ align-content: center;
+ cursor: progress;
+ z-index: 2;
+}
+.progress-bar {
+ width: 250px;
+ height: 20px;
+ display: grid;
+ justify-content: center;
+ align-content: center;
+ background-color: white;
+ border-radius: 5px;
+ border: 2px solid orangered;
+ cursor: progress;
+}
+.progress-bar-done-number {
+ color: #0088cc;
+ font-weight: bolder;
+ cursor: progress;
+}

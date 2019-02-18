@@ -1,0 +1,28 @@
+@keyframes please-wait-animation {
+ 0% {
+  background-color: #0088cc;
+  opacity: .4;
+ }
+ 50% {
+  background-color: #0088cc;
+  opacity: .8;
+ }
+ 100% {
+  background-color: #0088cc;
+  opacity: .4;
+ }
+}
+.please-wait {
+ position: fixed;
+ top: 0;
+ left: 0;
+ width: 100%;
+ height: 100%;
+ display: grid;
+ justify-content: center;
+ align-content: center;
+ animation: please-wait-animation 1s;
+ animation-iteration-count: infinite;
+ cursor: wait;
+ z-index: 1;
+}

@@ -1,0 +1,58 @@
+.menu-item-0,
+.menu-item-1,
+.menu-item-2,
+.menu-item-3 {
+ padding: 5px;
+ border-bottom: 1px solid #ffdd99;
+ font-size: 18px;
+ font-weight: normal;
+}
+.menu-item-0:hover,
+.menu-item-1:hover,
+.menu-item-2:hover,
+.menu-item-3:hover {
+ color: orangered;
+}
+div.sub-item {
+ display: none;
+}
+div.expand > div.sub-item {
+ display: block;
+}
+.root-div-menu div {
+ cursor: pointer;
+}
+.is-selected {
+ background-color: #0088cc;
+ color: white;
+ font-weight: bold;
+}
+/* Computer screen */
+@media only screen
+and (min-width: 768px) {
+ .menu-item-1 {
+  margin-left: 10px;
+ }
+ .menu-item-2 {
+  margin-left: 20px;
+ }
+ .menu-item-3 {
+  margin-left: 30px;
+ }
+}
+/* Grand Neo */
+@media only screen
+and (max-width: 767px) {
+ .root-div-menu div {
+  text-align: center;
+ }
+ .menu-item-1 {
+  font-size: 15px;
+ }
+ .menu-item-2 {
+  font-size: 12px;
+ }
+ .menu-item-3 {
+  font-size: 9px;
+ }
+}

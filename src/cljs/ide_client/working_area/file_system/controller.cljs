@@ -1,10 +1,10 @@
 (ns ide-client.working-area.file-system.controller
-  (:require [js-lib.core :as md]
+  (:require [htmlcss-lib.core :refer [gen div input menu menuitem
+                                      textarea img video source a]]
+            [js-lib.core :as md]
             [ajax-lib.core :refer [ajax get-response]]
             [ajax-lib.http.request-header :as rh]
             [ide-middle.request-urls :as irurls]
-            [ide-client.working-area.file-system.html :as fsh]
-            [ide-client.working-area.html :as wah]
             [ide-client.project.entity :as proent]
             [ide-client.utils :as utils]
             [framework-lib.core :as frm]
@@ -169,12 +169,53 @@
         c-char))
     @doc-name))
 
+(defn textarea-fn
+  "Generate textarea HTML element"
+  [& [content]]
+  (gen
+    (textarea
+      (if-let [content content]
+        content
+        "")
+      {:readonly true}))
+ )
+
+(defn image-fn
+  "Generate image HTML element"
+  [& [src]]
+  (gen
+    (img
+      ""
+      {:src (if-let [src src]
+              src
+              "")
+       :style {:max-width "100%"
+               :max-height "100%"}}))
+ )
+
+(defn video-fn
+  "Generate image HTML element"
+  [& [src
+      mtype]]
+  (gen
+    (video
+      (source
+        ""
+        {:src (if-let [src src]
+                src
+                "")
+         :type mtype})
+      {:width "100%"
+       :height "100%"
+       :controls true}))
+ )
+
 (defn read-file-success
   "Display file if format is supported success"
   [xhr
    ajax-params]
   (md/remove-element-content
-    "#displayFile")
+    "#display-file")
   (let [response (get-response
                    xhr
                    true)
@@ -184,10 +225,10 @@
                      :operation])]
     (when (= operation
              "read")
-      (let [textarea-obj (wah/textarea-fn
+      (let [textarea-obj (textarea-fn
                            response)]
         (md/append-element
-          "#displayFile"
+          "#display-file"
           textarea-obj))
      )
     (when (= operation
@@ -198,10 +239,10 @@
             image-url (.createObjectURL
                         url-creator
                         response)
-            image-obj (wah/image-fn
+            image-obj (image-fn
                         image-url)]
         (md/append-element
-          "#displayFile"
+          "#display-file"
           image-obj))
      )
     (when (= operation
@@ -216,11 +257,11 @@
             video-url (.createObjectURL
                         url-creator
                         response)
-            video-obj (wah/video-fn
+            video-obj (video-fn
                         video-url
                         mtype)]
         (md/append-element
-          "#displayFile"
+          "#display-file"
           video-obj))
      ))
  )
@@ -283,6 +324,17 @@
       "text"))
  )
 
+(defn a-fn
+  "Generate a HTML element"
+  [content
+   a-evts]
+  (gen
+    (a
+      content
+      nil
+      a-evts))
+ )
+
 (defn prepare-file-system-fn-success2
   "Generate and render file system"
   [xhr
@@ -294,23 +346,23 @@
               out
               "\n")]
     (md/remove-element-content
-      "#filesDisplay")
+      "#files-display")
     (md/remove-element-content
-      "#displayFile")
+      "#display-file")
     (when-let [dir-name (:dir-name ajax-params)]
       (swap!
         current-directory
         form-absolute-path
         dir-name)
       (md/set-inner-html
-        "#absolutePath"
+        "#absolute-path"
         @current-directory))
     (doseq [line out]
       (let [doc-name (parse-doc-name
                        line)]
         (if (= (first line)
                  \d)
-          (let [directory-link (wah/a-fn
+          (let [directory-link (a-fn
                                  doc-name
                                  {:onclick
                                    {:evt-fn list-file-system-fn
@@ -319,9 +371,9 @@
                                   :oncontextmenu
                                    {:evt-fn remember-element-fn}})]
             (md/append-element
-              "#filesDisplay"
+              "#files-display"
               directory-link))
-          (let [file-link (wah/a-fn
+          (let [file-link (a-fn
                             doc-name
                             {:onclick
                               {:evt-fn display-file-fn
@@ -329,7 +381,7 @@
                              :oncontextmenu
                               {:evt-fn remember-element-fn}})]
             (md/append-element
-              "#filesDisplay"
+              "#files-display"
               file-link))
          ))
      ))
@@ -351,7 +403,7 @@
       (str
         "/" home "/" user-directory))
     (md/set-inner-html
-      "#absolutePath"
+      "#absolute-path"
       @current-directory)
     (ajax
       {:url irurls/execute-shell-command-url
@@ -390,7 +442,7 @@
   "Make directory request"
   []
   (let [new-folder-name (md/get-value
-                          "#popupInputId")]
+                          "#popup-input-id")]
     (ajax
       {:url irurls/execute-shell-command-url
        :success-fn mkdir-fn-success
@@ -402,10 +454,24 @@
        :dir-name new-folder-name}))
  )
 
+(defn custom-popup-content-fn
+  "Custom popup form"
+  [mkdir-evt]
+  (div
+    [(input
+       ""
+       {:id "popup-input-id"
+        :type "text"})
+     (input
+       ""
+       {:value "Create"
+        :type "button"}
+       mkdir-evt)]))
+
 (defn mkdir-popup-fn
   "Make directory popup for directory name"
   []
-  (let [content (fsh/custom-popup-content-fn
+  (let [content (custom-popup-content-fn
                   {:onclick {:evt-fn mkdir-fn}})
         heading "New folder"]
     (frm/popup-fn
@@ -506,12 +572,73 @@
                          @remembered-value)}})
  )
 
+(defn menu-fn
+  "Custom context menu"
+  [new-folder-evt
+   cut-evt
+   copy-evt
+   delete-evt
+   paste-evt]
+  (menu
+    [(menuitem
+       ""
+       {:label "New folder"}
+       new-folder-evt)
+     (menuitem
+       ""
+       {:label "Cut"}
+       cut-evt)
+     (menuitem
+       ""
+       {:label "Copy"}
+       copy-evt)
+     (menuitem
+       ""
+       {:label "Delete"}
+       delete-evt)
+     (menuitem
+       ""
+       {:label "Paste"}
+       paste-evt)]
+    {:type "context"
+     :id "document-menu"}))
+
+(defn file-system-area-html-fn
+  "Generate shell HTML"
+  [new-folder-evt
+   cut-evt
+   copy-evt
+   delete-evt
+   paste-evt]
+  (gen
+    (div 
+      [(div
+         [(div
+            ""
+            {:id "absolute-path"})
+          (div
+            ""
+            {:id "files-display"})
+          (div
+            ""
+            {:id "display-file"})]
+        {:class "display-content"})
+       (menu-fn
+         new-folder-evt
+         cut-evt
+         copy-evt
+         delete-evt
+         paste-evt)]
+      {:class "file-system-area"
+       :contextmenu "document-menu"}))
+ )
+
 (defn display-file-system
   "Initial function for displaying file-system area"
   []
   (empty-then-append
     ".content"
-    (fsh/file-system-area-html-fn
+    (file-system-area-html-fn
       {:onclick {:evt-fn mkdir-popup-fn}}
       {:onclick {:evt-fn cut-fn}}
       {:onclick {:evt-fn copy-fn}}

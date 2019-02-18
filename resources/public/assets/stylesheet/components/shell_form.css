@@ -1,0 +1,35 @@
+.shell-area {
+ max-width: 767px;
+ width: calc(100% - 20px);
+}
+.shell-area #shell-terminal-output {
+ height: 500px;
+}
+.shell-area #shell-terminal-output textarea {
+ background-color: #a5a5a522;
+ padding: 10px;
+ border: 2px solid #a5a5a599;
+ border-radius: 15px;
+ overflow: auto;
+ resize: none;
+ height: calc(100% - 24px);
+ width: calc(100% - 24px);
+}
+.shell-area input {
+ box-sizing: content-box;
+ width: 100%;
+ display: block;
+ border: 1px solid #0088cc;
+ border-radius: 5px;
+ color: #0088cc;
+ margin: 5px 0;
+ padding: 5px 8px;
+}
+/* Computer screen */
+@media only screen
+and (min-width: 768px) {
+}
+/* Grand Neo */
+@media only screen
+and (max-width: 767px) {
+}
