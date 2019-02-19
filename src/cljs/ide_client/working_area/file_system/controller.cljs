@@ -2,7 +2,7 @@
   (:require [htmlcss-lib.core :refer [gen div input menu menuitem
                                       textarea img video source a]]
             [js-lib.core :as md]
-            [ajax-lib.core :refer [ajax get-response]]
+            [ajax-lib.core :refer [ajax get-response base-url]]
             [ajax-lib.http.request-header :as rh]
             [ide-middle.request-urls :as irurls]
             [ide-client.project.entity :as proent]
@@ -42,6 +42,7 @@
 
 (def display-as-video
      #{"mp4"
+       "mkv"
        "webm"})
 
 (defn empty-then-append
@@ -254,8 +255,8 @@
                        js/document)
             video-uri (:uri response)
             video-url (str
-                        base-uri
-                        "video/"
+                        @base-url
+                        "/video?name="
                         video-uri)
             video-obj (video-fn
                         video-url)]

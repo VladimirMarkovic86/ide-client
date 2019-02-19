@@ -24,7 +24,12 @@
                           base-uri
                           "herokuapp"))
                    "https://ide-server-clj.herokuapp.com"
-                   "https://ide:1604")]
+                   (if (< -1
+                         (.indexOf
+                           base-uri
+                           "192.168.1.86"))
+                     "https://192.168.1.86:1604"
+                     "https://ide:1604"))]
     (reset!
       base-url
       base-uri))
@@ -38,7 +43,12 @@
                              base-ws-uri
                              "herokuapp"))
                       "wss://ide-server-clj.herokuapp.com"
-                      "wss://ide:1604")]
+                      (if (< -1
+                            (.indexOf
+                              base-ws-uri
+                              "192.168.1.86"))
+                        "wss://192.168.1.86:1604"
+                        "wss://ide:1604"))]
     (reset!
       base-ws-url
       base-ws-uri))

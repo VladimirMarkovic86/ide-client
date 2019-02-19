@@ -15,7 +15,7 @@
                  [org.clojars.vladimirmarkovic86/common-middle "0.2.5"]
                  [org.clojars.vladimirmarkovic86/language-lib "0.2.11"]
                  [org.clojars.vladimirmarkovic86/common-client "0.3.13"]
-                 [org.clojars.vladimirmarkovic86/server-lib "0.3.17"]
+                 [org.clojars.vladimirmarkovic86/server-lib "0.3.18"]
                  [org.clojars.vladimirmarkovic86/websocket-lib "0.1.1"]
                  ]
 
