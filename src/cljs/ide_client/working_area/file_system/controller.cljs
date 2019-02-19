@@ -195,16 +195,14 @@
 
 (defn video-fn
   "Generate image HTML element"
-  [& [src
-      mtype]]
+  [& [src]]
   (gen
     (video
       (source
         ""
         {:src (if-let [src src]
                 src
-                "")
-         :type mtype})
+                "")})
       {:width "100%"
        :height "100%"
        :controls true}))
@@ -216,16 +214,16 @@
    ajax-params]
   (md/remove-element-content
     "#display-file")
-  (let [response (get-response
-                   xhr
-                   true)
-        operation (get-in
+  (let [operation (get-in
                     ajax-params
                     [:entity
                      :operation])]
     (when (= operation
              "read")
-      (let [textarea-obj (textarea-fn
+      (let [response (get-response
+                       xhr
+                       true)
+            textarea-obj (textarea-fn
                            response)]
         (md/append-element
           "#display-file"
@@ -233,7 +231,10 @@
      )
     (when (= operation
              "image")
-      (let [url-creator (aget
+      (let [response (get-response
+                       xhr
+                       true)
+            url-creator (aget
                           js/window
                           "URL")
             image-url (.createObjectURL
@@ -247,19 +248,17 @@
      )
     (when (= operation
              "video")
-      (let [mtype (get-in
-                    ajax-params
-                    [:request-header-map
-                     (rh/accept)])
-            url-creator (aget
-                          js/window
-                          "URL")
-            video-url (.createObjectURL
-                        url-creator
-                        response)
+      (let [response (get-response
+                       xhr)
+            base-uri (.-baseURI
+                       js/document)
+            video-uri (:uri response)
+            video-url (str
+                        base-uri
+                        "video/"
+                        video-uri)
             video-obj (video-fn
-                        video-url
-                        mtype)]
+                        video-url)]
         (md/append-element
           "#display-file"
           video-obj))
@@ -308,7 +307,6 @@
         {:url irurls/read-file-url
          :success-fn read-file-success
          :request-header-map {(rh/accept) (str "video/" extension)}
-         :request-property-map {"responseType" "blob"}
          :entity {:file-path file-path
                   :operation "video"}}))
    ))
