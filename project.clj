@@ -11,7 +11,7 @@
                  [org.clojars.vladimirmarkovic86/framework-lib "0.2.17"]
                  [org.clojars.vladimirmarkovic86/utils-lib "0.4.3"]
                  [org.clojars.vladimirmarkovic86/client-test-lib "0.2.5"]
-                 [org.clojars.vladimirmarkovic86/ide-middle "0.2.9"]
+                 [org.clojars.vladimirmarkovic86/ide-middle "0.2.10"]
                  [org.clojars.vladimirmarkovic86/common-middle "0.2.5"]
                  [org.clojars.vladimirmarkovic86/language-lib "0.2.11"]
                  [org.clojars.vladimirmarkovic86/common-client "0.3.13"]

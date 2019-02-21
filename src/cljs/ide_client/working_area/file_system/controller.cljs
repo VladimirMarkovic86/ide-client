@@ -246,23 +246,6 @@
         (md/append-element
           "#display-file"
           image-obj))
-     )
-    (when (= operation
-             "video")
-      (let [response (get-response
-                       xhr)
-            base-uri (.-baseURI
-                       js/document)
-            video-uri (:uri response)
-            video-url (str
-                        @base-url
-                        "/video?name="
-                        video-uri)
-            video-obj (video-fn
-                        video-url)]
-        (md/append-element
-          "#display-file"
-          video-obj))
      ))
  )
 
@@ -304,13 +287,18 @@
                   :operation "image"}})
      )
     (when display-as-video?
-      (ajax
-        {:url irurls/read-file-url
-         :success-fn read-file-success
-         :request-header-map {(rh/accept) (str "video/" extension)}
-         :entity {:file-path file-path
-                  :operation "video"}}))
-   ))
+      (let [video-url (str
+                        @base-url
+                        irurls/video-url
+                        "?filepath="
+                        file-path)
+            video-obj (video-fn
+                        video-url)]
+        (md/append-element
+          "#display-file"
+          video-obj))
+     ))
+ )
 
 (defn remember-element-fn
   "Cut and copy clipboard"
@@ -397,10 +385,25 @@
          user-directory] (cstring/split
                            out
                            #"/")]
-    (reset!
-      current-directory
-      (str
-        "/" home "/" user-directory))
+    (if (or (nil?
+              home)
+            (cstring/blank?
+              home)
+            (nil?
+              user-directory))
+      (reset!
+        current-directory
+        "/")
+      (reset!
+        current-directory
+        (str
+          "/"
+          (cstring/trim
+            home)
+          "/"
+          (cstring/trim
+            user-directory))
+       ))
     (md/set-inner-html
       "#absolute-path"
       @current-directory)
@@ -418,7 +421,7 @@
   (ajax
     {:url irurls/execute-shell-command-url
      :success-fn prepare-file-system-fn-success
-     :entity {:command "pwd"}}))
+     :entity {:command "echo $HOME"}}))
 
 (defn mkdir-fn-success
   "Make directory success"
