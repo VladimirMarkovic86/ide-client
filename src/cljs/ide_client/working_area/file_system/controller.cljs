@@ -287,6 +287,8 @@
                   :operation "image"}})
      )
     (when display-as-video?
+      (md/remove-element-content
+        "#display-file")
       (let [video-url (str
                         @base-url
                         irurls/video-url
