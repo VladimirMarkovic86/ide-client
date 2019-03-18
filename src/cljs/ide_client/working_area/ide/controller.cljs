@@ -7,6 +7,7 @@
             [ide-client.project.entity :as proent]
             [ajax-lib.core :refer [ajax sjax get-response]]
             [ajax-lib.http.request-header :as rh]
+            [ajax-lib.http.mime-type :as mt]
             [common-middle.request-urls :as rurls]
             [ide-middle.request-urls :as irurls]
             [ide-client.working-area.leiningen.controller :as walc]
@@ -914,26 +915,30 @@
         xhr (if is-text
               (sjax
                 {:url irurls/read-file-url
+                 :request-header-map {(rh/accept) (mt/text-plain)}
+                 :request-property-map {"responseType" (mt/text-plain)
+                                        "cljResponseType" (mt/text-plain)}
                  :entity {:file-path file-path
                           :operation "read"}})
               (if is-image
                 (sjax
                   {:url irurls/read-file-url
                    :request-header-map {(rh/accept) (str "image/" extension)}
-                   :request-property-map {"responseType" "blob"}
+                   :request-property-map {"responseType" "blob"
+                                          "cljResponseType" "blob"}
                    :entity {:file-path file-path
                             :operation "image"}})
                 (when is-video
                   (sjax
                     {:url irurls/read-file-url
                      :request-header-map {(rh/accept) (str "video/" extension)}
-                     :request-property-map {"responseType" "blob"}
+                     :request-property-map {"responseType" "blob"
+                                            "cljResponseType" "blob"}
                      :entity {:file-path file-path
                               :operation "video"}}))
                ))
         response (get-response
-                   xhr
-                   true)]
+                   xhr)]
     (when is-text
       (if (contains?
             @opened-files

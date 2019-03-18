@@ -980,8 +980,7 @@
                           [" "
                            caret-end]
                           [part-one
-                           (dec
-                             caret-end)])]
+                           caret-end])]
         (aset
           textarea
           "value"
@@ -1030,9 +1029,6 @@
                        part-two
                        #"\n "
                        "\n")
-            part-two-row-count (count
-                                 (utils/split-with-newline
-                                   part-two))
             caret-end (- caret-end
                          part-two-appearance-count)
             [part-two

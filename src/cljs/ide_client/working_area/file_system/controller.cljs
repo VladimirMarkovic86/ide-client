@@ -4,6 +4,7 @@
             [js-lib.core :as md]
             [ajax-lib.core :refer [ajax get-response base-url]]
             [ajax-lib.http.request-header :as rh]
+            [ajax-lib.http.mime-type :as mt]
             [ide-middle.request-urls :as irurls]
             [ide-client.project.entity :as proent]
             [ide-client.utils :as utils]
@@ -222,8 +223,7 @@
     (when (= operation
              "read")
       (let [response (get-response
-                       xhr
-                       true)
+                       xhr)
             textarea-obj (textarea-fn
                            response)]
         (md/append-element
@@ -233,8 +233,7 @@
     (when (= operation
              "image")
       (let [response (get-response
-                       xhr
-                       true)
+                       xhr)
             url-creator (aget
                           js/window
                           "URL")
@@ -275,6 +274,9 @@
       (ajax
         {:url irurls/read-file-url
          :success-fn read-file-success
+         :request-header-map {(rh/accept) (mt/text-plain)}
+         :request-property-map {"responseType" (mt/text-plain)
+                                "cljResponseType" (mt/text-plain)}
          :entity {:file-path file-path
                   :operation "read"}}))
     (when display-as-image?
@@ -282,7 +284,8 @@
         {:url irurls/read-file-url
          :success-fn read-file-success
          :request-header-map {(rh/accept) (str "image/" extension)}
-         :request-property-map {"responseType" "blob"}
+         :request-property-map {"responseType" "blob"
+                                "cljResponseType" "blob"}
          :entity {:file-path file-path
                   :operation "image"}})
      )
