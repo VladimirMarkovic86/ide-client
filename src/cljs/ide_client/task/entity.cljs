@@ -198,7 +198,7 @@
            :code 1}
    :pagination true
    :current-page 0
-   :rows 10
+   :rows imte/rows
    :collation {:locale "sr"}})
 
 (defn table-conf-fn
@@ -211,6 +211,7 @@
              :edit
              :delete]
    :allowed-actions @allowed-actions
+   :reports-on true
    :search-on true
    :search-fields [;:code
                    :name

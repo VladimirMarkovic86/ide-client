@@ -54,7 +54,7 @@
                                     :required "required"}}
             :git-remote-link {:label (get-label 1008)
                               :input-el "text"
-                            :attrs {:placeholder (get-label 1008)}}
+                              :attrs {:placeholder (get-label 1008)}}
             :language {:label (get-label 1009)
                        :input-el "radio"
                        :attrs {:required "required"}
@@ -163,7 +163,7 @@
    :qsort {:artifact-id 1}
    :pagination true
    :current-page 0
-   :rows 10
+   :rows impe/rows
    :collation {:locale "sr"}})
 
 (defn table-conf-fn
@@ -176,6 +176,7 @@
              :edit
              :delete]
    :allowed-actions @allowed-actions
+   :reports-on true
    :search-on true
    :search-fields [:name
                    :group-id

@@ -1,0 +1,32 @@
+.report-links {
+ padding: 10px 0;
+ height: 50px;
+}
+.report-links a {
+ float: right;
+}
+.report-links a:hover,
+.report-links a:hover div {
+ cursor: pointer;
+}
+.report-icon {
+ height: 50px;
+ width: 50px;
+ background-size: cover;
+}
+.english-full-report {
+ background-image: url("../../images/report/pdf-us-all.png");
+ background-repeat: no-repeat;
+}
+.english-page-report {
+ background-image: url("../../images/report/pdf-us-page.png");
+ background-repeat: no-repeat;
+}
+.serbian-full-report {
+ background-image: url("../../images/report/pdf-sr-all.png");
+ background-repeat: no-repeat;
+}
+.serbian-page-report {
+ background-image: url("../../images/report/pdf-sr-page.png");
+ background-repeat: no-repeat;
+}
