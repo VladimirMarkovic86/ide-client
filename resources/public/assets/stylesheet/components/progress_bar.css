@@ -18,7 +18,7 @@
  align-content: center;
  background-color: white;
  border-radius: 5px;
- border: 2px solid orangered;
+ border: 2px solid purple;
  cursor: progress;
 }
 .progress-bar-done-number {

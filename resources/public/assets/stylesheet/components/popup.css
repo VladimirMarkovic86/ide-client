@@ -43,7 +43,7 @@
  cursor: pointer;
 }
 .popup-window .close-btn:hover {
- color: orangered;
+ color: purple;
 }
 .popup-window .popup-content {
  padding: 10px;

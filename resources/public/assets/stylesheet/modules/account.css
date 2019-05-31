@@ -52,7 +52,7 @@
  cursor: pointer;
 }
 .account-menu .account-items > div:hover {
- color: orangered;
+ color: purple;
 }
 /* Computer screen */
 @media only screen

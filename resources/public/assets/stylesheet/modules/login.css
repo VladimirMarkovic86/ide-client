@@ -26,10 +26,10 @@
  margin-bottom: 10px;
 }
 .login label.error {
- color: orangered;
+ color: purple;
 }
 .login label.error input {
- box-shadow: 0 0 10px orangered;
+ box-shadow: 0 0 10px purple;
 }
 .login label.error span {
  display: none;
@@ -37,7 +37,7 @@
 .login label.error:hover span {
  display: block;
  position: absolute;
- background-color: orangered;
+ background-color: purple;
  color: white;
  border-radius: 5px;
  padding: 2px 4px;
@@ -47,7 +47,7 @@
  content: "";
  border-left: 10px solid transparent;
  border-right: 10px solid transparent;
- border-bottom: 10px solid orangered;
+ border-bottom: 10px solid purple;
  position: absolute;
  top: -10px;
  left: 10px;

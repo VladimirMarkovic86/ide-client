@@ -17,3 +17,18 @@ header .logo-img {
  width: 60px;
  background-size: contain;
 }
+header .logo-svg {
+ 
+}
+header .logo-svg-polyline {
+ stroke: white;
+ fill: white;
+}
+header .logo-svg:hover {
+ cursor: pointer;
+}
+header .logo-svg:hover .logo-svg-polyline {
+ stroke: purple;
+ fill: purple;
+}
+

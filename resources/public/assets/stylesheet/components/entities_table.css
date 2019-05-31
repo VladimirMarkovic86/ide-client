@@ -63,7 +63,7 @@
  color: inherit;
 }
 .entities .pagination > div:not(.current-page):hover {
- color: orangered;
+ color: purple;
 }
 .entities .pagination div:nth-child(1) {
  min-width: 30px;
@@ -91,7 +91,7 @@
  transition-timing-function: linear;
 }
 .entities .action:hover {
- background-color: orangered;
+ background-color: purple;
  color: white;
  font-weight: bolder;
 }

@@ -46,7 +46,7 @@
  cursor: pointer;
 }
 .language-menu .lang-items > div:hover {
- color: orangered;
+ color: purple;
 }
 /* Computer screen */
 @media only screen
