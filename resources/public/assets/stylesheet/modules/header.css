@@ -4,9 +4,11 @@ header {
 }
 header .logo {
  height: 50px;
- position: fixed;
- top: 10px;
- left: 10px;
+ width: 80px;
+ float: left;
+ display: grid;
+ align-content: center;
+ justify-content: center;
 }
 header .logo,
 header .logo * {

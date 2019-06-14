@@ -10,6 +10,18 @@
  background-image: url("../../images/log_out.png");
  background-repeat: no-repeat;
 }
+div:hover > .logout-img {
+ background-image: url("../../images/log_out_hover.png");
+ background-repeat: no-repeat;
+}
+.preferences-img {
+ background-image: url("../../images/preferences.png");
+ background-repeat: no-repeat;
+}
+div:hover > .preferences-img {
+ background-image: url("../../images/preferences_hover.png");
+ background-repeat: no-repeat;
+}
 .us-flag-img {
  background-image: url("../../images/lang/us_flag.png");
  background-repeat: no-repeat;

@@ -22,13 +22,13 @@
                   {:label (get-label 4)
                    :id "task-create-nav-id"
                    :evt-fn create-entity
-                   :evt-p (table-conf-fn)})
+                   :evt-p table-conf-fn})
                 (when (contains?
                         @allowed-actions
                         imfns/task-read)
                   {:label (get-label 5)
                    :id "task-show-all-nav-id"
                    :evt-fn gen-table
-                   :evt-p (table-conf-fn)})]}
-   ))
+                   :evt-p table-conf-fn})]})
+ )
 

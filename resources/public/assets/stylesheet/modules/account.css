@@ -25,22 +25,26 @@
 .account-menu .default-user-img,
 .account-menu .default-user-img + div,
 .account-menu .logout-img,
-.account-menu .logout-img + div {
+.account-menu .logout-img + div,
+.account-menu .preferences-img,
+.account-menu .preferences-img + div {
  float: left;
 }
 .account-menu .default-user-img,
-.account-menu .logout-img {
+.account-menu .logout-img,
+.account-menu .preferences-img {
  height: 32px;
  width: 32px;
  background-size: contain;
 }
 .account-menu .default-user-img + div,
-.account-menu .logout-img + div {
+.account-menu .logout-img + div,
+.account-menu .preferences-img + div {
  margin-left: 10px;
  font-weight: bold;
 }
 .account-menu:hover {
- height: 95px;
+ height: 135px;
 }
 .account-menu .account-items > div {
  height: 32px;
@@ -53,6 +57,12 @@
 }
 .account-menu .account-items > div:hover {
  color: purple;
+}
+.account-menu .account-items > div > div:nth-child(2) {
+ width: calc(100% - 42px);
+ overflow: hidden;
+ text-overflow: ellipsis;
+ white-space: nowrap;
 }
 /* Computer screen */
 @media only screen

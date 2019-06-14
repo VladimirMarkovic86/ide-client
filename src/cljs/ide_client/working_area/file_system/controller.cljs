@@ -6,11 +6,8 @@
             [ajax-lib.http.request-header :as rh]
             [ajax-lib.http.mime-type :as mt]
             [ide-middle.request-urls :as irurls]
-            [ide-client.project.entity :as proent]
-            [ide-client.utils :as utils]
             [framework-lib.core :as frm]
-            [clojure.string :as cstring]
-            [cljs.reader :as reader]))
+            [clojure.string :as cstring]))
 
 (def current-directory
      (atom ""))

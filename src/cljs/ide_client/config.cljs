@@ -4,6 +4,10 @@
             [ide-client.html :as ht]
             [ide-middle.functionalities :as fns]
             [common-client.role.entity :as re]
+            [ide-client.preferences.controller :as icpc]
+            [common-client.preferences.controller :as ccpc]
+            [ide-client.preferences.html :as icph]
+            [common-client.preferences.html :as ccph]
             [common-client.login.controller :refer [logout
                                                     custom-menu
                                                     home-page-content
@@ -99,6 +103,34 @@
     re/functionalities
     fns/functionalities))
 
+(defn bind-set-specific-preferences-fn
+  "Binds project's specific preferences function to common client atom"
+  []
+  (reset!
+    ccpc/set-specific-preferences-a-fn
+    icpc/set-specific-preferences-fn))
+
+(defn bind-gather-specific-preferences-fn
+  "Binds project's specific preferences function to common client atom"
+  []
+  (reset!
+    ccpc/gather-specific-preferences-a-fn
+    icpc/gather-specific-preferences-fn))
+
+(defn bind-popup-specific-preferences-set-fn
+  "Binds project's specific preferences function to common client atom"
+  []
+  (reset!
+    ccpc/popup-specific-preferences-set-a-fn
+    icpc/popup-specific-preferences-set-fn))
+
+(defn bind-build-specific-display-tab-content-fn
+  "Binds project's specific preferences function to common client atom"
+  []
+  (reset!
+    ccph/build-specific-display-tab-content-a-fn
+    icph/build-specific-display-tab-content-fn))
+
 (defn setup-environment
   "Setup environment, https and wss urls, custom menus, home page"
   []
@@ -110,5 +142,9 @@
   (setup-home-page)
   (workaround-for-circular-dependency)
   (make-functionalities-available)
+  (bind-set-specific-preferences-fn)
+  (bind-gather-specific-preferences-fn)
+  (bind-popup-specific-preferences-set-fn)
+  (bind-build-specific-display-tab-content-fn)
   )
 

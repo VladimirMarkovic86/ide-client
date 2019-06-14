@@ -163,13 +163,15 @@
    :qsort {:artifact-id 1}
    :pagination true
    :current-page 0
-   :rows impe/rows
+   :rows (impe/calculate-rows)
    :collation {:locale "sr"}})
 
 (defn table-conf-fn
   "Table configuration for project entity"
   []
-  {:query (query-fn)
+  {:preferences impe/preferences
+   :query-fn query-fn
+   :query (query-fn)
    :columns (columns-fn)
    :form-conf (form-conf-fn)
    :actions [:details
@@ -193,7 +195,9 @@
 (defn lein-table-conf-fn
   "Table configuration for project entity"
   []
-  {:query (query-fn)
+  {:preferences impe/preferences
+   :query-fn query-fn
+   :query (query-fn)
    :columns (lein-columns-fn)
    :form-conf (form-conf-fn)
    :actions [:details
