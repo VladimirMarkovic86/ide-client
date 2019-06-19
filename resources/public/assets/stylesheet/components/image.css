@@ -2,6 +2,51 @@
  background-image: url("../../images/logo.png");
  background-repeat: no-repeat;
 }
+@keyframes logo-animation {
+ 0% {
+  background-image: url("../../images/logo_hi_res_w.png");
+  opacity: 0;
+ }
+ 12.5% {
+  background-image: url("../../images/logo_hi_res_w.png");
+  opacity: 1;
+ }
+ 25% {
+  background-image: url("../../images/logo_hi_res_w.png");
+  opacity: 0;
+ }
+ 37.5% {
+  background-image: url("../../images/logo_hi_res_b.png");
+  opacity: 0;
+ }
+ 50% {
+  background-image: url("../../images/logo_hi_res_b.png");
+  opacity: 1;
+ }
+ 62.5% {
+  background-image: url("../../images/logo_hi_res_b.png");
+  opacity: 0;
+ }
+ 75% {
+  background-image: url("../../images/logo_hi_res_p.png");
+  opacity: 0;
+ }
+ 87.5% {
+  background-image: url("../../images/logo_hi_res_p.png");
+  opacity: 1;
+ }
+ 100% {
+  background-image: url("../../images/logo_hi_res_p.png");
+  opacity: 0;
+ }
+}
+.logo-hi-res {
+ background-repeat: no-repeat;
+ background-size: contain;
+ background-position: center;
+ animation: logo-animation 10s;
+ animation-iteration-count: infinite;
+}
 .default-user-img {
  background-image: url("../../images/user.png");
  background-repeat: no-repeat;
