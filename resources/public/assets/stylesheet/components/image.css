@@ -87,3 +87,7 @@ div:hover > .preferences-img {
  background-image: url("../../images/delete.png");
  background-repeat: no-repeat;
 }
+.phone-img {
+ background-image: url("../../images/phone.png");
+ background-repeat: no-repeat;
+}

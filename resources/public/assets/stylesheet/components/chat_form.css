@@ -1,6 +1,7 @@
 .chat .chat-commands,
 .chat .chat-history,
-.chat .chat-message {
+.chat .chat-message,
+.chat .chat-call {
  max-width: 767px;
  width: calc(100% - 20px);
 }
@@ -42,6 +43,83 @@
  color: #0088cc;
  margin: 5px 0;
  padding: 5px 8px;
+}
+.call-modal {
+ display: grid;
+ align-content: center;
+ justify-content: center;
+ position: fixed;
+ top: 0;
+ width: 100%;
+ height: 100%;
+ z-index: 1;
+ left: 0;
+}
+.call-background {
+ position: fixed;
+ width: 100%;
+ height: 100%;
+ opacity: 0.6;
+ background-color: black;
+}
+.user-image {
+ z-index: 0;
+ color: white;
+ height: 200px;
+ width: 200px;
+ background-size: contain;
+}
+.contact-name {
+ z-index: 0;
+ width: 200px;
+ font-size: 25px;
+ margin-top: 40px;
+ color: white;
+ font-weight: bolder;
+ text-align: center;
+}
+.phone-action {
+ z-index: 0;
+ width: 200px;
+ margin-top: 40px;
+}
+.phone-call,
+.hang-up {
+ cursor: pointer;
+ color: white;
+ width: 60px;
+ height: 60px;
+ border-radius: 40px;
+ display: grid;
+ justify-content: center;
+ align-content: center;
+}
+.phone-call {
+ background-color: green;
+ float: left;
+}
+.hang-up {
+ background-color: red;
+ float: right;
+}
+.hang-up > .phone-img,
+.phone-call > .phone-img {
+ width: 50px;
+ height: 50px;
+ background-size: contain;
+ cursor: pointer;
+}
+.hang-up > .phone-img {
+ transform: rotate(132deg);
+}
+.call-label {
+ z-index: 0;
+ color: white;
+ width: 200px;
+ height: 50px;
+ text-align: center;
+ margin-top: 40px;
+ font-size: 20px;
 }
 /* Computer screen */
 @media only screen
