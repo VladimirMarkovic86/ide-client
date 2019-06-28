@@ -7,6 +7,7 @@
             [ajax-lib.http.mime-type :as mt]
             [ide-middle.request-urls :as irurls]
             [framework-lib.core :as frm]
+            [language-lib.core :refer [get-label]]
             [clojure.string :as cstring]))
 
 (def current-directory
@@ -256,8 +257,10 @@
                           ".")
         extension (.substr
                     file-name
-                    (inc extension-start)
-                    (count file-name))
+                    (inc
+                      extension-start)
+                    (count
+                      file-name))
         display-as-text? (contains?
                            display-as-text
                            extension)
@@ -468,7 +471,8 @@
         :type "text"})
      (input
        ""
-       {:value "Create"
+       {:value (get-label
+                 4)
         :type "button"}
        mkdir-evt)]))
 
@@ -477,7 +481,8 @@
   []
   (let [content (custom-popup-content-fn
                   {:onclick {:evt-fn mkdir-fn}})
-        heading "New folder"]
+        heading (get-label
+                  1027)]
     (frm/popup-fn
       {:content content
        :heading heading}))
@@ -576,34 +581,198 @@
                          @remembered-value)}})
  )
 
+(defn download-fn-success
+  "Download file from system success"
+  [xhr
+   ajax-params]
+  (let [operation (get-in
+                    ajax-params
+                    [:entity
+                     :operation])]
+    (when (= operation
+             "download")
+      (let [response (get-response
+                       xhr)
+            file-url (.createObjectURL
+                       js/URL
+                       response)
+            download-link (gen
+                            (a))]
+        (aset
+          download-link
+          "href"
+          file-url)
+        (aset
+          download-link
+          "download"
+          @remembered-value)
+        (md/dispatch-event
+          "click"
+          download-link))
+     ))
+ )
+
+(defn download-fn
+  "Download file from system request"
+  []
+  (let [file-path (str
+                    @current-directory
+                    "/"
+                    @remembered-value)]
+    (ajax
+      {:url irurls/read-file-url
+       :success-fn download-fn-success
+       :request-property-map {"responseType" "blob"
+                              "cljResponseType" "blob"}
+       :entity {:file-path file-path
+                :operation "download"}}))
+ )
+
+(defn upload-fn-success
+  "Download file from system success"
+  [xhr
+   ajax-params]
+  (ajax
+    {:url irurls/execute-shell-command-url
+     :success-fn prepare-file-system-fn-success2
+     :entity {:command (str
+                         "ls -al "
+                         @current-directory)}})
+  (frm/close-popup))
+
+(def upload-file-a
+     (atom nil))
+
+(defn upload-fn
+  "Upload file on system request"
+  []
+  (when @upload-file-a
+    (let [file-input-el (md/query-selector
+                          ".upload-fileds input[type='file']")
+          upload-file-name (aget
+                             (aget
+                               (aget
+                                 file-input-el
+                                 "files")
+                               0)
+                             "name")
+          file-path (str
+                      @current-directory
+                      "/"
+                      upload-file-name)]
+      (ajax
+        {:url irurls/save-file-changes-url
+         :success-fn upload-fn-success
+         :entity {:file-path file-path
+                  :file-content @upload-file-a
+                  :is-base64 true}})
+      (reset!
+        upload-file-a
+        nil))
+   ))
+
+(defn upload-popup
+  "Displays modal dialog for file upload"
+  []
+  (let [upload-file-fn (fn []
+                         (let [file-input-el (md/query-selector
+                                               ".upload-fileds input[type='file']")
+                               file (aget
+                                      (aget
+                                        file-input-el
+                                        "files")
+                                      0)
+                               fileReader (js/FileReader.)
+                               onload (aset
+                                        fileReader
+                                        "onload"
+                                        ((fn []
+                                           (fn [e]
+                                             (reset!
+                                               upload-file-a
+                                               (aget
+                                                 (aget
+                                                   e
+                                                   "target")
+                                                 "result"))
+                                            ))
+                                         ))
+                               dataURL (when file
+                                         (.readAsDataURL
+                                           fileReader
+                                           file))]
+                           
+                          ))
+        content (div
+                  [(div
+                     (input
+                       nil
+                       {:type "file"}
+                       {:onchange {:evt-fn upload-file-fn}})
+                     {:class "upload-fileds"})
+                   (div
+                     (input
+                       nil
+                       {:class "btn"
+                        :value (get-label
+                                 1079)
+                        :type "button"}
+                       {:onclick {:evt-fn upload-fn}})
+                     {:class "upload-actions"})
+                   ]
+                  {:class "upload-container"})
+        heading (get-label
+                  1079)]
+    (frm/popup-fn
+      {:heading heading
+       :content content}))
+ )
+
 (defn menu-fn
   "Custom context menu"
   [new-folder-evt
    cut-evt
    copy-evt
    delete-evt
-   paste-evt]
+   paste-evt
+   download-evt
+   upload-evt]
   (menu
     [(menuitem
        ""
-       {:label "New folder"}
+       {:label (get-label
+                 1027)}
        new-folder-evt)
      (menuitem
        ""
-       {:label "Cut"}
+       {:label (get-label
+                 1029)}
        cut-evt)
      (menuitem
        ""
-       {:label "Copy"}
+       {:label (get-label
+                 1030)}
        copy-evt)
      (menuitem
        ""
-       {:label "Delete"}
+       {:label (get-label
+                 8)}
        delete-evt)
      (menuitem
        ""
-       {:label "Paste"}
-       paste-evt)]
+       {:label (get-label
+                 1031)}
+       paste-evt)
+     (menuitem
+       ""
+       {:label (get-label
+                 1078)}
+       download-evt)
+     (menuitem
+       ""
+       {:label (get-label
+                 1079)}
+       upload-evt)]
     {:type "context"
      :id "document-menu"}))
 
@@ -613,7 +782,9 @@
    cut-evt
    copy-evt
    delete-evt
-   paste-evt]
+   paste-evt
+   download-evt
+   upload-evt]
   (gen
     (div 
       [(div
@@ -632,7 +803,9 @@
          cut-evt
          copy-evt
          delete-evt
-         paste-evt)]
+         paste-evt
+         download-evt
+         upload-evt)]
       {:class "file-system-area"
        :contextmenu "document-menu"}))
  )
@@ -648,6 +821,8 @@
       {:onclick {:evt-fn copy-fn}}
       {:onclick {:evt-fn delete-fn}}
       {:onclick {:evt-fn paste-fn}}
+      {:onclick {:evt-fn download-fn}}
+      {:onclick {:evt-fn upload-popup}}
      ))
   (prepare-file-system-fn))
 
