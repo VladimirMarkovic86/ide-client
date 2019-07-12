@@ -1,6 +1,6 @@
 (ns ide-client.working-area.file-system.controller
   (:require [htmlcss-lib.core :refer [gen div input menu menuitem
-                                      textarea img video source a]]
+                                      textarea img video audio source a]]
             [js-lib.core :as md]
             [ajax-lib.core :refer [ajax get-response base-url]]
             [ajax-lib.http.request-header :as rh]
@@ -44,6 +44,10 @@
        "mkv"
        "webm"})
 
+(def display-as-audio
+     #{"mp3"
+       "m4a"})
+
 (defn empty-then-append
   "Empty content and append new one"
   [selector
@@ -53,6 +57,24 @@
   (md/append-element
     selector
     new-content))
+
+(defn escape-space
+  "Escape space sign"
+  [path]
+  (let [escaped-path (atom "")]
+    (doseq [c-char path]
+      (if (= c-char
+             \space)
+        (swap!
+          escaped-path
+          str
+          "\\ ")
+        (swap!
+          escaped-path
+          str
+          c-char))
+     )
+    @escaped-path))
 
 (defn form-absolute-path
   "Form absolute path for \"ls -al\" query"
@@ -110,24 +132,6 @@
      )
     @final-path))
 
-(defn escape-space
-  "Escape space sign"
-  [path]
-  (let [escaped-path (atom "")]
-    (doseq [c-char path]
-      (if (= c-char
-             \space)
-        (swap!
-          escaped-path
-          str
-          "\\ ")
-        (swap!
-          escaped-path
-          str
-          c-char))
-     )
-    @escaped-path))
-
 (defn list-file-system-fn
   "Execute shell command \"ls -al\" on server"
   [{dir-name :dir-name
@@ -137,9 +141,10 @@
      :success-fn success-fn
      :entity {:command (str
                          "ls -al "
-                         (escape-space
-                           (form-absolute-path
-                             @current-directory
+                         (form-absolute-path
+                           (escape-space
+                             @current-directory)
+                           (escape-space
                              dir-name))
                         )}
      :dir-name dir-name}))
@@ -198,6 +203,21 @@
   [& [src]]
   (gen
     (video
+      (source
+        ""
+        {:src (if-let [src src]
+                src
+                "")})
+      {:width "100%"
+       :height "100%"
+       :controls true}))
+ )
+
+(defn audio-fn
+  "Generate audio HTML element"
+  [& [src]]
+  (gen
+    (audio
       (source
         ""
         {:src (if-let [src src]
@@ -269,6 +289,9 @@
                             extension)
         display-as-video? (contains?
                             display-as-video
+                            extension)
+        display-as-audio? (contains?
+                            display-as-audio
                             extension)]
     (when display-as-text?
       (ajax
@@ -302,6 +325,20 @@
         (md/append-element
           "#display-file"
           video-obj))
+     )
+    (when display-as-audio?
+      (md/remove-element-content
+        "#display-file")
+      (let [audio-url (str
+                        @base-url
+                        irurls/video-url
+                        "?filepath="
+                        file-path)
+            audio-obj (audio-fn
+                        audio-url)]
+        (md/append-element
+          "#display-file"
+          audio-obj))
      ))
  )
 
@@ -417,8 +454,10 @@
        :success-fn prepare-file-system-fn-success2
        :entity {:command (str
                            "ls -al "
-                           @current-directory)}})
-   ))
+                           (escape-space
+                             @current-directory))}}
+     ))
+ )
 
 (defn prepare-file-system-fn
   "Call server to return data about chosen document source"
@@ -439,11 +478,13 @@
        :success-fn prepare-file-system-fn-success2
        :entity {:command (str
                            "ls -al "
-                           @current-directory
+                           (escape-space
+                             @current-directory)
                            "/"
-                           dir-name)}
-       :dir-name dir-name}))
- )
+                           (escape-space
+                             dir-name))}
+       :dir-name dir-name})
+   ))
 
 (defn mkdir-fn
   "Make directory request"
@@ -455,9 +496,11 @@
        :success-fn mkdir-fn-success
        :entity {:command (str
                            "mkdir "
-                           @current-directory
+                           (escape-space
+                             @current-directory)
                            "/"
-                           new-folder-name)}
+                           (escape-space
+                             new-folder-name))}
        :dir-name new-folder-name}))
  )
 
@@ -524,8 +567,9 @@
      :success-fn prepare-file-system-fn-success2
      :entity {:command (str
                          "ls -al "
-                         @current-directory)}})
- )
+                         (escape-space
+                           @current-directory))}}
+   ))
 
 (defn paste-fn
   "Paste document in file system request"
@@ -539,10 +583,12 @@
        :success-fn paste-fn-success
        :entity {:command (str
                            "mv "
-                           cut-doc
+                           (escape-space
+                             cut-doc)
                            " "
-                           @current-directory)}})
-   )
+                           (escape-space
+                             @current-directory))}}
+     ))
   (when-let [copy-doc @copy-value]
     (reset!
       copy-value
@@ -552,10 +598,13 @@
        :success-fn paste-fn-success
        :entity {:command (str
                            "cp -r "
-                           copy-doc
+                           (escape-space
+                             copy-doc)
                            " "
-                           @current-directory)}})
-   ))
+                           (escape-space
+                             @current-directory))}}
+     ))
+ )
 
 (defn delete-fn-success
   "Delete file from system success"
@@ -565,8 +614,9 @@
      :success-fn prepare-file-system-fn-success2
      :entity {:command (str
                          "ls -al "
-                         @current-directory)}})
- )
+                         (escape-space
+                           @current-directory))}}
+   ))
 
 (defn delete-fn
   "Delete file from system request"
@@ -576,10 +626,12 @@
      :success-fn delete-fn-success
      :entity {:command (str
                          "rm -rf "
-                         @current-directory
+                         (escape-space
+                           @current-directory)
                          "/"
-                         @remembered-value)}})
- )
+                         (escape-space
+                           @remembered-value))}}
+   ))
 
 (defn download-fn-success
   "Download file from system success"
@@ -637,7 +689,9 @@
      :success-fn prepare-file-system-fn-success2
      :entity {:command (str
                          "ls -al "
-                         @current-directory)}})
+                         (escape-space
+                           @current-directory))}}
+   )
   (frm/close-popup))
 
 (def upload-file-a
