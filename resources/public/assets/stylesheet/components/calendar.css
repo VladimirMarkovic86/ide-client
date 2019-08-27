@@ -1,0 +1,145 @@
+.calendar .n-resizable {
+ cursor: n-resize;
+}
+.calendar .ne-resizable {
+ cursor: ne-resize;
+}
+.calendar .e-resizable {
+ cursor: e-resize;
+}
+.calendar .se-resizable {
+ cursor: se-resize;
+}
+.calendar .s-resizable {
+ cursor: s-resize;
+}
+.calendar .sw-resizable {
+ cursor: sw-resize;
+}
+.calendar .w-resizable {
+ cursor: w-resize;
+}
+.calendar .nw-resizable {
+ cursor: nw-resize;
+}
+.calendar polygon.item {
+ cursor: pointer;
+}
+.calendar .grabbed {
+ cursor: grabbing;
+}
+.calendar {
+ width: 100%;
+ height: 100%;
+}
+.calendar .calendar-container {
+ width: 100%;
+ height: calc(100% - 50px);
+}
+.calendar .calendar-container svg {
+ background-color: #f3f3f3;
+ font-family: unset;
+}
+.calendar .calendar-commands {
+ height: 50px;
+}
+.calendar .calendar-commands div {
+ float: left;
+ height: 25px;
+ width: 150px;
+ padding: 12.5px 0 12.5px 0;
+}
+.calendar .calendar-commands div:first-child {
+ text-align: left;
+ cursor: pointer;
+}
+.calendar .calendar-commands .month-name {
+ width: calc(100% - 300px);
+ height: 100%;
+ text-align: center;
+ cursor: default;
+ padding: 0;
+}
+.calendar .calendar-commands .month-name h2 {
+ padding: 3px 0;
+}
+.calendar .calendar-commands div:last-child {
+ float: right;
+ text-align: right;
+ cursor: pointer;
+}
+.calendar .calendar-container svg .day-name {
+ fill: white;
+}
+.calendar .calendar-container svg .day-name-background {
+ fill: #08c;
+}
+.calendar .calendar-container svg .week-number-background {
+ fill: #08c;
+}
+.calendar .calendar-container svg .week-number-text {
+ fill: white;
+ cursor: pointer;
+}
+.calendar .calendar-container svg .item {
+ fill: #0088cc;
+}
+.calendar .calendar-container svg .day-cell {
+ fill: white;
+}
+.calendar .calendar-container svg .day-number {
+ fill: gray;
+ cursor: pointer;
+}
+.calendar .calendar-container svg .day-number.current-date {
+ fill: purple;
+ font-weight: 600;
+}
+.calendar .calendar-container svg[view-type="day"] .day-number {
+ cursor: default;
+}
+.calendar .calendar-container svg .add-button {
+ fill: #0088cc;
+ font-size: 20px;
+ cursor: pointer;
+}
+.calendar .calendar-container svg .add-button:hover {
+ stroke: purple;
+}
+.calendar .calendar-container svg .item-details-name,
+.calendar .calendar-container svg .item-details-type,
+.calendar .calendar-container svg .item-details-time {
+ fill: white;
+}
+.calendar .calendar-container svg .item-details-name {
+ font-size: 16px;
+ font-weight: 600;
+}
+.calendar .calendar-container svg .item-details-type {
+ font-size: 12px;
+}
+.calendar .calendar-container svg .item-details-time {
+ font-size: 12px;
+ font-weight: 600;
+}
+.calendar .calendar-container svg .item-details-background {
+ fill: purple;
+}
+.calendar .calendar-container svg .hour-line {
+ stroke: #d5d5d5;
+ stroke-width:1;
+}
+.calendar .calendar-container svg .hour-text {
+ font-size: 10px;
+ fill: gray;
+}
+.calendar .calendar-container svg .current-time-line {
+ stroke: purple;
+}
+.calendar .calendar-container svg .current-time-triangle {
+ fill: purple;
+}
+.calendar .calendar-container svg .current-time-text {
+ font-size: 10px;
+ fill: purple;
+}
